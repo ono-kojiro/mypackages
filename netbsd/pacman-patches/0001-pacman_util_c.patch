@@ -1,0 +1,20 @@
+--- lib/libalpm/util.c.orig	2019-12-08 23:06:35.676931445 +0900
++++ lib/libalpm/util.c	2019-12-08 23:07:20.318996575 +0900
+@@ -34,6 +34,8 @@
+ #include <fnmatch.h>
+ #include <poll.h>
+ 
++#include <signal.h>
++
+ /* libarchive */
+ #include <archive.h>
+ #include <archive_entry.h>
+@@ -556,7 +558,7 @@ static void _alpm_reset_signals(void)
+ 	int *i, signals[] = {
+ 		SIGABRT, SIGALRM, SIGBUS, SIGCHLD, SIGCONT, SIGFPE, SIGHUP, SIGILL,
+ 		SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGSTOP, SIGTERM, SIGTSTP,
+-		SIGTTIN, SIGTTOU, SIGUSR1, SIGUSR2, SIGPOLL, SIGPROF, SIGSYS, SIGTRAP,
++		SIGTTIN, SIGTTOU, SIGUSR1, SIGUSR2, SIGPROF, SIGSYS, SIGTRAP,
+ 		SIGURG, SIGVTALRM, SIGXCPU, SIGXFSZ,
+ 		0
+ 	};

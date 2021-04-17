@@ -1,0 +1,19 @@
+*** scripts/makepkg.sh.in-orig	Wed Jun  5 21:30:03 2019
+--- scripts/makepkg.sh.in	Wed Jun  5 21:25:16 2019
+*************** clean_up() {
+*** 181,187 ****
+  
+  enter_fakeroot() {
+  	msg "$(gettext "Entering %s environment...")" "fakeroot"
+! 	fakeroot -- $0 -F "${ARGLIST[@]}" || exit $?
+  }
+  
+  # Automatically update pkgver variable if a pkgver() function is provided
+--- 181,187 ----
+  
+  enter_fakeroot() {
+  	msg "$(gettext "Entering %s environment...")" "fakeroot"
+! 	fakeroot -l @prefix@/lib/libfakeroot.so -- $0 -F "${ARGLIST[@]}" || exit $?
+  }
+  
+  # Automatically update pkgver variable if a pkgver() function is provided
