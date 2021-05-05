@@ -1,0 +1,27 @@
+_realname=myapp
+pkgname=("${_realname}")
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="myapp"
+arch=('any')
+url="http://example.com/"
+license=('GPL2')
+depends=("libmylib")
+source=("myapp-0.0.1.tar.gz")
+sha256sums=("SKIP")
+
+prepare() {                                                                       cd $srcdir/${_realname}-${pkgver}
+}
+
+build() {
+  cd $srcdir/${_realname}-${pkgver}
+  sh configure --prefix=/usr
+  make
+}
+
+package() {
+  cd $srcdir/${_realname}-${pkgver}
+  make install DESTDIR=${pkgdir}
+}
+
+
