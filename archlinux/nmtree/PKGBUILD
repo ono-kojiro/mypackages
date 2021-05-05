@@ -1,0 +1,29 @@
+_realname=nmtree
+pkgname=("${_realname}")
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="nmtree"
+arch=('any')
+url="https://github.com/archiecobbs/nmtree"
+license=('BSD')
+depends=()
+source=("https://github.com/archiecobbs/nmtree/archive/refs/tags/1.0.0.tar.gz")
+sha256sums=("SKIP")
+
+prepare() {
+  cd $srcdir/${_realname}-${pkgver}
+}
+
+build() {
+  cd $srcdir/${_realname}-${pkgver}
+  sh autogen.sh
+  sh configure --prefix=/usr CFLAGS="-Wno-error=format-security"
+  make
+}
+
+package() {
+  cd $srcdir/${_realname}-${pkgver}
+  make install DESTDIR=${pkgdir}
+}
+
+
