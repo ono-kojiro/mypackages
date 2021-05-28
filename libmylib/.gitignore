@@ -14,5 +14,7 @@ aclocal.m4
 config.status
 config/
 *.tar.gz
-*_amd64.deb
+autom4te.cache/
+*.rpm
+*.deb
 
