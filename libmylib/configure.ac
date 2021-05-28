@@ -27,5 +27,7 @@ AC_PROG_CC
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 mkdebpkg.sh
+               ])
 AC_OUTPUT
