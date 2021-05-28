@@ -6,7 +6,7 @@ cd $top_dir
 REALNAME=libmylib
 PKGNAME=$REALNAME
 VERSION=0.0.1
-ARCHIVE=${VERSION}.tar.gz
+ARCHIVE=${REALNAME}-${VERSION}.tar.gz
 #URL=http://example.com/${ARCHIVE}
 SHA256SUM=SKIP
 
