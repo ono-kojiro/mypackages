@@ -10,14 +10,17 @@
 %define __requires_exclude libc.so.6
 %define __requires_exclude rtld
 
+%if "%{version}" == ""
+%define version 3.28
+%endif
 
 Name: fio
-Version: 3.28
+Version: %{version}
 Release: 1%{?dist}
-Summary: RPM example
+Summary: fio
 Group: none
-License: BSD	
-URL: https://github.com/axboe/fio/archive/refs/tags/fio-3.28.tar.gz
+License: GPL2
+URL: https://github.com/axboe/fio/archive/refs/tags/fio-%{version}.tar.gz
 Source0: %{name}-%{version}.tar.gz
 
 #BuildArch: noarch
