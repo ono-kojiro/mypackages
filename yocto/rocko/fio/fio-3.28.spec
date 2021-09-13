@@ -35,7 +35,7 @@ fio
 %setup -q -n %{name}-%{name}-%{version}
 
 %build
-
+./FIO-VERSION-GEN
 make %{?_smp_mflags}
 
 %install
