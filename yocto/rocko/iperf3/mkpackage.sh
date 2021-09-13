@@ -3,7 +3,7 @@
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 
 pkgname=iperf
-pkgver=3.9
+pkgver=3.8.1
 archive=${pkgname}-${pkgver}.tar.gz
 src_url=https://downloads.es.net/pub/iperf/$archive
 
