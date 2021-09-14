@@ -1,0 +1,19 @@
+*** configure.ac.orig	2021-09-15 08:25:51.152905699 +0900
+--- configure.ac	2021-09-15 08:25:56.845012175 +0900
+*************** AC_SUBST(CC_VERSION)
+*** 46,52 ****
+  
+  # Checks for user arguments
+  
+! AC_LIB_PREFIX()
+  # Additional linker flags
+  AC_ARG_WITH([extra-ldflags],
+                AS_HELP_STRING([--with-extra-ldflags],[additional linker flags, e.g. -all-static]),
+--- 46,52 ----
+  
+  # Checks for user arguments
+  
+! #AC_LIB_PREFIX()
+  # Additional linker flags
+  AC_ARG_WITH([extra-ldflags],
+                AS_HELP_STRING([--with-extra-ldflags],[additional linker flags, e.g. -all-static]),
