@@ -9,6 +9,8 @@ if [ "$res" != "0" ]; then
   exit 1
 fi
 
+# https://download.fedoraproject.org/pub/fedora/linux/development/rawhide/Everything/source/tree/Packages/n/nano-5.8-4.fc35.src.rpm
+
 pkgname=nano
 pkgver=5.8
 archive=${pkgname}-${pkgver}.tar.xz
