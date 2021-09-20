@@ -38,7 +38,7 @@ stress-ng
 %setup -q -n %{name}-%{version}
 
 %build
-make %{?_smp_mflags}
+make %{?_smp_mflags} CC="$CC" LD="$LD" VERBOSE=1
 
 %install
 BINDIR=%{buildroot}%{_prefix}/bin \

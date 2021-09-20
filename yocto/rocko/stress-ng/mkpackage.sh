@@ -2,6 +2,19 @@
 
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 
+
+target=aarch64-poky-linux
+cc=$target-gcc
+
+which $cc
+res=$?
+if [ "$res" != "0" ]; then
+  echo "no $cc"
+  exit 1
+fi
+
+source /opt/poky/2.4.4/environment-setup-aarch64-poky-linux
+
 pkgname=stress-ng
 pkgver=0.12.12
 archive=V${pkgver}.tar.gz
