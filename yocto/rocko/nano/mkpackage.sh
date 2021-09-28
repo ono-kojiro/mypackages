@@ -9,19 +9,23 @@ if [ "$res" != "0" ]; then
   exit 1
 fi
 
-# https://download.fedoraproject.org/pub/fedora/linux/development/rawhide/Everything/source/tree/Packages/n/nano-5.8-4.fc35.src.rpm
-
 pkgname=nano
 pkgver=5.8
 archive=${pkgname}-${pkgver}.tar.xz
-src_url=https://www.nano-editor.org/dist/v5/${pkgname}-${pkgver}.tar.xz
+srpm_url=https://download.fedoraproject.org/pub/fedora/linux/development/rawhide/Everything/source/tree/Packages/n/nano-5.8-4.fc35.src.rpm
 specfile=nano.spec
-  
-spectool -g -C $top_dir/rpmbuild/SOURCES ${specfile}
+srpmfile=`basename $srpm_url`
 
-cp -f nano-5.8-die-infinite-recursion.patch ./rpmbuild/SOURCES/
-cp -f nano-default-editor.* ./rpmbuild/SOURCES/
-cp -f nanorc ./rpmbuild/SOURCES/
+mkdir -p ./rpmbuild/SOURCES
+mkdir -p ./rpmbuild/SRPMS
+
+srpmpath=./rpmbuild/SRPMS/$srpmfile
+
+if [ ! -e $srpmpath ]; then
+  wget -O $srpmpath $srpm_url
+fi
+
+rpm -vhi --define="_topdir $top_dir/rpmbuild" $srpmpath
 
 rpmbuild -bb \
   --nodeps \
@@ -31,5 +35,7 @@ rpmbuild -bb \
   --define="_build x86_64-linux-gnu" \
   --define="_lib lib" \
   --define="_libdir /usr/lib" \
-  ${specfile}
+  --define="_buildshell /bin/bash" \
+  --define="_unpackaged_files_terminate_build 0" \
+  ./rpmbuild/SPECS/${specfile}
 
