@@ -5,11 +5,12 @@ cd $top_dir
 
 REALNAME=rpmdevtools
 PKGNAME=$REALNAME
-#VERSION=9.5
-VERSION=8.10
+VERSION=9.5
 ARCHIVE=${REALNAME}-${VERSION}.tar.xz
 SRC_URL=https://releases.pagure.org/rpmdevtools/${PKGNAME}-${VERSION}.tar.xz
-SHA256SUM=dddf6649f2bcbe0204bd59316a387a59bb9056aaa14593e1b4dcdfe8c05dafcc
+
+# 9.5
+SHA256SUM=b46a1d6949078f8b25056682768ed6bd50d713c33ac8a986d94ce71a162212aa
 
 DESTDIR=~/tmp/$PKGNAME-$VERSION
 OUTPUTDIR=.
@@ -37,6 +38,7 @@ fetch()
   if [ ! -z "$SHA256SUM" ]; then
     echo "$SHA256SUM  ${ARCHIVE}" > sha256sum.txt
     sha256sum -c sha256sum.txt
+    rm -f sha256sum.txt
   fi
 }
 
