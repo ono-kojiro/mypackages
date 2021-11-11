@@ -33,8 +33,7 @@ download()
     echo "skip download"
   fi
 
-  echo "$SHA256SUM  ${ARCHIVE}" > sha256sum.txt
-  sha256sum -c sha256sum.txt
+  echo "$SHA256SUM  ${ARCHIVE}" | sha256sum -c -
 }
 
 extract()
