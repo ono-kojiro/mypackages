@@ -13,3 +13,5 @@ target_link_directories(myapp
 target_link_libraries(myapp
   PUBLIC mylib)
 
+install(TARGETS myapp ARCHIVE DESTINATION ${INSTALL_LIB_DIR})
+
