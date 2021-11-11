@@ -22,8 +22,8 @@ porg
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall logdir=%{buildroot}%{_var}/log
+rm -rf ${buildroot}
+%make_install logdir=%{buildroot}%{_var}/log
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -36,9 +36,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/porgball
 %{_libdir}/libporg-log.a
 %{_libdir}/libporg-log.la
-%{_libdir}/libporg-log.so
-%{_libdir}/libporg-log.so.0
-%{_libdir}/libporg-log.so.0.0.0
 %{_mandir}/man5/porgrc.5.gz
 %{_mandir}/man8/porg.8.gz
 %{_mandir}/man8/porgball.8.gz
