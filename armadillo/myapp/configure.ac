@@ -12,6 +12,8 @@ AC_CANONICAL_SYSTEM
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
+LT_INIT
+
 # Checks for programs.
 AC_PROG_CC
 
