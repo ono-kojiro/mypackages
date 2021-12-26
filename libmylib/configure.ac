@@ -8,6 +8,8 @@ AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_SRCDIR([src/mylib.c])
 AC_CONFIG_HEADERS([config/config.h])
 
+AC_REQUIRE_AUX_FILE([tap-driver.sh])
+
 AC_CANONICAL_SYSTEM
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
@@ -16,6 +18,8 @@ LT_INIT
 
 # Checks for programs.
 AC_PROG_CC
+
+AC_PROG_AWK
 
 # Checks for libraries.
 
