@@ -8,3 +8,8 @@ int mylib(void)
   return 0;
 }
 
+int mylib_add(int a, int b)
+{
+  return a + b;
+}
+

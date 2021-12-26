@@ -22,6 +22,7 @@ AC_PROG_CC
 AC_PROG_AWK
 
 # Checks for libraries.
+PKG_CHECK_MODULES(CHECK, [check])
 
 # Checks for header files.
 
