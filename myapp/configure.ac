@@ -8,12 +8,16 @@ AC_CONFIG_MACRO_DIR([config])
 AC_CONFIG_SRCDIR([src/myapp.c])
 AC_CONFIG_HEADERS([config/config.h])
 
+AC_REQUIRE_AUX_FILE([tap-driver.sh])
+
 AC_CANONICAL_SYSTEM
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # Checks for programs.
 AC_PROG_CC
+
+AC_PROG_AWK
 
 AC_ARG_WITH([mylib_include],
   [  --with-mylib-include=DIR  mylib include directory ],

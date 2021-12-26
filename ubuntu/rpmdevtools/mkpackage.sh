@@ -5,7 +5,7 @@ cd $top_dir
 
 REALNAME=rpmdevtools
 PKGNAME=$REALNAME
-VERSION=9.5
+VERSION=8.5
 ARCHIVE=${REALNAME}-${VERSION}.tar.xz
 SRC_URL=https://releases.pagure.org/rpmdevtools/${PKGNAME}-${VERSION}.tar.xz
 

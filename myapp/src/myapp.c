@@ -1,7 +1,9 @@
+#include "config.h"
+
 #include <stdio.h>
 
 #ifdef HAVE_LIBMYLIB
-#include <mylib.h>
+#include "mylib.h"
 #endif
 
 int main(int argc, char **argv)
