@@ -1,0 +1,63 @@
+#!/bin/sh
+
+top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
+cd $top_dir
+
+REALNAME=@PACKAGE@
+PKGNAME=$REALNAME
+VERSION=@VERSION@
+ARCHIVE=${REALNAME}-${VERSION}.tar.gz
+#URL=http://example.com/${ARCHIVE}
+SHA256SUM=SKIP
+
+DESTDIR=`pwd`/package/$PKGNAME-$VERSION
+OUTPUTDIR=.
+
+all()
+{
+  install
+  package
+}
+
+install()
+{
+  make install DESTDIR=$DESTDIR
+}
+
+custom_install()
+{
+  :
+}
+
+package()
+{
+	mkdir -p $DESTDIR/DEBIAN
+cat << EOS > $DESTDIR/DEBIAN/control
+Package: $PKGNAME
+Maintainer: Kojiro ONO <ono.kojiro@gmail.com>
+Architecture: amd64
+Version: $VERSION
+Description: $PKGNAME
+EOS
+	fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
+}
+
+clean()
+{
+  :
+}
+
+
+if [ "$#" = 0 ]; then
+  all
+fi
+
+for target in "$@"; do
+	LANG=C type $target | grep 'function' > /dev/null 2>&1
+	if [ "$?" = "0" ]; then
+		$target
+	else
+		echo invalid target, "$target"
+	fi
+done
+

@@ -35,4 +35,6 @@ AC_CONFIG_FILES([Makefile
                  tests/Makefile
                  mkdebpkg.sh
                ])
+AC_CONFIG_FILES([mkpackage.sh], [chmod +x mkpackage.sh])
+
 AC_OUTPUT
