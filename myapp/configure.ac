@@ -19,34 +19,35 @@ AC_PROG_CC
 
 AC_PROG_AWK
 
-AC_ARG_WITH([mylib_include],
-  [  --with-mylib-include=DIR  mylib include directory ],
+AC_ARG_WITH([libmylib_include],
+  [  --with-libmylib-include=DIR  libmylib include directory ],
   CFLAGS="$CFLAGS -I$withval"
-  mylib_include_path="$withval"
+  libmylib_include_path="$withval"
       
   AC_DEFINE([HAVE_LIBMYLIB], [1], [Define if you want to use libmylib])
 )
 
-AC_ARG_WITH([mylib_lib],
-  [  --with-mylib-lib=DIR      mylib lib directory ],
+AC_ARG_WITH([libmylib_lib],
+  [  --with-libmylib-lib=DIR      libmylib lib directory ],
   LDFLAGS="$LDFLAGS -L$withval"
-  mylib_lib_path="$withval"
+  libmylib_lib_path="$withval"
   AC_SUBST([LIBMYLIB], ["-lmylib"])
 )
 
-AC_ARG_WITH([mylib],
-  [  --with-mylib=DIR          mylib install directory ],
+AC_ARG_WITH([libmylib],
+  [  --with-libmylib=DIR          libmylib install directory ],
   [
-    if test -z "$mylib_include_path" && test -z "$mylib_lib_path" ; then
+    if test -z "$libmylib_include_path" && test -z "$libmylib_lib_path" ; then
       CFLAGS="$CFLAGS -I$withval/include"
 	  LDFLAGS="$LDFLAGS -L$withval/lib"
-	  mylib_include_path="$withval/include"
-	  mylib_lib_path="$withval/lib"
+	  libmylib_include_path="$withval/include"
+	  libmylib_lib_path="$withval/lib"
   
       AC_DEFINE([HAVE_LIBMYLIB], [1], [Define if you want to use libmylib])
       AC_SUBST([LIBMYLIB], ["-lmylib"])
+      AC_SUBST([LIBMYLIB_DIR], ["$withval"])
 	else
-      AC_MSG_FAILURE([Do not use --with-mylib and --with-mylib-include/--with-mylib-lib options simultaneously.])
+      AC_MSG_FAILURE([Do not use --with-libmylib and --with-libmylib-include/--with-libmylib-lib options simultaneously.])
 	fi
   ]
 )

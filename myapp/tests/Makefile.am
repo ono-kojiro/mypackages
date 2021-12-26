@@ -5,4 +5,6 @@ TEST_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) \
 
 EXTRA_DIST = $(TESTS)
 
+test :
+	LD_LIBRARY_PATH=$(LIBMYLIB_DIR)/lib $(MAKE) check
 
