@@ -8,6 +8,7 @@ Makefile.in
 *.a
 .deps/
 .libs/
+autom4te.cache/
 libtool
 configure
 aclocal.m4

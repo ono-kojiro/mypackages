@@ -16,7 +16,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_PROG_CC
 
 AC_ARG_WITH([mylib_include],
-  [ --with-mylib-include=DIR  mylib include directory ],
+  [  --with-mylib-include=DIR  mylib include directory ],
   CFLAGS="$CFLAGS -I$withval"
   mylib_include_path="$withval"
       
@@ -24,14 +24,14 @@ AC_ARG_WITH([mylib_include],
 )
 
 AC_ARG_WITH([mylib_lib],
-  [ --with-mylib-lib=DIR      mylib lib directory ],
+  [  --with-mylib-lib=DIR      mylib lib directory ],
   LDFLAGS="$LDFLAGS -L$withval"
   mylib_lib_path="$withval"
   AC_SUBST([LIBMYLIB], ["-lmylib"])
 )
 
 AC_ARG_WITH([mylib],
-  [ --with-mylib=DIR          mylib install directory ],
+  [  --with-mylib=DIR          mylib install directory ],
   [
     if test -z "$mylib_include_path" && test -z "$mylib_lib_path" ; then
       CFLAGS="$CFLAGS -I$withval/include"
@@ -56,5 +56,7 @@ AC_ARG_WITH([mylib],
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+				 tests/Makefile
+				 ])
 AC_OUTPUT
