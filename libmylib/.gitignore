@@ -1,3 +1,4 @@
+buildroot/
 Makefile
 Makefile.in
 *.log
