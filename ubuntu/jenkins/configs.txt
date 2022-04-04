@@ -1,0 +1,18 @@
+Configuration
+  http://192.168.0.98/jenkins/
+
+LDAP
+  Server
+    ldaps://localhost:636
+  root DN
+    dc=example,dc=com
+  User search filter
+    uid={0}
+  Group membershil
+    Search for LDAP groups containing user
+    (empty)
+  Display Name LDAP attribute
+    gecos
+  Email Address LDAP attribute
+    mail
+
