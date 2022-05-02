@@ -8,6 +8,11 @@ PKGNAME=$REALNAME
 VERSION=4.37.2
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
+
+workdir=${top_dir}/work
+
+mkdir -p ${workdir}
+
 WARFILE=$(basename $WAR_URL)
 
 DESTDIR=$top_dir/dest
@@ -15,7 +20,7 @@ OUTPUTDIR=.
 
 debug()
 {
-  echo warfile is $WARFILE
+  :
 }
 
 all()
@@ -32,8 +37,10 @@ all()
 
 fetch()
 {
-  if [ ! -e "${WARFILE}" ]; then
+  if [ ! -e "${workdir}/${WARFILE}" ]; then
+    cd ${workdir}
     wget ${WAR_URL}
+    cd ${top_dir}
   else
     echo "skip download"
   fi
@@ -41,19 +48,20 @@ fetch()
 
 extract()
 {
-  if [ ! -e $REALNAME-$VERSION ]; then
-    tar xvf $ARCHIVE;
-  fi
+  cd ${workdir}
+  cd ${top_dir}
 }
 
 configure()
 {
-  :
+  cd ${workdir}
+  cd ${top_dir}
 }
 
 build()
 {
-  :
+  cd ${workdir}
+  cd ${top_dir}
 }
 
 do_install()
@@ -68,7 +76,7 @@ do_install()
 
   install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
   install ${top_dir}/gitbucket.service $DESTDIR/lib/systemd/system/
-  install ${top_dir}/$WARFILE          $DESTDIR/usr/share/java/
+  install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
   
   cd $top_dir
 }
@@ -80,11 +88,13 @@ custom_install()
 
 package()
 {
+  maintainer=`git config --get user.name`
+  email=`git config --get user.email`
 
   mkdir -p $DESTDIR/DEBIAN
   cat << EOS > $DESTDIR/DEBIAN/control
 Package: $PKGNAME
-Maintainer: Kojiro ONO <ono.kojiro@gmail.com>
+Maintainer: $maintainer <$email>
 Architecture: amd64
 Version: $VERSION
 Description: $PKGNAME

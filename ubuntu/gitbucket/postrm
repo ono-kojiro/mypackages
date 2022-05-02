@@ -15,13 +15,15 @@ case "$1" in
         echo "failed to remove gitbucket system user with userdel" 1>&2
     fi
     
-    
-    if [ -x "$(command -v delgroup)" ]; then
-      delgroup --quiet --system --only-if-empty $GITBUCKET_GROUP || \
-        echo "failed to remove gitbucket system group with delgroup" 1>&2
-    else
-      groupdel $GITBUCKET_GROUP || \
-        echo "failed to remove gitbucket system group with groupdel" 1>&2
+   
+    if getent group "$GITBUCKET_GROUP" > /dev/null; then 
+      if [ -x "$(command -v delgroup)" ]; then
+        delgroup --quiet --system --only-if-empty $GITBUCKET_GROUP || \
+          echo "failed to remove gitbucket system group with delgroup" 1>&2
+      else
+        groupdel $GITBUCKET_GROUP || \
+          echo "failed to remove gitbucket system group with groupdel" 1>&2
+      fi
     fi
 
     rm -rf \
@@ -29,7 +31,6 @@ case "$1" in
       /var/log/gitbucket \
       /var/run/gitbucket \
       /var/cache/gitbucket
-    
     ;;
 
   remove | upgrade | failed-upgrade )
