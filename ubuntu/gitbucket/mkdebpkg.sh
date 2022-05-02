@@ -92,6 +92,7 @@ EOS
 
   cp -f postinst $DESTDIR/DEBIAN/
   cp -f postrm   $DESTDIR/DEBIAN/
+  cp -f prerm    $DESTDIR/DEBIAN/
 
   fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
 }
