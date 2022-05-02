@@ -1,0 +1,52 @@
+#!/bin/sh
+
+set -e
+
+GITBUCKET_USER=gitbucket
+GITBUCKET_GROUP=gitbucket
+
+case "$1" in
+  configure)
+    if ! getent group "$GITBUCKET_GROUP" > /dev/null; then
+      addgroup --system --quiet "$GITBUCKET_GROUP"
+    fi
+
+    if ! id "GITBUCKET_USER" > /dev/null 2>&1; then
+      adduser --system --quiet \
+        --home /var/lib/gitbucket \
+        --no-create-home \
+        --ingroup "$GITBUCKET_GROUP" \
+        --disabled-password \
+        --shell /usr/sbin/nologin \
+        --gecos 'Gitbucket' \
+        "$GITBUCKET_USER"
+    fi
+    
+    mkdir -p /var/lib/gitbucket
+    chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /var/lib/gitbucket
+    chmod u+rwx /var/lib/gitbucket
+    
+    mkdir -p /var/log/gitbucket
+    chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /var/log/gitbucket
+    chmod u+rwx /var/log/gitbucket
+    
+    mkdir -p /var/cache/gitbucket
+    chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /var/cache/gitbucket
+    chmod -R 750 /var/cache/gitbucket
+
+    if [ -d "/var/run/gitbucket" ]; then
+      chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /var/run/gitbucket
+      chmod -R 750 /var/run/gitbucket
+    fi
+
+    ;;
+  abort-upgrade | abort-remove | abort-deconfigure)
+    ;;
+  * )
+    echo "postinst called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+exit 0
+

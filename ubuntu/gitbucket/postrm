@@ -1,0 +1,48 @@
+#!/bin/sh
+
+set -e
+
+GITBUCKET_USER=gitbucket
+GITBUCKET_GROUP=gitbucket
+
+case "$1" in
+  purge )
+    rm -rf \
+      /var/lib/gitbucket \
+      /var/log/gitbucket \
+      /var/run/gitbucket \
+      /var/cache/gitbucket \
+    
+    if [ -x "$(command -v deluser)" ]; then
+      deluser --quiet --system $GITBUCKET_USER || \
+        echo "failed to remove gitbucket system user" 1>&2
+    else
+      userdel $GITBUCKET_USER || \
+        echo "failed to remove gitbucket system user" 1>&2
+    fi
+    
+    
+    if [ -x "$(command -v delgroup)" ]; then
+      delgroup --quiet --system --only-if-empty $GITBUCKET_GROUP || \
+        echo "failed to remove gitbucket system group" 1>&2
+    else
+      groupdel $GITBUCKET_GROUP || \
+        echo "failed to remove gitbucket system group" 1>&2
+    fi
+
+    ;;
+
+  remove | upgrade | failed-upgrade )
+    ;;
+
+  abort-install | abort-upgrade | disappear )
+    ;;
+
+  * )
+    echo "postrm called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+exit 0
+
