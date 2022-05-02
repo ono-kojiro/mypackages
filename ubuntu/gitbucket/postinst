@@ -48,5 +48,20 @@ case "$1" in
     ;;
 esac
 
+case "$1" in
+  configure | abort-upgrade | abort-deconfigure | abort-remove )
+
+    deb-systemd-helper umask 'gitbucket.service' > /dev/null || true
+
+    if deb-systemd-helper --quiet was-enabled 'gitbucket.service'; then
+      deb-systemd-helper enable       'gitbucket.service' > /dev/null || true
+    else
+      deb-systemd-helper update-state 'gitbucket.service' > /dev/null || true
+    fi
+    ;;
+  * )
+    ;;
+esac
+
 exit 0
 

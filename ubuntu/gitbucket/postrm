@@ -7,29 +7,29 @@ GITBUCKET_GROUP=gitbucket
 
 case "$1" in
   purge )
-    rm -rf \
-      /var/lib/gitbucket \
-      /var/log/gitbucket \
-      /var/run/gitbucket \
-      /var/cache/gitbucket \
-    
     if [ -x "$(command -v deluser)" ]; then
       deluser --quiet --system $GITBUCKET_USER || \
-        echo "failed to remove gitbucket system user" 1>&2
+        echo "failed to remove gitbucket system user with deluser" 1>&2
     else
       userdel $GITBUCKET_USER || \
-        echo "failed to remove gitbucket system user" 1>&2
+        echo "failed to remove gitbucket system user with userdel" 1>&2
     fi
     
     
     if [ -x "$(command -v delgroup)" ]; then
       delgroup --quiet --system --only-if-empty $GITBUCKET_GROUP || \
-        echo "failed to remove gitbucket system group" 1>&2
+        echo "failed to remove gitbucket system group with delgroup" 1>&2
     else
       groupdel $GITBUCKET_GROUP || \
-        echo "failed to remove gitbucket system group" 1>&2
+        echo "failed to remove gitbucket system group with groupdel" 1>&2
     fi
 
+    rm -rf \
+      /var/lib/gitbucket \
+      /var/log/gitbucket \
+      /var/run/gitbucket \
+      /var/cache/gitbucket
+    
     ;;
 
   remove | upgrade | failed-upgrade )
@@ -43,6 +43,27 @@ case "$1" in
     exit 1
     ;;
 esac
+
+if [ "$1" = "purge" ]; then
+  update-rc.d gitbucket remove > /dev/null
+fi
+
+if [ -d /run/systemd/system ]; then
+  systemctl --system daemon-reload > /dev/null || true
+fi
+
+if [ "$1" = "remove" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper mask   'gitbucket.service' >/dev/null || true
+  fi
+fi
+
+if [ "$1" = "purge" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper purge  'gitbucket.service' >/dev/null || true
+    deb-systemd-helper unmask 'gitbucket.service' >/dev/null || true
+  fi
+fi
 
 exit 0
 
