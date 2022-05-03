@@ -97,6 +97,7 @@ Package: $PKGNAME
 Maintainer: $maintainer <$email>
 Architecture: amd64
 Version: $VERSION
+Depends: openjdk-11-jre
 Description: $PKGNAME
 EOS
 
