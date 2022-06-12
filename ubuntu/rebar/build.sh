@@ -135,6 +135,11 @@ install()
   rm -rf ${destdir}
   mkdir -p ${destdir}/usr/bin
   cp -f ./rebar ${destdir}/usr/bin/
+
+  mkdir -p ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}
+  cp -a ./ebin ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}/
+  cp -a ./include ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}/
+
   cd ${top_dir}
 }
 
