@@ -10,7 +10,7 @@ pkgname="${realname}"
 version="25.0.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/erlang/otp/releases/download/OTP-25.0.1/otp_src_25.0.1.tar.gz"
+src_urls="$src_urls https://github.com/erlang/otp/archive/refs/tags/OTP-25.0.1.tar.gz"
 
 url="https://www.erlang.org/"
 
@@ -104,9 +104,19 @@ extract()
 
 }
 
+prepare()
+{
+  sudo apt -y install libncurses-dev
+  sudo apt -y install libssl-dev
+  sudo apt -y install pkg-config
+  sudo apt -y install libxml2-utils
+  sudo apt -y install libodbc2 libodbcinst2
+
+}
+
 configure()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   ./configure --prefix=/usr
   cd ${top_dir}
 }
@@ -118,26 +128,14 @@ config()
 
 compile()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   make -j7
   cd ${top_dir}
 }
 
-run()
-{
-  qemu-system-aarch64 \
-    -M arm-generic-fdt \
-    -nographic \
-    -serial mon:stdio \
-    -dtb /usr/share/qemu/xilinx/SINGLE_ARCH/zcu102-arm.dtb \
-    -device loader,file=${builddir}/${pkgname}_${version}/obj/${pkgname},cpu-num=4 \
-    -device loader,addr=0xff5e023c,data=0x80008fde,data-len=4 \
-    -device loader,addr=0xff9a0000,data=0x80000218,data-len=4
-}
-
 install()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   rm -rf ${destdir}
   make install DESTDIR=${destdir}
   cd ${top_dir}
