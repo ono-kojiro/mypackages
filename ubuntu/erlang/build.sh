@@ -10,7 +10,7 @@ pkgname="${realname}"
 version="25.0.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/erlang/otp/releases/download/OTP-25.0.1/otp_src_25.0.1.tar.gz"
+src_urls="$src_urls https://github.com/erlang/otp/archive/refs/tags/OTP-25.0.1.tar.gz"
 
 url="https://www.erlang.org/"
 
@@ -104,9 +104,14 @@ extract()
 
 }
 
+prepare()
+{
+  sudo apt -y install libncurses-dev
+}
+
 configure()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   ./configure --prefix=/usr
   cd ${top_dir}
 }
@@ -118,7 +123,7 @@ config()
 
 compile()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   make -j7
   cd ${top_dir}
 }
@@ -137,7 +142,7 @@ run()
 
 install()
 {
-  cd ${builddir}/${pkgname}_src_${version}
+  cd ${builddir}/${pkgname}-OTP-${version}
   rm -rf ${destdir}
   make install DESTDIR=${destdir}
   cd ${top_dir}
