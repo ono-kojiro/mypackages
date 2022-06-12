@@ -125,7 +125,6 @@ config()
 compile()
 {
   cd ${builddir}/${pkgname}-${version}
-  make -j7
   cd ${top_dir}
 }
 
@@ -133,10 +132,17 @@ install()
 {
   cd ${builddir}/${pkgname}-${version}
   rm -rf ${destdir}
+  mkdir -p ${destdir}/usr
   #make install DESTDIR=${destdir}
   ./rebar3 local install
 
-  mkdir -p ${destdir}/usr
+  mkdir -p ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}
+  cp -a _build/bootstrap/lib/rebar/ebin ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}/ebin
+  #mkdir -p ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}/include
+
+  #cp -f _build/bootstrap/lib/rebar/include/* \
+  #  ${destdir}/usr/lib/erlang/lib/${pkgname}-${version}/include/
+
   cp -a $HOME/.cache/rebar3/* ${destdir}/usr/
   rm -rf ${destdir}/usr/vsns/
   cd ${top_dir}
