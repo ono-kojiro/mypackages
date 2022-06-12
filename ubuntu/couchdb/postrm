@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -e
+
+COUCHDB_USER=couchdb
+COUCHDB_GROUP=couchdb
+
+case "$1" in
+  purge )
+    if [ -x "$(command -v deluser)" ]; then
+      deluser --quiet --system $COUCHDB_USER || \
+        echo "failed to remove couchdb system user with deluser" 1>&2
+    else
+      userdel $COUCHDB_USER || \
+        echo "failed to remove couchdb system user with userdel" 1>&2
+    fi
+    
+   
+    if getent group "$COUCHDB_GROUP" > /dev/null; then 
+      if [ -x "$(command -v delgroup)" ]; then
+        delgroup --quiet --system --only-if-empty $COUCHDB_GROUP || \
+          echo "failed to remove couchdb system group with delgroup" 1>&2
+      else
+        groupdel $COUCHDB_GROUP || \
+          echo "failed to remove couchdb system group with groupdel" 1>&2
+      fi
+    fi
+
+    rm -rf \
+      /var/lib/couchdb \
+      /var/log/couchdb \
+      /var/run/couchdb
+    ;;
+
+  remove | upgrade | failed-upgrade )
+    ;;
+
+  abort-install | abort-upgrade | disappear )
+    ;;
+
+  * )
+    echo "postrm called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+if [ "$1" = "purge" ]; then
+  update-rc.d couchdb remove > /dev/null
+fi
+
+if [ -d /run/systemd/system ]; then
+  systemctl --system daemon-reload > /dev/null || true
+fi
+
+if [ "$1" = "remove" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper mask   'couchdb.service' >/dev/null || true
+  fi
+fi
+
+if [ "$1" = "purge" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper purge  'couchdb.service' >/dev/null || true
+    deb-systemd-helper unmask 'couchdb.service' >/dev/null || true
+  fi
+fi
+
+exit 0
+

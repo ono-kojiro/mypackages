@@ -1,0 +1,65 @@
+#!/bin/sh
+
+set -e
+
+COUCHDB_USER=couchdb
+COUCHDB_GROUP=couchdb
+
+case "$1" in
+  configure)
+    if ! getent group "$COUCHDB_GROUP" > /dev/null; then
+      addgroup --system --quiet "$COUCHDB_GROUP"
+    fi
+
+    if ! id "COUCHDB_USER" > /dev/null 2>&1; then
+      adduser --system --quiet \
+        --home /opt/couchdb \
+        --no-create-home \
+        --ingroup "$COUCHDB_GROUP" \
+        --disabled-password \
+        --shell /usr/sbin/nologin \
+        --gecos 'CouchDB' \
+        "$COUCHDB_USER"
+    fi
+    
+    mkdir -p /var/lib/couchdb
+    chown -R "${COUCHDB_USER}:${COUCHDB_GROUP}" /var/lib/couchdb
+    chmod u+rwx /var/lib/couchdb
+    
+    mkdir -p /var/log/couchdb
+    chown -R "${COUCHDB_USER}:${COUCHDB_GROUP}" /var/log/couchdb
+    chmod u+rwx /var/log/couchdb
+    
+    if [ -d "/var/run/couchdb" ]; then
+      chown -R "${COUCHDB_USER}:${COUCHDB_GROUP}" /var/run/couchdb
+      chmod -R 750 /var/run/couchdb
+    fi
+
+    chown -R "${COUCHDB_USER}:${COUCHDB_GROUP}" /opt/couchdb
+
+    ;;
+  abort-upgrade | abort-remove | abort-deconfigure)
+    ;;
+  * )
+    echo "postinst called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+case "$1" in
+  configure | abort-upgrade | abort-deconfigure | abort-remove )
+
+    deb-systemd-helper umask 'couchdb.service' > /dev/null || true
+
+    if deb-systemd-helper --quiet was-enabled 'couchdb.service'; then
+      deb-systemd-helper enable       'couchdb.service' > /dev/null || true
+    else
+      deb-systemd-helper update-state 'couchdb.service' > /dev/null || true
+    fi
+    ;;
+  * )
+    ;;
+esac
+
+exit 0
+

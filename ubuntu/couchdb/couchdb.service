@@ -1,0 +1,21 @@
+[Unit]
+Description=CouchDB
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/couchdb/bin/couchdb &
+Restart=on-failure
+SuccessExitStatus=143
+
+User=couchdb
+Group=couchdb
+
+WorkingDirectory=/var/lib/couchdb
+
+Environment="COUCHDB_HOME=/opt/couchdb"
+
+[Install]
+WantedBy=multi-user.target
+
