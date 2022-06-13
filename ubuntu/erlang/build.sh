@@ -7,10 +7,14 @@ cd $top_dir
 
 realname="otp"
 pkgname="${realname}"
-version="25.0.1"
+version="24.3.4.1"
+#version="22.3.4.24"
 
 src_urls=""
-src_urls="$src_urls https://github.com/erlang/otp/archive/refs/tags/OTP-25.0.1.tar.gz"
+#src_urls="$src_urls https://github.com/erlang/otp/archive/refs/tags/OTP-25.0.1.tar.gz"
+src_urls="$src_urls https://github.com/erlang/otp/archive/refs/tags/OTP-${version}.tar.gz"
+#src_urls="$src_urls https://github.com/erlang/otp.git"
+
 
 url="https://www.erlang.org/"
 
