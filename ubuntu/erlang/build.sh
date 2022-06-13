@@ -110,11 +110,14 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libncurses-dev
-  sudo apt -y install libssl-dev
-  sudo apt -y install pkg-config
-  sudo apt -y install libxml2-utils
-  sudo apt -y install libodbc2 libodbcinst2
+  sudo apt -y install \
+    build-essential \
+    libncurses-dev \
+    libssl-dev \
+    pkg-config \
+    libxml2-utils \
+    libodbc2 \
+    libodbcinst2
 }
 
 configure()
