@@ -107,7 +107,12 @@ extract()
 
 prepare()
 {
-  :
+  sudo apt -y install \
+    libicu-dev \
+    libmozjs-91-dev
+
+  # remove symlink
+  sudo rm -f /usr/lib/erlang/man
 }
 
 configure()
