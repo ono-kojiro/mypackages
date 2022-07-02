@@ -31,6 +31,7 @@ all()
 {
   fetch
   extract
+  patch
   configure
   compile
   install
@@ -120,7 +121,7 @@ patch()
 
 prepare()
 {
-  :
+  sudo apt -y install rebar
 }
 
 configure()
