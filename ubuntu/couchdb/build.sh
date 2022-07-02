@@ -107,7 +107,10 @@ extract()
 
 prepare()
 {
-  :
+  sudo apt -y install \
+    make rebar3 gcc g++ \
+    libmozjs-91-dev libicu-dev \
+    fakeroot
 }
 
 configure()
@@ -130,7 +133,8 @@ compile()
   cd ${builddir}
   #make -j7
   #rebar compile
-  make release \
+  #make release \
+  make \
     ERL_CFLAGS="-I/usr/include/mozjs-91 -I/usr/lib/erlang/usr/include"
   cd ${top_dir}
 }
@@ -146,6 +150,7 @@ install()
   mkdir -p ${destdir}/opt
   
   cd ${builddir}
+  make release
   cp -r ./rel/couchdb ${destdir}/opt/
 
   mkdir -p ${destdir}/lib/systemd/system/
