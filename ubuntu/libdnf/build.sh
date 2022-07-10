@@ -114,22 +114,33 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libncurses-dev
+  sudo apt -y install \
+    libjson-c-dev \
+    libsmartcols-dev \
+    swig \
+    gettext \
+    libcppunit-dev
+
+  python3 -m pip install -r requirements.txt
 }
 
 configure()
 {
   cd ${builddir}/${pkgname}-${version}
+
+  cp -f /usr/share/cmake/Modules/FindLibSolv.cmake ./cmake/modules
+
   mkdir -p build
   cd build
 
   cflags=$(pkg-config --cflags libsolv)
 
-  CMAKE_MODULE_PATH=/usr/share/cmake/Modules \
+  export CMAKE_MODULE_PATH=/usr/share/cmake/Modules
+
   cmake \
     -DPYTHON_DESIRED="3" \
     -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_MODULE_PATH=/usr/share/cmake/Modules \
+    -DCMAKE_MODULE_PATH=/usr/share/cmake/Modules/ \
     -DWITH_BINDINGS=1 \
     -DWITH_GTKDOC=0 \
     -DWITH_HTML=0 \
