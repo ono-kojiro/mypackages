@@ -109,7 +109,8 @@ prepare()
 {
   sudo apt -y install \
     python3-rpm \
-    python3-gpg
+    python3-gpg \
+    rpm
 }
 
 patch()
@@ -162,6 +163,10 @@ install()
 
   PYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
   make install DESTDIR=${destdir}
+
+  mkdir -p ${destdir}/var/lib/dnf
+  mkdir -p ${destdir}/var/cache/dnf
+  mkdir -p ${destdir}/etc/yum.repos.d
   cd ${top_dir}
 
   custom_install
