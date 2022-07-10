@@ -7,8 +7,9 @@ cd $top_dir
 
 realname="librepo"
 pkgname="${realname}"
-#version="1.14.3"
-version="1.13.0"
+#version="1.14.2" # ng
+version="1.14.1"
+#version="1.13.0"
 #version="1.7.20"
 
 src_urls=""
