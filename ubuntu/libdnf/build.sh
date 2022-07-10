@@ -8,12 +8,16 @@ cd $top_dir
 realname="libdnf"
 pkgname="${realname}"
 #version="0.67.0"
-#version="0.63.1"
-#version="0.61.1"
-#version="0.60.1"
-version="0.55.2"
-#version="0.54.2"  # ng
-#version="0.46.2"  # ng
+#version="0.65.0" # ng
+#version="0.64.0" # ng
+#version="0.63.1" # ng
+#version="0.62.0" # ng
+#version="0.61.1" # ng
+#version="0.60.1" # ng
+version="0.60.0" # ok
+#version="0.55.2"
+#version="0.54.2"
+#version="0.46.2"
 #version="0.9.3"
 
 src_urls=""
