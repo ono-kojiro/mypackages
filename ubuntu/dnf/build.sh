@@ -107,7 +107,9 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libncurses-dev
+  sudo apt -y install \
+    python3-rpm \
+    python3-gpg
 }
 
 patch()
