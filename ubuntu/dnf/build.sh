@@ -5,15 +5,14 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="zchunk"
+realname="dnf"
 pkgname="${realname}"
-version="1.2.2"
-#version="1.7.20"
+version="4.13.0"
 
 src_urls=""
-src_urls="$src_urls https://github.com/zchunk/zchunk/archive/refs/tags/1.2.2.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/dnf/archive/refs/tags/4.13.0.tar.gz"
 
-url="https://github.com/zchunk/zchunk"
+url="https://github.com/rpm-software-management/dnf"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -25,6 +24,7 @@ all()
 {
   fetch
   extract
+  patch
   configure
   compile
   install
@@ -107,17 +107,29 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libexpat1-dev libpython3-dev
+  sudo apt -y install libncurses-dev
+}
+
+patch()
+{
+  cd ${builddir}/${pkgname}-${version}
+  command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
+  cd ${top_dir}
 }
 
 configure()
 {
-  #cd ${builddir}/${pkgname}-${pkgname}-${version}
   cd ${builddir}/${pkgname}-${version}
-  rm -rf build
   mkdir -p build
   cd build
-  meson --prefix=/usr ..
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DWITH_MAN=0 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DPYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+    -DPYTHON_INSTALL_DIR=/usr/lib/python3.6/dist-packages \
+    ..
+
   cd ${top_dir}
 }
 
@@ -128,10 +140,10 @@ config()
 
 compile()
 {
-  #cd ${builddir}/${pkgname}-${pkgname}-${version}
   cd ${builddir}/${pkgname}-${version}
   cd build
-  ninja
+  make clean
+  make
   cd ${top_dir}
 }
 
@@ -145,13 +157,20 @@ install()
   cd ${builddir}/${pkgname}-${version}
   cd build
   rm -rf ${destdir}
-  DESTDIR=${destdir} ninja install
+
+  PYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+  make install DESTDIR=${destdir}
   cd ${top_dir}
+
+  custom_install
 }
 
 custom_install()
 {
-  :
+  cd ${destdir}/usr/bin
+  rm -f dnf
+  ln -s dnf-3 dnf
+  cd ${top_dir}
 }
 
 package()
