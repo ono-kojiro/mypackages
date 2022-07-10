@@ -8,8 +8,8 @@ cd $top_dir
 realname="libsolv"
 pkgname="${realname}"
 #version="0.7.22"
-version="0.7.11"
-#version="0.7.20"
+#version="0.7.11"
+version="0.7.20"
 
 src_urls=""
 src_urls="$src_urls https://github.com/openSUSE/libsolv/archive/refs/tags/${version}.tar.gz"
