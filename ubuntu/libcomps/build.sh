@@ -106,7 +106,7 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libncurses-dev
+  python3 -m pip install -r requirements.txt
 }
 
 configure()
