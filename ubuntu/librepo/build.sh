@@ -110,7 +110,13 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libexpat1-dev libpython3-dev
+  sudo apt -y install \
+    cmake \
+    libcurl4-openssl-dev \
+    libgpgme-dev \
+    libpython3-dev \
+    check \
+    libssl-dev
 }
 
 configure()
