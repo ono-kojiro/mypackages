@@ -106,7 +106,25 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libexpat1-dev libpython3-dev
+  sudo apt -y install \
+    python3-setuptools \
+    build-essential \
+    libgirepository1.0-dev \
+    libyaml-dev \
+    librpm-dev \
+    libzstd-dev \
+    libmagic-dev
+
+  if [ ! -e "get-pip.py" ]; then
+    wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
+  fi
+
+  which pip
+  if [ "$?" -ne 0 ]; then
+    python3 get-pip.py
+  fi
+
+  python3 -m pip install -r requirements.txt --user
 }
 
 configure()
