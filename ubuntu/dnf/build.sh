@@ -167,6 +167,11 @@ install()
   mkdir -p ${destdir}/var/lib/dnf
   mkdir -p ${destdir}/var/cache/dnf
   mkdir -p ${destdir}/etc/yum.repos.d
+  mkdir -p ${destdir}/etc/dnf/vars
+  
+  echo "18.04"   > ${destdir}/etc/dnf/vars/releasever
+  echo "aarch64" > ${destdir}/etc/dnf/vars/arch
+
   cd ${top_dir}
 
   custom_install
@@ -202,6 +207,23 @@ clean()
   rm -rf $builddir
   rm -rf $destdir
 }
+
+test_install()
+{
+  fakechroot fakeroot dnf -y install --installroot=$HOME/tmp/myroot --forcearch aarch64 tzdata
+}
+
+test_query()
+{
+  dnf repoquery --requires --resolve --recursive --tree sed
+}
+
+test()
+{
+  test_query 
+  test_install
+}
+
 
 if [ "$#" = 0 ]; then
   all
