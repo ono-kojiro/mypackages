@@ -7,10 +7,10 @@ cd $top_dir
 
 realname="dnf"
 pkgname="${realname}"
-version="4.13.0"
+version="4.6.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/dnf/archive/refs/tags/4.13.0.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/dnf/archive/refs/tags/${version}.tar.gz"
 
 url="https://github.com/rpm-software-management/dnf"
 
@@ -116,7 +116,7 @@ prepare()
 patch()
 {
   cd ${builddir}/${pkgname}-${version}
-  command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
+  #command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
   cd ${top_dir}
 }
 
