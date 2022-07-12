@@ -114,7 +114,11 @@ prepare()
     libtool \
     libgcrypt20-dev \
     libarchive-dev \
-    liblua5.3-dev
+    liblua5.3-dev \
+    zlib1g-dev \
+    libmagic-dev \
+    libpopt-dev \
+    libsqlite3-dev
 }
 
 patch()
