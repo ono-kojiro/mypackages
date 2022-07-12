@@ -112,12 +112,14 @@ extract()
 prepare()
 {
   sudo apt -y install \
-    cmake \
     libcurl4-openssl-dev \
     libgpgme-dev \
     libpython3-dev \
     check \
-    libssl-dev
+    libssl-dev \
+    libglib2.0-dev \
+    libxml2-dev \
+    libzstd-dev
 }
 
 configure()
