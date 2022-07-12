@@ -107,7 +107,7 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libexpat1-dev libpython3-dev
+  :
 }
 
 configure()
