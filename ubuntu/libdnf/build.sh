@@ -22,7 +22,6 @@ version="0.60.0" # ok
 
 src_urls=""
 src_urls="$src_urls https://github.com/rpm-software-management/libdnf/archive/refs/tags/${version}.tar.gz"
-#src_urls="$src_urls https://github.com/rpm-software-management/libsolv/archive/refs/tags/0.7.4.tar.gz"
 
 url="https://github.com/rpm-software-management/libdnf"
 
@@ -205,6 +204,14 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libjson-c-dev \
+    libsmartcols-dev \
+    swig \
+    gettext \
+    libcppunit-dev
+Depends: \
+    libjson-c3
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }

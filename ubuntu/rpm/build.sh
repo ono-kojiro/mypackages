@@ -118,7 +118,8 @@ prepare()
     zlib1g-dev \
     libmagic-dev \
     libpopt-dev \
-    libsqlite3-dev
+    libsqlite3-dev \
+    libpython3-dev
 }
 
 patch()
@@ -136,7 +137,8 @@ configure()
   sh configure \
     --prefix=/usr \
     --localstatedir=/var \
-    --disable-nls
+    --disable-nls \
+    --enable-python
 
   cd ${top_dir}
 }

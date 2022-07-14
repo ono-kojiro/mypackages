@@ -146,7 +146,6 @@ config()
 
 compile()
 {
-  #cd ${builddir}/${pkgname}-${pkgname}-${version}
   cd ${builddir}/${pkgname}-${version}
   cd build
   make clean
@@ -186,6 +185,17 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libcurl4-openssl-dev \
+    libgpgme-dev \
+    libpython3-dev \
+    check \
+    libssl-dev \
+    libglib2.0-dev \
+    libxml2-dev \
+    libzstd-dev
+Depends: \
+  libxml2
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }

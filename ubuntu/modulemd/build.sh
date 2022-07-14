@@ -202,6 +202,19 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libgirepository1.0-dev \
+    libyaml-dev \
+    libzstd-dev \
+    libmagic-dev \
+    libcairo2-dev
+Depends: \
+    libgirepository-1.0-1, \
+    libyaml-0-2, \
+    libzstd1, \
+    libmagic1, \
+    libcairo2, \
+    rpm
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
