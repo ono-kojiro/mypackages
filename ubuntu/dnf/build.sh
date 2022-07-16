@@ -108,9 +108,7 @@ extract()
 prepare()
 {
   sudo apt -y install \
-    python3-rpm \
-    python3-gpg \
-    rpm
+    python3-gpg
 }
 
 patch()
