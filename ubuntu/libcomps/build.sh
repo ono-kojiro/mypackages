@@ -123,6 +123,7 @@ config()
 compile()
 {
   cd ${builddir}/${realname}-${version}
+  rm -rf ./dist
   python3 setup.py bdist_wheel
   cd ${top_dir}
 }
@@ -135,6 +136,7 @@ build()
 install()
 {
   cd ${builddir}/${realname}-${version}
+  rm -rf ${destdir}
   pip3 install \
     -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
   cd ${top_dir}
