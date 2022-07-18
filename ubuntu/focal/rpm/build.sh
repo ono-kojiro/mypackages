@@ -175,6 +175,8 @@ install()
 
 custom_install()
 {
+  mkdir -p ${destdir}/etc/rpm/
+  touch ${destdir}/etc/rpm/platform
   cd ${top_dir}
 }
 
@@ -202,7 +204,8 @@ Build-Depends: \
     zlib1g-dev \
     libmagic-dev \
     libpopt-dev \
-    libsqlite3-dev
+    libsqlite3-dev \
+    liblzma-dev
 Depends: \
     libgcrypt20, \
     libarchive13, \
@@ -212,6 +215,7 @@ Depends: \
     libpopt0, \
     libsqlite3-0
 EOS
+
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
 
