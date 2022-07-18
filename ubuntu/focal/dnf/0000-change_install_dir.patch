@@ -1,0 +1,20 @@
+*** CMakeLists.txt.orig	2022-07-10 07:19:26.191353122 +0000
+--- CMakeLists.txt	2022-07-10 07:20:40.136011035 +0000
+*************** ELSE ()
+*** 19,25 ****
+      MESSAGE (FATAL_ERROR "Invalid PYTHON_DESIRED value: " ${PYTHON_DESIRED})
+  ENDIF()
+  
+! EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from sysconfig import get_path; stdout.write(get_path('purelib'))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+  MESSAGE(STATUS "Python install dir is ${PYTHON_INSTALL_DIR}")
+  
+  ADD_SUBDIRECTORY (dnf)
+--- 19,26 ----
+      MESSAGE (FATAL_ERROR "Invalid PYTHON_DESIRED value: " ${PYTHON_DESIRED})
+  ENDIF()
+  
+! #EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from sysconfig import get_path; stdout.write(get_path('purelib'))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+! SET (PYTHON_INSTALL_DIR "/usr/lib/python3/dist-packages")
+  MESSAGE(STATUS "Python install dir is ${PYTHON_INSTALL_DIR}")
+  
+  ADD_SUBDIRECTORY (dnf)
