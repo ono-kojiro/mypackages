@@ -1,0 +1,3 @@
+arch_compat: qemuarm64: all any noarch aarch64 armv8a armv8a_crc qemuarm64
+buildarch_compat: qemuarm64: noarch
+
