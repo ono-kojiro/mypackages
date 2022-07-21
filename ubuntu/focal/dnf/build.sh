@@ -114,7 +114,7 @@ prepare()
 patch()
 {
   cd ${builddir}/${pkgname}-${version}
-  #command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
+  command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
   cd ${top_dir}
 }
 
