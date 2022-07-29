@@ -26,7 +26,7 @@ all()
   fetch
   extract
   configure
-  build
+  compile
   install
   custom_install
   package
@@ -116,7 +116,7 @@ config()
   configure
 }
 
-build()
+compile()
 {
   cd ${builddir}/${realname}/asp
   cd obj
@@ -125,11 +125,11 @@ build()
   cd ${top_dir}
 }
 
-test()
+run()
 {
   cd ${builddir}/${realname}/asp
-  cd obj
-  ./obj/asp
+  cd ojb
+  ./asp
   cd ${top_dir}
 }
 
