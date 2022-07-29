@@ -50,6 +50,14 @@ extract()
   fi
 }
 
+patch()
+{
+  cd ${builddir}/${pkgname}
+  command patch -p1 -i ${top_dir}/0000_add_next_prior.patch
+  cd ${top_dir}
+}
+
+
 configure()
 {
   cd ${builddir}/${pkgname}
@@ -101,8 +109,7 @@ EOS
 
 clean()
 {
-  rm -rf $builddir
-  rm -rf $destdir
+  :
 }
 
 if [ "$#" = 0 ]; then

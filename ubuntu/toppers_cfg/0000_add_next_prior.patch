@@ -1,0 +1,53 @@
+diff -crp cfg/toppers/builtin_function.cpp cfg-mod/toppers/builtin_function.cpp
+*** cfg/toppers/builtin_function.cpp	2015-09-08 09:51:38.000000000 +0900
+--- cfg-mod/toppers/builtin_function.cpp	2022-07-30 05:25:12.853618197 +0900
+***************
+*** 52,57 ****
+--- 52,58 ----
+  #include <boost/lexical_cast.hpp>
+  #include <boost/xpressive/xpressive.hpp>
+  #include <boost/algorithm/string.hpp> 
++ #include <boost/next_prior.hpp> 
+  
+  namespace toppers
+  {
+diff -crp cfg/toppers/cpp.hpp cfg-mod/toppers/cpp.hpp
+*** cfg/toppers/cpp.hpp	2015-12-28 11:39:47.000000000 +0900
+--- cfg-mod/toppers/cpp.hpp	2022-07-30 05:23:04.760851013 +0900
+***************
+*** 47,52 ****
+--- 47,53 ----
+  #include <boost/filesystem/path.hpp>
+  #include <boost/filesystem/operations.hpp>
+  #include <boost/filesystem/exception.hpp>
++ #include <boost/next_prior.hpp>
+  
+  namespace toppers
+  {
+diff -crp cfg/toppers/macro_processor.cpp cfg-mod/toppers/macro_processor.cpp
+*** cfg/toppers/macro_processor.cpp	2015-12-28 11:39:47.000000000 +0900
+--- cfg-mod/toppers/macro_processor.cpp	2022-07-30 05:24:43.805398627 +0900
+***************
+*** 54,59 ****
+--- 54,60 ----
+  #include <boost/spirit/include/classic_dynamic.hpp>
+  #include <boost/spirit/include/classic_parse_tree.hpp>
+  #include <boost/lexical_cast.hpp>
++ #include <boost/next_prior.hpp>
+  
+  // 非標準マクロの定義を除去
+  #ifdef  max
+diff -crp cfg/toppers/text.hpp cfg-mod/toppers/text.hpp
+*** cfg/toppers/text.hpp	2015-09-08 09:51:38.000000000 +0900
+--- cfg-mod/toppers/text.hpp	2022-07-30 05:25:48.773922913 +0900
+***************
+*** 56,61 ****
+--- 56,62 ----
+  #include <boost/utility.hpp>
+  #include <boost/iterator/iterator_facade.hpp>
+  #include <boost/format.hpp>
++ #include <boost/next_prior.hpp>
+  
+  namespace toppers
+  {
+
