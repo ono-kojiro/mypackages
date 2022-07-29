@@ -6,12 +6,11 @@ top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
 realname="zchunk"
-pkgname="zck"
+pkgname="zchunk"
 version="1.2.2"
-#version="1.7.20"
 
 src_urls=""
-src_urls="$src_urls https://github.com/zchunk/zchunk/archive/refs/tags/1.2.2.tar.gz"
+src_urls="$src_urls https://github.com/zchunk/zchunk/archive/refs/tags/${version}.tar.gz"
 
 url="https://github.com/zchunk/zchunk"
 
@@ -107,12 +106,14 @@ extract()
 
 prepare()
 {
-  sudo apt -y install libexpat1-dev libpython3-dev
+  sudo apt -y install \
+    libssl-dev libcurl4-gnutls-dev \
+    libzstd-dev cmake pkg-config
+
 }
 
 configure()
 {
-  #cd ${builddir}/${realname}-${realname}-${version}
   cd ${builddir}/${realname}-${version}
   rm -rf build
   mkdir -p build
@@ -128,7 +129,6 @@ config()
 
 compile()
 {
-  #cd ${builddir}/${realname}-${realgname}-${version}
   cd ${builddir}/${realname}-${version}
   cd build
   ninja
@@ -172,8 +172,11 @@ package()
 cat << EOS > $destdir/DEBIAN/control
 Package: $pkgname
 Maintainer: $username <$email>
+Build-Depends: cmake pkg-config libssl-dev libcurl4-gnutls-dev \
+  libzstd-dev 
 Architecture: amd64
 Version: $version
+Depends: libcurl4, openssl
 Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir

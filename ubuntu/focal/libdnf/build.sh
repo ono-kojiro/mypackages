@@ -5,14 +5,25 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="libdnf"
+pkgname="${realname}"
+#version="0.67.0"
+#version="0.65.0" # ng
+#version="0.64.0" # ng
+#version="0.63.1" # ng
+#version="0.62.0" # ng
+#version="0.61.1" # ng
+#version="0.60.1" # ng
+version="0.60.0" # ok
+#version="0.55.2"
+#version="0.54.2"
+#version="0.46.2"
+#version="0.9.3"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/libdnf/archive/refs/tags/${version}.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/rpm-software-management/libdnf"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -106,12 +117,42 @@ extract()
 
 prepare()
 {
+  sudo apt -y install \
+    libjson-c-dev \
+    libsmartcols-dev \
+    swig \
+    gettext \
+    libcppunit-dev
+
   python3 -m pip install -r requirements.txt
 }
 
 configure()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+
+  cp -f /usr/share/cmake/Modules/FindLibSolv.cmake ./cmake/modules
+
+  mkdir -p build
+  cd build
+
+  cflags=$(pkg-config --cflags libsolv)
+
+  export CMAKE_MODULE_PATH=/usr/share/cmake/Modules
+
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_MODULE_PATH=/usr/share/cmake/Modules/ \
+    -DWITH_BINDINGS=1 \
+    -DWITH_GTKDOC=0 \
+    -DWITH_HTML=0 \
+    -DWITH_MAN=0 \
+    -DWITH_ZCHUNK=0 \
+    -DLibSolv_DIR=/usr \
+    ..
+
+  echo "cflags is $cflag"
   cd ${top_dir}
 }
 
@@ -122,9 +163,12 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${pkgname}-${version}
+  cd build
+  pwd
+  ls
+  make clean
+  make -j6
   cd ${top_dir}
 }
 
@@ -135,10 +179,10 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  cd build
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+  make install DESTDIR=${destdir}
   cd ${top_dir}
 }
 
@@ -160,9 +204,23 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libjson-c-dev \
+    libsmartcols-dev \
+    swig \
+    gettext \
+    libcppunit-dev
+Depends: \
+    libjson-c4
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
 
 clean()
 {

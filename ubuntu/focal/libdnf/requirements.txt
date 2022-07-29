@@ -1,6 +1,5 @@
 ###### Requirements without Version Specifiers ######`
-pygobject
+sphinx
 
 ###### Requirements with Version Specifiers ######`
-meson ~= 0.61.5
 

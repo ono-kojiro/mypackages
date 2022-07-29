@@ -5,14 +5,14 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="zchunk"
+pkgname="zchunk"
+version="1.2.2"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/zchunk/zchunk/archive/refs/tags/${version}.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/zchunk/zchunk"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -20,14 +20,26 @@ destdir=$top_dir/work/dest/${pkgname}-${version}
 
 outputdir=$top_dir
 
+help()
+{
+  cat - << EOS
+ussage : $0 <target>
+
+target
+  prepare
+  fetch/extract/config/compile
+  package
+  
+EOS
+
+}
+
 all()
 {
   fetch
   extract
   configure
   compile
-  install
-  custom_install
   package
 }
 
@@ -106,12 +118,18 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    libssl-dev libcurl4-gnutls-dev \
+    libzstd-dev cmake pkg-config
 }
 
 configure()
 {
   cd ${builddir}/${realname}-${version}
+  rm -rf build
+  mkdir -p build
+  cd build
+  meson --prefix=/usr ..
   cd ${top_dir}
 }
 
@@ -123,8 +141,8 @@ config()
 compile()
 {
   cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd build
+  ninja
   cd ${top_dir}
 }
 
@@ -133,22 +151,34 @@ build()
   compile
 }
 
-install()
-{
-  cd ${builddir}/${realname}-${version}
-  rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
-  cd ${top_dir}
-}
-
 custom_install()
 {
   :
 }
 
+install()
+{
+  cd ${builddir}/${realname}-${version}
+  cd build
+  rm -rf ${destdir}
+  DESTDIR=${destdir} ninja install
+
+  rm -f ${destdir}/usr/include/zbuff.h
+  rm -f ${destdir}/usr/include/zdict.h
+  rm -f ${destdir}/usr/include/zstd.h
+  rm -f ${destdir}/usr/include/zstd_errors.h
+  rm -f ${destdir}/usr/lib/x86_64-linux-gnu/libzstd*
+  rm -f ${destdir}/usr/lib/x86_64-linux-gnu/pkgconfig/libzstd.pc
+
+  cd ${top_dir}
+
+  custom_install
+}
+
 package()
 {
+  install
+
   mkdir -p $destdir/DEBIAN
 
   username=`git config user.name`
@@ -157,11 +187,20 @@ package()
 cat << EOS > $destdir/DEBIAN/control
 Package: $pkgname
 Maintainer: $username <$email>
+Build-Depends: cmake pkg-config libssl-dev libcurl4-gnutls-dev \
+  libzstd-dev 
 Architecture: amd64
 Version: $version
+Depends: libcurl4, openssl
 Description: $pkgname
 EOS
-	fakeroot dpkg-deb --build $destdir $outputdir
+
+  fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
 }
 
 clean()

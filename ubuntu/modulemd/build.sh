@@ -107,24 +107,23 @@ extract()
 prepare()
 {
   sudo apt -y install \
-    python3-setuptools \
     build-essential \
     libgirepository1.0-dev \
     libyaml-dev \
-    librpm-dev \
     libzstd-dev \
-    libmagic-dev
-
-  if [ ! -e "get-pip.py" ]; then
-    wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
-  fi
+    libmagic-dev \
+    libcairo2-dev
 
   which pip
   if [ "$?" -ne 0 ]; then
+    if [ ! -e "get-pip.py" ]; then
+      wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
+    fi
+
     python3 get-pip.py
   fi
 
-  python3 -m pip install -r requirements.txt --user
+  python3 -m pip install -r requirements.txt
 }
 
 configure()
@@ -203,6 +202,19 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libgirepository1.0-dev \
+    libyaml-dev \
+    libzstd-dev \
+    libmagic-dev \
+    libcairo2-dev
+Depends: \
+    libgirepository-1.0-1, \
+    libyaml-0-2, \
+    libzstd1, \
+    libmagic1, \
+    libcairo2, \
+    rpm
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }

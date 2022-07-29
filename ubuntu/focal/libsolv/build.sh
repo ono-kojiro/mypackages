@@ -5,14 +5,15 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="libsolv"
+pkgname="${realname}"
+version="0.7.22"
+#version="0.7.20"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/openSUSE/libsolv/archive/refs/tags/${version}.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/openSUSE/libsolv"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -106,12 +107,27 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    libncurses-dev \
+    zlib1g-dev \
+    librpm-dev
 }
 
 configure()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  mkdir -p build
+  cd build
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DWITH_MAN=0 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DENABLE_COMPLEX_DEPS=1 \
+    -DENABLE_RPMMD=1 \
+    -DENABLE_RPMDB=1 \
+    -DENABLE_RPMPKG=1 \
+    ..
+
   cd ${top_dir}
 }
 
@@ -122,9 +138,10 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${pkgname}-${version}
+  cd build
+  make clean
+  make -j6
   cd ${top_dir}
 }
 
@@ -135,16 +152,20 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  cd build
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+  make install DESTDIR=${destdir}
   cd ${top_dir}
+
+  custom_install
 }
 
 custom_install()
 {
-  :
+  cd ${builddir}/${pkgname}-${version}
+  cp -f ext/*.h ${destdir}/usr/include/solv/
+  cd ${top_dir}
 }
 
 package()
@@ -163,6 +184,12 @@ Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
 
 clean()
 {

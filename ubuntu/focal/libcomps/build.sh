@@ -106,6 +106,9 @@ extract()
 
 prepare()
 {
+  sudo apt -y install \
+    python3-gpg
+
   python3 -m pip install -r requirements.txt
 }
 
@@ -162,6 +165,11 @@ Version: $version
 Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
 }
 
 clean()

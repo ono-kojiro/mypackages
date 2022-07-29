@@ -5,14 +5,14 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="rpm"
+pkgname="${realname}"
+version="4.17.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/rpm/archive/refs/tags/rpm-${version}-release.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/rpm-software-management/rpm"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -24,6 +24,7 @@ all()
 {
   fetch
   extract
+  patch
   configure
   compile
   install
@@ -106,12 +107,39 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    autoconf \
+    automake \
+    autopoint \
+    libtool \
+    libgcrypt20-dev \
+    libarchive-dev \
+    liblua5.3-dev \
+    zlib1g-dev \
+    libmagic-dev \
+    libpopt-dev \
+    libsqlite3-dev \
+    libpython3-dev
+}
+
+patch()
+{
+  cd ${builddir}/${realname}-${realname}-${version}-release
+  command patch -p0 -i ${top_dir}/0000-change_pkgname_of_lua.patch
+  command patch -p0 -i ${top_dir}/0001-ignore_man_dir.patch
+  cd ${top_dir}
 }
 
 configure()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${realname}-${realname}-${version}-release
+  sh autogen.sh
+  sh configure \
+    --prefix=/usr \
+    --localstatedir=/var \
+    --disable-nls \
+    --enable-python
+
   cd ${top_dir}
 }
 
@@ -122,9 +150,9 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${realname}-${realname}-${version}-release
+  make clean
+  make
   cd ${top_dir}
 }
 
@@ -135,16 +163,21 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${realname}-${realname}-${version}-release
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+
+  #PYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+  make install DESTDIR=${destdir}
   cd ${top_dir}
+
+  custom_install
 }
 
 custom_install()
 {
-  :
+  mkdir -p ${destdir}/etc/rpm/
+  touch ${destdir}/etc/rpm/platform
+  cd ${top_dir}
 }
 
 package()
@@ -160,9 +193,37 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    autoconf \
+    automake \
+    autopoint \
+    libtool \
+    libgcrypt20-dev \
+    libarchive-dev \
+    liblua5.3-dev \
+    zlib1g-dev \
+    libmagic-dev \
+    libpopt-dev \
+    libsqlite3-dev \
+    liblzma-dev
+Depends: \
+    libgcrypt20, \
+    libarchive13, \
+    liblua5.3-0, \
+    zlib1g, \
+    libmagic1, \
+    libpopt0, \
+    libsqlite3-0
 EOS
+
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
 
 clean()
 {

@@ -5,14 +5,14 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="dnf"
+pkgname="${realname}"
+version="4.6.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/dnf/archive/refs/tags/${version}.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/rpm-software-management/dnf"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -24,6 +24,7 @@ all()
 {
   fetch
   extract
+  patch
   configure
   compile
   install
@@ -106,12 +107,30 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    python3-gpg
+}
+
+patch()
+{
+  cd ${builddir}/${pkgname}-${version}
+  command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
+  cd ${top_dir}
 }
 
 configure()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  mkdir -p build
+  cd build
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DWITH_MAN=0 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DPYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+    -DPYTHON_INSTALL_DIR=/usr/lib/python3.6/dist-packages \
+    ..
+
   cd ${top_dir}
 }
 
@@ -122,9 +141,10 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${pkgname}-${version}
+  cd build
+  make clean
+  make
   cd ${top_dir}
 }
 
@@ -135,16 +155,32 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  cd build
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+
+  PYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+  make install DESTDIR=${destdir}
+
+  mkdir -p ${destdir}/var/lib/dnf
+  mkdir -p ${destdir}/var/cache/dnf
+  mkdir -p ${destdir}/etc/yum.repos.d
+  mkdir -p ${destdir}/etc/dnf/vars
+  
+  echo "18.04"   > ${destdir}/etc/dnf/vars/releasever
+  echo "aarch64" > ${destdir}/etc/dnf/vars/arch
+
   cd ${top_dir}
+
+  custom_install
 }
 
 custom_install()
 {
-  :
+  cd ${destdir}/usr/bin
+  rm -f dnf
+  ln -s dnf-3 dnf
+  cd ${top_dir}
 }
 
 package()
@@ -164,11 +200,34 @@ EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
 
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
+
 clean()
 {
   rm -rf $builddir
   rm -rf $destdir
 }
+
+test_install()
+{
+  fakechroot fakeroot dnf -y install --installroot=$HOME/tmp/myroot --forcearch aarch64 tzdata
+}
+
+test_query()
+{
+  dnf repoquery --requires --resolve --recursive --tree sed
+}
+
+test()
+{
+  test_query 
+  test_install
+}
+
 
 if [ "$#" = 0 ]; then
   all

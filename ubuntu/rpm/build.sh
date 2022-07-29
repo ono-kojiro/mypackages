@@ -114,7 +114,12 @@ prepare()
     libtool \
     libgcrypt20-dev \
     libarchive-dev \
-    liblua5.3-dev
+    liblua5.3-dev \
+    zlib1g-dev \
+    libmagic-dev \
+    libpopt-dev \
+    libsqlite3-dev \
+    libpython3-dev
 }
 
 patch()
@@ -132,7 +137,8 @@ configure()
   sh configure \
     --prefix=/usr \
     --localstatedir=/var \
-    --disable-nls
+    --disable-nls \
+    --enable-python
 
   cd ${top_dir}
 }
@@ -185,6 +191,26 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    autoconf \
+    automake \
+    autopoint \
+    libtool \
+    libgcrypt20-dev \
+    libarchive-dev \
+    liblua5.3-dev \
+    zlib1g-dev \
+    libmagic-dev \
+    libpopt-dev \
+    libsqlite3-dev
+Depends: \
+    libgcrypt20, \
+    libarchive13, \
+    liblua5.3-0, \
+    zlib1g, \
+    libmagic1, \
+    libpopt0, \
+    libsqlite3-0
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }

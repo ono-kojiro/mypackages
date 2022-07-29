@@ -5,14 +5,20 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="librepo"
+pkgname="${realname}"
+#version="1.14.3" # ng
+#version="1.14.2" # ng
+version="1.14.1" # ok
+#version="1.13.0"
+#version="1.7.20"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+#src_urls="$src_urls https://github.com/rpm-software-management/librepo/archive/refs/tags/librepo-${version}.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+src_urls="$src_urls https://github.com/rpm-software-management/librepo/archive/refs/tags/${version}.tar.gz"
+
+url="https://github.com/rpm-software-management/librepo"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -106,12 +112,31 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    libcurl4-openssl-dev \
+    libgpgme-dev \
+    libpython3-dev \
+    check \
+    libssl-dev \
+    libglib2.0-dev \
+    libxml2-dev \
+    libzstd-dev
 }
 
 configure()
 {
-  cd ${builddir}/${realname}-${version}
+  #cd ${builddir}/${pkgname}-${pkgname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  mkdir -p build
+  cd build
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DWITH_MAN=0 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DENABLE_TESTS=O \
+    -DENABLE_DOCS=0 \
+    ..
+
   cd ${top_dir}
 }
 
@@ -122,9 +147,10 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${pkgname}-${version}
+  cd build
+  make clean
+  make
   cd ${top_dir}
 }
 
@@ -135,10 +161,10 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  cd build
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+  make install DESTDIR=${destdir}
   cd ${top_dir}
 }
 
@@ -160,9 +186,26 @@ Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
 Description: $pkgname
+Build-Depends: \
+    libcurl4-openssl-dev \
+    libgpgme-dev \
+    libpython3-dev \
+    check \
+    libssl-dev \
+    libglib2.0-dev \
+    libxml2-dev \
+    libzstd-dev
+Depends: \
+  libxml2
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
 
 clean()
 {

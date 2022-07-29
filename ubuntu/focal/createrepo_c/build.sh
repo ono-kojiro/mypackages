@@ -5,14 +5,15 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-realname="libcomps"
-pkgname="python3-${realname}"
-version="0.1.18"
+realname="createrepo_c"
+pkgname="${realname}"
+debname="$(echo ${realname} | sed 's|_|-|g')"
+version="0.20.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/rpm-software-management/libcomps/archive/refs/tags/${version}.tar.gz"
+src_urls="$src_urls https://github.com/rpm-software-management/createrepo_c/archive/refs/tags/0.20.1.tar.gz"
 
-url="https://github.com/rpm-software-management/libcomps"
+url="https://github.com/rpm-software-management/createrepo_c"
 
 sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
@@ -24,6 +25,7 @@ all()
 {
   fetch
   extract
+  patch
   configure
   compile
   install
@@ -106,12 +108,31 @@ extract()
 
 prepare()
 {
-  python3 -m pip install -r requirements.txt
+  sudo apt -y install \
+    libbz2-dev \
+    liblzma-dev
+}
+
+patch()
+{
+  cd ${builddir}/${realname}-${version}
+  #command patch -p0 -i ${top_dir}/0000-change_install_dir.patch
+  cd ${top_dir}
 }
 
 configure()
 {
   cd ${builddir}/${realname}-${version}
+  mkdir -p build
+  cd build
+  cmake \
+    -DPYTHON_DESIRED="3" \
+    -DWITH_MAN=0 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DPYTHON3_PACKAGES_PATH=/usr/lib/python3.6/dist-packages \
+    -DPYTHON_INSTALL_DIR=/usr/lib/python3.6/dist-packages \
+    ..
+
   cd ${top_dir}
 }
 
@@ -122,9 +143,10 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${version}
-  rm -rf ./dist
-  python3 setup.py bdist_wheel
+  cd ${builddir}/${pkgname}-${version}
+  cd build
+  make clean
+  make
   cd ${top_dir}
 }
 
@@ -135,16 +157,23 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${version}
+  cd ${builddir}/${pkgname}-${version}
+  cd build
   rm -rf ${destdir}
-  pip3 install \
-    -t ${destdir}/usr/lib/python3/dist-packages  ./dist/${name}*.whl
+
+  PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages \
+  make install DESTDIR=${destdir}
+
   cd ${top_dir}
+
+  custom_install
 }
 
 custom_install()
 {
-  :
+  cd ${destdir}/usr/bin
+  ln -s createrepo_c createrepo
+  cd ${top_dir}
 }
 
 package()
@@ -155,7 +184,7 @@ package()
   email=`git config user.email`
 
 cat << EOS > $destdir/DEBIAN/control
-Package: $pkgname
+Package: $debname
 Maintainer: $username <$email>
 Architecture: amd64
 Version: $version
@@ -164,11 +193,34 @@ EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
 }
 
+sysinstall()
+{
+  sudo apt -y install ./${debname}_${version}_amd64.deb
+}
+
+
 clean()
 {
   rm -rf $builddir
   rm -rf $destdir
 }
+
+test_install()
+{
+  :
+}
+
+test_query()
+{
+  dnf repoquery --requires --resolve --recursive --tree sed
+}
+
+test()
+{
+  test_query 
+  test_install
+}
+
 
 if [ "$#" = 0 ]; then
   all
