@@ -30,7 +30,6 @@ all()
   install
   custom_install
   package
-  clean
 }
 
 fetch()
@@ -101,6 +100,7 @@ extract()
 configure()
 {
   cd ${builddir}/${realname}/asp
+  rm -f ./cfg/cfg/cfg
   ln -s /usr/bin/cfg ./cfg/cfg/cfg
   rm -rf ./obj
   mkdir -p obj
