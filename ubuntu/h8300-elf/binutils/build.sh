@@ -1,71 +1,129 @@
 #!/bin/sh
 
+set -e
+
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-CROSS=h8300-elf
-REALNAME=binutils
-PKGNAME=$CROSS-$REALNAME
-VERSION=2.30
-URL=https://ftp.jaist.ac.jp/pub/GNU/${REALNAME}/${REALNAME}-${VERSION}.tar.xz
+target="h8300-elf"
+realname="binutils"
+pkgname="${realname}-${target}"
+version="2.30"
 
+src_urls=""
+src_urls="$src_urls https://ftp.jaist.ac.jp/pub/GNU/${realname}/${realname}-${version}.tar.xz"
 
-ARCHIVE_DIR=$top_dir/archives
+url="https://www.gnu.org/software/binutils/"
 
-ARCHIVE=`basename ${URL}`
+sourcedir=$top_dir/work/sources
+builddir=$top_dir/work/build
+destdir=$top_dir/work/dest/${pkgname}-${version}
 
-WORK_DIR=$top_dir/work
-SOURCE_DIR=$WORK_DIR/${REALNAME}-${VERSION}
-  
-BUILD_DIR=$WORK_DIR/build-${REALNAME}-${VERSION}
-DESTDIR=$WORK_DIR/install-${REALNAME}-${VERSION}
-
-OUTPUTDIR=.
-
-mkdir -p ${ARCHIVE_DIR}
+outputdir=$top_dir
 
 all()
 {
   fetch
   extract
   configure
-  build
+  compile
+  install
+  custom_install
   package
 }
 
 fetch()
 {
-  if [ ! -e "${ARCHIVE_DIR}/${ARCHIVE}" ]; then
-    wget ${URL}
-    mv ${ARCHIVE} ${ARCHIVE_DIR}/
-  else
-    echo "skip fetch"
-  fi
+  mkdir -p $sourcedir
+
+  for src_url in $src_urls; do
+    archive=`basename $src_url`
+    case $src_url in
+      *.gz | *.xz | *.zip )
+        if [ ! -e "$sourcedir/$archive" ]; then
+            wget $src_url
+            mv -f $archive $sourcedir/
+        else
+            echo "skip $src_url"
+        fi
+        ;;
+      *.git )
+        dirname=${archive%.git}
+        if [ ! -d "${sourcedir}/${dirname}" ]; then
+            mkdir -p ${sourcedir}
+            git -C ${sourcedir} clone $src_url
+        else
+            echo "skip git-clone"
+        fi
+        ;;
+      * )
+        echo "ERROR : unknown extension, $src_url"
+        exit 1
+        ;;
+    esac
+  done
+
 }
 
 extract()
 {
-  if [ ! -d "${WORK_DIR}/${REALNAME}-${VERSION}" ]; then
-    mkdir -p $WORK_DIR
-    tar -C $WORK_DIR -xf ${ARCHIVE_DIR}/${ARCHIVE}
-  else
-    echo "skip extract"
-  fi
+  mkdir -p ${builddir}
+  
+  for src_url in $src_urls; do
+    archive=`basename $src_url`
+    basename=`basename $src_url .tar.gz`
+    case $src_url in
+      *.gz | *.xz )
+        if [ ! -d "${builddir}/${basename}" ]; then
+          tar -C ${builddir} -xvf ${sourcedir}/${archive}
+        else
+          echo "skip $archive"
+        fi
+        ;;
+      *.zip )
+        if [ ! -d "${builddir}/${basename}" ]; then
+          unzip ${sourcedir}/${archive} -d ${builddir}
+        else
+          echo "skip $archive"
+        fi
+        ;;
+      *.git )
+        dirname=${archive%.git}
+        if [ ! -d "${builddir}/${dirname}" ]; then
+            mkdir -p ${builddir}
+            cp -a ${sourcedir}/${dirname} ${builddir}/
+        else
+            echo "skip extract"
+        fi
+        ;;
+      * )
+        echo "ERROR : unknown extension, $src_url"
+        exit 1
+        ;;
+    esac
+  done
+
+}
+
+prepare()
+{
+  sudo apt -y install libexpat1-dev libpython3-dev
 }
 
 configure()
 {
-  mkdir -p ${BUILD_DIR}
-
-  cd ${BUILD_DIR}
-  sh ../${REALNAME}-${VERSION}/configure \
+  cd ${builddir}/${realname}-${version}
+  rm -rf build
+  mkdir -p build
+  cd build
+  sh ../configure \
     --prefix=/usr \
-    --target=h8300-elf \
-    --disable-nls \
+    --target=$target \
+    --enable-nls \
     --disable-initfini-array \
     --enable-lto
 
-  cd $top_dir
+  cd ${top_dir}
 }
 
 config()
@@ -73,53 +131,68 @@ config()
   configure
 }
 
+compile()
+{
+  cd ${builddir}/${realname}-${version}
+  cd build
+  make -j7
+  cd ${top_dir}
+}
+
 build()
 {
-  cd ${BUILD_DIR}
-  make -j8
-  cd $top_dir
-}
-
-_install()
-{
-  cd ${BUILD_DIR}
-  make install DESTDIR=$DESTDIR
-  cd $top_dir
-}
-
-package()
-{
-  _install
-
-  mkdir -p $DESTDIR/DEBIAN
-cat << EOS > $DESTDIR/DEBIAN/control
-Package: $PKGNAME
-Maintainer: Kojiro ONO <ono.kojiro@gmail.com>
-Architecture: amd64
-Version: $VERSION
-Description: $PKGNAME
-EOS
-  fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
+  compile
 }
 
 install()
 {
-  sudo dpkg -i ${PKGNAME}_${VERSION}_amd64.deb
+  cd ${builddir}/${realname}-${version}
+  cd build
+  rm -rf ${destdir}
+  make install DESTDIR=${destdir}
+  cd ${top_dir}
+}
+
+custom_install()
+{
+  :
+}
+
+package()
+{
+  mkdir -p $destdir/DEBIAN
+
+  username=`git config user.name`
+  email=`git config user.email`
+
+cat << EOS > $destdir/DEBIAN/control
+Package: $pkgname
+Maintainer: $username <$email>
+Architecture: amd64
+Version: $version
+Description: $pkgname
+EOS
+	fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
 }
 
 clean()
 {
-  rm -rf $REALNAME-$VERSION
+  rm -rf $builddir
+  rm -rf $destdir
 }
 
-
-if [ $# -eq 0 ]; then
+if [ "$#" = 0 ]; then
   all
 fi
 
 for target in "$@"; do
-	type $target | grep 'function' > /dev/null 2>&1
-	if [ $? -eq 0 ]; then
+	num=`LANG=C type $target | grep 'function' | wc -l`
+	if [ $num -ne 0 ]; then
 		$target
 	else
 		echo invalid target, "$target"

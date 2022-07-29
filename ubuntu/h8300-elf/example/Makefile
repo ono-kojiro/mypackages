@@ -23,6 +23,9 @@ run : test
 test :
 	$(RUN) $(PROG)
 
+clean :
+	rm -f $(OBJS) $(PROG)
+
 .PHONY : \
     all clean test obj prog run
 
