@@ -1,0 +1,6 @@
+###### Requirements without Version Specifiers ######`
+meson
+ninja
+
+###### Requirements with Version Specifiers ######`
+

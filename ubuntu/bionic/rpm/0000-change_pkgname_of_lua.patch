@@ -1,0 +1,19 @@
+*** configure.ac.orig	2022-07-10 13:17:06.741378018 +0000
+--- configure.ac	2022-07-10 13:16:03.260473939 +0000
+*************** AC_SUBST(WITH_ACL_LIB)
+*** 746,752 ****
+  AM_CONDITIONAL(ACL,[test "$with_acl" = yes])
+  
+  PKG_CHECK_MODULES([LUA],
+!     [lua >= 5.3],
+      [],
+      [AC_MSG_ERROR([lua not present or too old)])])
+  AC_SUBST(LUA_CFLAGS)
+--- 746,752 ----
+  AM_CONDITIONAL(ACL,[test "$with_acl" = yes])
+  
+  PKG_CHECK_MODULES([LUA],
+!     [lua53 >= 5.3],
+      [],
+      [AC_MSG_ERROR([lua not present or too old)])])
+  AC_SUBST(LUA_CFLAGS)
