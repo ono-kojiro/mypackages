@@ -1,0 +1,8 @@
+%_topdir %(echo $HOME)/rpmbuild
+
+%_dbpath %(echo $HOME)/rpmdb
+
+%_localstatedir %(echo $HOME)/myroot
+%_var %(echo $HOME)/myroot/var
+
+
