@@ -16,6 +16,10 @@ libsolv :
 librepo :
 	cd "$@" && sh build.sh && sh build.sh sysinstall
 
+libdnf :
+	cd "$@" && sh build.sh && sh build.sh sysinstall
+
+
 libcomps :
 	cd "$@" && sh build.sh && sh build.sh sysinstall
 
@@ -27,6 +31,6 @@ createrepo_c :
 
 .PHONY : \
 	zck rpm modulemd libsolv librepo libcomps \
-		dnf createrepo_c
+		libdnf dnf createrepo_c
 
 
