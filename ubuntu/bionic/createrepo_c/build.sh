@@ -23,6 +23,7 @@ outputdir=$top_dir
 
 all()
 {
+  prepare
   fetch
   extract
   patch

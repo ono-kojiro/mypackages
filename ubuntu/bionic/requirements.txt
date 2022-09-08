@@ -1,5 +1,10 @@
 ###### Requirements without Version Specifiers ######`
+meson
+ninja
 sphinx
+pygobject
 
 ###### Requirements with Version Specifiers ######`
+scikit-build ~= 0.15.0
+meson ~= 0.61.5
 

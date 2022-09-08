@@ -36,6 +36,7 @@ EOS
 
 all()
 {
+  prepare
   fetch
   extract
   configure
