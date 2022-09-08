@@ -1,6 +1,6 @@
  #!/bin/sh
 
-sudo apt -y install \ 
+sudo apt -y install \
     autoconf \
     automake \
     autopoint \
@@ -10,9 +10,8 @@ sudo apt -y install \
     gettext \
     libarchive-dev \
     libbz2-dev \
-    libcairo2-dev
+    libcairo2-dev \
     libcppunit-dev \
-    libcurl4-gnutls-dev \
     libcurl4-openssl-dev \
     libgcrypt20-dev \
     libgirepository1.0-dev \
@@ -24,8 +23,7 @@ sudo apt -y install \
     libmagic-dev \
     libncurses-dev \
     libpopt-dev \
-    libpython3-dev
-    librpm-dev
+    libpython3-dev \
     libsmartcols-dev \
     libsqlite3-dev \
     libssl-dev \
