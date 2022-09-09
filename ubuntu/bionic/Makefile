@@ -1,5 +1,5 @@
 all : zck rpm modulemd libsolv libcomps \
-	libdnf dnf createrepo
+	librepo libdnf dnf createrepo
 
 zck :
 	cd "$@" && sh build.sh && sh build.sh sysinstall

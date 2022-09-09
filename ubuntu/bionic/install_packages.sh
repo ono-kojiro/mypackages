@@ -31,9 +31,11 @@ sudo apt -y install \
     libxml2-dev \
     libyaml-dev \
     libzstd-dev \
+    make \
     pkg-config \
     python3-distutils \
     python3-gpg \
     swig \
+    wget \
     zlib1g-dev
 
