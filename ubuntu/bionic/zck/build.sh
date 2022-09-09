@@ -36,7 +36,6 @@ EOS
 
 all()
 {
-  prepare
   fetch
   extract
   configure
@@ -115,21 +114,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    libssl-dev libcurl4-gnutls-dev \
-    libzstd-dev cmake pkg-config
-
-  sudo apt -y install python3-distutils
-
-  if [ ! -e "get-pip.py" ]; then
-    wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
-  fi
-  python3 get-pip.py
-  python3 -m pip install -r requirements.txt
 }
 
 configure()

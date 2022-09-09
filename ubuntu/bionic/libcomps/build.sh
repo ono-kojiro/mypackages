@@ -22,7 +22,6 @@ outputdir=$top_dir
 
 all()
 {
-  prepare
   fetch
   extract
   configure
@@ -103,14 +102,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    python3-gpg
-
-  python3 -m pip install -r requirements.txt
 }
 
 configure()

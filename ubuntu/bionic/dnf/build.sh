@@ -22,7 +22,6 @@ outputdir=$top_dir
 
 all()
 {
-  prepare
   fetch
   extract
   patch
@@ -104,12 +103,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    python3-gpg
 }
 
 patch()

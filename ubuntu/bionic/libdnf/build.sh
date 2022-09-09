@@ -115,18 +115,6 @@ extract()
 
 }
 
-prepare()
-{
-  sudo apt -y install \
-    libjson-c-dev \
-    libsmartcols-dev \
-    swig \
-    gettext \
-    libcppunit-dev
-
-  python3 -m pip install -r requirements.txt
-}
-
 configure()
 {
   cd ${builddir}/${pkgname}-${version}

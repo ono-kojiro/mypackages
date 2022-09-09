@@ -23,7 +23,6 @@ outputdir=$top_dir
 
 all()
 {
-  prepare
   fetch
   extract
   patch
@@ -105,13 +104,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    libbz2-dev \
-    liblzma-dev
 }
 
 patch()

@@ -22,7 +22,6 @@ outputdir=$top_dir
 
 all()
 {
-  prepare
   fetch
   extract
   patch
@@ -104,23 +103,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    autoconf \
-    automake \
-    autopoint \
-    libtool \
-    libgcrypt20-dev \
-    libarchive-dev \
-    liblua5.3-dev \
-    zlib1g-dev \
-    libmagic-dev \
-    libpopt-dev \
-    libsqlite3-dev \
-    libpython3-dev
 }
 
 patch()

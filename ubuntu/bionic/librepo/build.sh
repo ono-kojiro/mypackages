@@ -28,7 +28,6 @@ outputdir=$top_dir
 
 all()
 {
-  prepare
   fetch
   extract
   configure
@@ -109,19 +108,6 @@ extract()
     esac
   done
 
-}
-
-prepare()
-{
-  sudo apt -y install \
-    libcurl4-openssl-dev \
-    libgpgme-dev \
-    libpython3-dev \
-    check \
-    libssl-dev \
-    libglib2.0-dev \
-    libxml2-dev \
-    libzstd-dev
 }
 
 configure()

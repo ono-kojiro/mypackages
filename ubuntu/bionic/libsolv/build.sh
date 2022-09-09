@@ -105,14 +105,6 @@ extract()
 
 }
 
-prepare()
-{
-  sudo apt -y install \
-    libncurses-dev \
-    zlib1g-dev \
-    librpm-dev
-}
-
 configure()
 {
   cd ${builddir}/${pkgname}-${version}
