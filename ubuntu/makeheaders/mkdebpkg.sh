@@ -5,14 +5,19 @@ cd $top_dir
 
 REALNAME=fossil
 PKGNAME=makeheaders
-VERSION=2.16
-ARCHIVE=fossil-src-2.16.tar.gz
-URL=https://fossil-scm.org/home/tarball/7aedd5675883d4412cf20917d340b6985e3ecb842e88a39f135df034b2d5f4d3/fossil-src-2.16.tar.gz
+VERSION=2.19
+ARCHIVE=fossil-src-${VERSION}.tar.gz
+#URL=https://fossil-scm.org/home/tarball/7aedd5675883d4412cf20917d340b6985e3ecb842e88a39f135df034b2d5f4d3/fossil-src-2.16.tar.gz
+URL=https://fossil-scm.org/home/tarball/1e131febd3fbb028d00cab6d020214e8fe36be95daaf93237523c29c542e9a5f/fossil-src-2.19.tar.gz
 
-SHA256SUM=fab37e8093932b06b586e99a792bf9b20d00d530764b5bddb1d9a63c8cdafa14
+#SHA256SUM=fab37e8093932b06b586e99a792bf9b20d00d530764b5bddb1d9a63c8cdafa14
+SHA256SUM=4f135659ec9a3958a10eec98f79d4d3fc10edeae2605b4b38e0a58826800b490
 
-DESTDIR=~/tmp/$PKGNAME-$VERSION
+#DESTDIR=~/tmp/$PKGNAME-$VERSION
+DESTDIR=$top_dir/work/dest/$PKGNAME-$VERSION
 OUTPUTDIR=.
+
+mkdir -p $top_dir/work/dest
 
 all()
 {
@@ -85,7 +90,7 @@ build()
 {
   echo build
   cd $REALNAME-src-$VERSION
-  gcc -o makeheaders src/makeheaders.c
+  gcc -o makeheaders tools/makeheaders.c
   cd ..
 }
 
@@ -107,10 +112,13 @@ custom_install()
 
 package()
 {
+	username=`git config --get user.name`
+	email=`git config --get user.email`
+
 	mkdir -p $DESTDIR/DEBIAN
 cat << EOS > $DESTDIR/DEBIAN/control
 Package: $PKGNAME
-Maintainer: Kojiro ONO <ono.kojiro@gmail.com>
+Maintainer: $username <$email>
 Architecture: amd64
 Version: $VERSION
 Description: $PKGNAME
