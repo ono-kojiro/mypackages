@@ -10,6 +10,7 @@ else
   GITBUCKET_OPTS="${GITBUCKET_OPTS} $*"
 fi
 
+java_opts=""
 gitbucket_opts=""
 
 if [ -n "${GITBUCKET_HOME}" ]; then
@@ -40,12 +41,17 @@ if [ -n "${GITBUCKET_OPTS}" ]; then
   gitbucket_opts="${gitbucket_opts} ${GITBUCKET_OPTS}"
 fi
 
-if [ -n "${GITBUCKET_LOG}" ]; then
-  gitbucket_opts="${gitbucket_opts} > ${GITBUCKET_LOG}"
+#if [ -n "${GITBUCKET_LOG}" ]; then
+#  gitbucket_opts="${gitbucket_opts} > ${GITBUCKET_LOG}"
+#fi
+
+if [ -n "${GITBUCKET_LOGBACK}" ]; then
+  java_opts="${java_opts} -Dlogback.configurationFile=${GITBUCKET_LOGBACK}"
 fi
 
 exec /usr/bin/java \
+    ${java_opts} \
     -jar ${GITBUCKET_WAR} \
     ${gitbucket_opts} \
-	2>&1 &
+	&
 

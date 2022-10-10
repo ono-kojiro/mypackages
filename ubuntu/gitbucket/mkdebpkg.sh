@@ -5,7 +5,7 @@ cd $top_dir
 
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.37.2
+VERSION=4.38.2
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
 
@@ -77,6 +77,7 @@ do_install()
   install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
   install ${top_dir}/gitbucket.service $DESTDIR/lib/systemd/system/
   install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
+  install ${top_dir}/logback-settings.xml $DESTDIR/var/lib/gitbucket/
   
   cd $top_dir
 }
@@ -97,14 +98,13 @@ Package: $PKGNAME
 Maintainer: $maintainer <$email>
 Architecture: amd64
 Version: $VERSION
-Depends: openjdk-11-jre
+Depends: openjdk-17-jre-headless
 Description: $PKGNAME
 EOS
 
   cp -f postinst $DESTDIR/DEBIAN/
   cp -f postrm   $DESTDIR/DEBIAN/
   cp -f prerm    $DESTDIR/DEBIAN/
-
   fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
 }
 
