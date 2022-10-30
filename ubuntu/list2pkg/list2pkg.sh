@@ -28,6 +28,6 @@ for pkgname in $packages; do
     grep -v -e '^Original-Maintainer' \
     > $destdir/DEBIAN/control
 
-  fakeroot dpkg-deb --build $destdir .
+  fakeroot dpkg-deb --build -Zxz $destdir .
 done
 
