@@ -22,10 +22,10 @@ destdir=$top_dir/work/dest/${pkgname}-${version}
 outputdir=$top_dir
 
 # OK
-rebar=/usr/bin/rebar
+#rebar=/usr/bin/rebar
 
 # NG
-#rebar=/usr/bin/rebar3
+rebar=/usr/bin/rebar3
 
 all()
 {
@@ -163,12 +163,28 @@ install()
   
   cd ${builddir}
 
-  mkdir -p $destdir/opt/couchdb/lib/${pkgname}-${version}/
-  cp -R ebin             $destdir/opt/couchdb/lib/${pkgname}-${version}/
-  mkdir -p $destdir/opt/couchdb/etc/default.d/
-  cp -f priv/default.d/* $destdir/opt/couchdb/etc/default.d/
-  mkdir -p $destdir/opt/couchdb/etc/local.d/
-  cp -f priv/local.d/*   $destdir/opt/couchdb/etc/local.d/
+  # rebar2
+  if [ "$rebar" = "/usr/bin/rebar" ]; then
+    mkdir -p $destdir/opt/couchdb/lib/${pkgname}-${version}/
+    cp -R ebin             $destdir/opt/couchdb/lib/${pkgname}-${version}/
+    mkdir -p $destdir/opt/couchdb/etc/default.d/
+    cp -f priv/default.d/* $destdir/opt/couchdb/etc/default.d/
+    mkdir -p $destdir/opt/couchdb/etc/local.d/
+    cp -f priv/local.d/*   $destdir/opt/couchdb/etc/local.d/
+  fi
+
+  if [ "$rebar" = "/usr/bin/rebar3" ]; then
+    echo "cwd is " `pwd`
+    mkdir -p $destdir/opt/couchdb/lib/${pkgname}-${version}/
+    cp -R \
+      _build/default/lib/ldap_auth/ebin \
+      $destdir/opt/couchdb/lib/${pkgname}-${version}/
+
+    mkdir -p $destdir/opt/couchdb/etc/default.d/
+    cp -f priv/default.d/* $destdir/opt/couchdb/etc/default.d/
+    mkdir -p $destdir/opt/couchdb/etc/local.d/
+    cp -f priv/local.d/*   $destdir/opt/couchdb/etc/local.d/
+  fi
   cd ${top_dir}
 }
 
@@ -192,6 +208,11 @@ Version: $version
 Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo dpkg -i couchdb-ldap-auth_2.0.0_amd64.deb
 }
 
 clean()
