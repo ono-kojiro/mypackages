@@ -1,0 +1,40 @@
+diff -crp couchdb-ldap-auth-v-2.0.0/src/ldap_auth.erl couchdb-ldap-auth-v-2.0.0-mod/src/ldap_auth.erl
+*** couchdb-ldap-auth-v-2.0.0/src/ldap_auth.erl	2014-05-18 20:44:11.000000000 +0000
+--- couchdb-ldap-auth-v-2.0.0-mod/src/ldap_auth.erl	2022-06-13 12:18:40.416256503 +0000
+*************** ensure_cookie_auth_secret() ->
+*** 142,148 ****
+    end.
+  
+  make_cookie_time() ->
+!   {NowMS, NowS, _} = erlang:now(),
+    NowMS * 1000000 + NowS.
+  
+  cookie_scheme(#httpd{mochi_req=MochiReq}) ->
+--- 142,149 ----
+    end.
+  
+  make_cookie_time() ->
+!   %{NowMS, NowS, _} = erlang:now(),
+!   {NowMS, NowS, _} = erlang:timestamp(),
+    NowMS * 1000000 + NowS.
+  
+  cookie_scheme(#httpd{mochi_req=MochiReq}) ->
+*************** cookie_scheme(#httpd{mochi_req=MochiReq}
+*** 154,160 ****
+  
+  cookie_auth_cookie(Req, User, Secret, TimeStamp) ->
+    SessionData = User ++ ":" ++ erlang:integer_to_list(TimeStamp, 16),
+!   Hash = crypto:hmac(sha, Secret, SessionData),
+    mochiweb_cookies:cookie("AuthSession",
+      couch_util:encodeBase64Url(SessionData ++ ":" ++ ?b2l(Hash)),
+      [{path, "/"}] ++ cookie_scheme(Req) ++ max_age()).
+--- 155,162 ----
+  
+  cookie_auth_cookie(Req, User, Secret, TimeStamp) ->
+    SessionData = User ++ ":" ++ erlang:integer_to_list(TimeStamp, 16),
+!   %Hash = crypto:hmac(sha, Secret, SessionData),
+!   Hash = crypto:mac(hmac, sha1, Secret, SessionData),
+    mochiweb_cookies:cookie("AuthSession",
+      couch_util:encodeBase64Url(SessionData ++ ":" ++ ?b2l(Hash)),
+      [{path, "/"}] ++ cookie_scheme(Req) ++ max_age()).
+

@@ -5,8 +5,9 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/couchdb/bin/couchdb &
-Restart=on-failure
+ExecStart=/opt/couchdb/bin/couchdb
+ExecStop=/bin/kill ${MAINPID}
+Restart=always
 SuccessExitStatus=143
 
 User=couchdb

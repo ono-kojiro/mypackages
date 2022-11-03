@@ -116,6 +116,7 @@ patch()
 {
   cd ${builddir}
   command patch -N -p1 -i ${top_dir}/0000-update_meck_version.patch
+  command patch -N -p1 -i ${top_dir}/0001-fix_duplicate.patch
   cd ${top_dir}
 }
 
@@ -162,29 +163,16 @@ install()
   mkdir -p ${destdir}
   
   cd ${builddir}
+  
+  prefix=/opt/couchdb
+  #prefix=/usr/lib/erlang
 
-  # rebar2
-  if [ "$rebar" = "/usr/bin/rebar" ]; then
-    mkdir -p $destdir/opt/couchdb/lib/${pkgname}-${version}/
-    cp -R ebin             $destdir/opt/couchdb/lib/${pkgname}-${version}/
-    mkdir -p $destdir/opt/couchdb/etc/default.d/
-    cp -f priv/default.d/* $destdir/opt/couchdb/etc/default.d/
-    mkdir -p $destdir/opt/couchdb/etc/local.d/
-    cp -f priv/local.d/*   $destdir/opt/couchdb/etc/local.d/
-  fi
-
-  if [ "$rebar" = "/usr/bin/rebar3" ]; then
-    echo "cwd is " `pwd`
-    mkdir -p $destdir/opt/couchdb/lib/${pkgname}-${version}/
-    cp -R \
-      _build/default/lib/ldap_auth/ebin \
-      $destdir/opt/couchdb/lib/${pkgname}-${version}/
-
-    mkdir -p $destdir/opt/couchdb/etc/default.d/
-    cp -f priv/default.d/* $destdir/opt/couchdb/etc/default.d/
-    mkdir -p $destdir/opt/couchdb/etc/local.d/
-    cp -f priv/local.d/*   $destdir/opt/couchdb/etc/local.d/
-  fi
+  mkdir -p ${destdir}${prefix}/lib/${pkgname}-${version}/
+  cp -R ebin             ${destdir}${prefix}/lib/${pkgname}-${version}/
+  mkdir -p ${destdir}${prefix}/etc/default.d/
+  cp -f priv/default.d/* ${destdir}${prefix}/etc/default.d/
+  mkdir -p ${destdir}${prefix}/etc/local.d/
+  cp -f priv/local.d/*   ${destdir}${prefix}/etc/local.d/
   cd ${top_dir}
 }
 
