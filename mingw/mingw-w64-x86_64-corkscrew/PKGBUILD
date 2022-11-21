@@ -1,0 +1,45 @@
+_pkgname=corkscrew
+pkgname=$_pkgname-git
+pkgver=v2.0.4.ge351bda
+pkgrel=1
+pkgdesc="Corkscrew is a tool for tunneling SSH through HTTP proxies, but... you might find another use for it."
+arch=('i686' 'x86_64')
+url="https://github.com/bryanpkc/corkscrew"
+license=('GPL2')
+groups=()
+depends=()
+makedepends=('mingw-w64-x86_64-gcc')
+optdepends=()
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("$_pkgname::git+https://github.com/bryanpkc/corkscrew.git")
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  git describe --tags | sed 's|-|.|g'
+}
+
+prepare() {
+  :
+}
+
+build() {
+  cd "$srcdir/$_pkgname"
+  autoreconf -vi
+  rm -rf _build
+  mkdir -p _build
+  cd _build
+  sh ../configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname"
+  cd _build
+  make install DESTDIR=$pkgdir
+}
+
+# vim:set ts=2 sw=2 et:
+
+
