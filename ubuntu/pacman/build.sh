@@ -1,5 +1,11 @@
 #!/bin/sh
 
+#
+# After installing pacman,  
+#  $ sudo mkdir -p /var/lib/pacman
+#  $ sudo pacman -Tv
+#
+
 set -e
 
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
