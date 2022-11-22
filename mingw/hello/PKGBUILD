@@ -1,0 +1,40 @@
+_pkgname=hello
+pkgname=$_pkgname
+pkgver=2.12.1
+pkgrel=1
+pkgdesc="GNU hello"
+arch=('i686' 'x86_64')
+url="https://www.gnu.org/software/hello/"
+license=('GPL3')
+groups=()
+depends=()
+makedepends=()
+optdepends=()
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("https://ftp.jaist.ac.jp/pub/GNU/hello/hello-2.12.1.tar.gz")
+md5sums=('SKIP')
+
+#pkgver() {
+#   cd "$srcdir/$_pkgname"
+#   git describe --tags | sed 's|-|.|g'
+#}
+
+prepare() {
+  :
+}
+
+build() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  sh configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  make install prefix=$pkgdir
+}
+
+# vim:set ts=2 sw=2 et:
+
+
