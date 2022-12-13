@@ -1,0 +1,45 @@
+_pkgname=check
+pkgname=$_pkgname
+pkgver=0.15.2
+pkgrel=1
+pkgdesc="Check is a unit testing framework for C."
+arch=('i686' 'x86_64')
+url="https://libcheck.github.io/check/"
+license=('GPL2')
+groups=()
+depends=()
+makedepends=('mingw-w64-x86_64-gcc')
+optdepends=()
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("https://github.com/libcheck/check/archive/refs/tags/0.15.2.tar.gz")
+sha256sums=('998d355294bb94072f40584272cf4424571c396c631620ce463f6ea97aa67d2e')
+
+#pkgver() {
+#  cd "$srcdir/$_pkgname"
+#  git describe --tags | sed 's|-|.|g'
+#}
+
+prepare() {
+  :
+}
+
+build() {
+  cd "$srcdir/$_pkgname-$pkgver"
+  autoreconf -vi
+  rm -rf _build
+  mkdir -p _build
+  cd _build
+  sh ../configure --prefix=/usr --enable-subunit=no
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname-$pkgver"
+  cd _build
+  make install DESTDIR=$pkgdir
+}
+
+# vim:set ts=2 sw=2 et:
+
+
