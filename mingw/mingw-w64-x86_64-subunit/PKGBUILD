@@ -1,0 +1,45 @@
+_pkgname=subunit
+pkgname=$_pkgname
+pkgver=1.4.2
+pkgrel=1
+pkgdesc="Subunit is a streaming protocol for test results."
+arch=('i686' 'x86_64')
+url="https://launchpad.net/subunit"
+license=('GPL2')
+groups=()
+depends=()
+makedepends=('mingw-w64-x86_64-gcc' 'python' 'check' 'texinfo' 'pkg-config' 'mingw-w64-x86_64-cppunit')
+optdepends=()
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("https://launchpad.net/subunit/trunk/1.4.2/+download/subunit-1.4.2.tar.gz")
+sha256sums=('SKIP')
+
+#pkgver() {
+#  cd "$srcdir/$_pkgname"
+#  git describe --tags | sed 's|-|.|g'
+#}
+
+prepare() {
+  :
+}
+
+build() {
+  cd "$srcdir/$_pkgname-$pkgver"
+  autoreconf -vi
+  rm -rf _build
+  mkdir -p _build
+  cd _build
+  sh ../configure --prefix=/usr 
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname-$pkgver"
+  cd _build
+  make install DESTDIR=$pkgdir
+}
+
+# vim:set ts=2 sw=2 et:
+
+
