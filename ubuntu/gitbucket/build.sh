@@ -5,7 +5,7 @@ cd $top_dir
 
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.38.2
+VERSION=4.38.3
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
 
