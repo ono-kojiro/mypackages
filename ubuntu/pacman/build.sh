@@ -14,9 +14,10 @@ cd $top_dir
 realname="pacman"
 pkgname="${realname}"
 version="6.0.2"
+#version="5.2.0"
 
 src_urls=""
-#src_urls="$src_urls https://sources.archlinux.org/other/pacman/pacman-5.1.2.tar.gz"
+#src_urls="$src_urls https://sources.archlinux.org/other/pacman/pacman-${version}.tar.gz"
 src_urls="$src_urls https://sources.archlinux.org/other/pacman/pacman-6.0.2.tar.xz"
 
 url="https://wiki.archlinux.org/title/Pacman"
@@ -26,6 +27,26 @@ builddir=$top_dir/work/build
 destdir=$top_dir/work/dest/${pkgname}-${version}
 
 outputdir=$top_dir
+
+help()
+{
+  cat - << EOF
+usage: $0 <target1> <target2> ...
+
+  target:
+    prepare
+    fetch, extract, patch, configure, compile
+    install, custom_install, package
+EOF
+
+}
+
+prepare()
+{
+  sudo apt -y install python3-gpg
+  python3 -m pip install -r requirements.txt
+}
+
 
 all()
 {
@@ -112,12 +133,6 @@ extract()
 
 }
 
-prepare()
-{
-  sudo apt -y install \
-    python3-gpg
-}
-
 patch()
 {
   cd ${builddir}/${pkgname}-${version}
@@ -128,15 +143,21 @@ patch()
 configure()
 {
   cd ${builddir}/${pkgname}-${version}
-  #mkdir -p build
-  #cd build
-  #sh ../configure --prefix=/usr \
-  #  --localstatedir=/var \
-  #  --with-pkg-ext=.pkg.tar.xz \
-  #  --disable-doc \
-  #  --with-crypto=openssl
 
-  meson setup build
+  if [ -e "configure" ]; then
+    mkdir -p build
+    cd build
+    sh ../configure --prefix=/usr \
+      --localstatedir=/var \
+      --with-pkg-ext=.pkg.tar.xz \
+      --disable-doc \
+      --with-crypto=openssl
+  elif [ -e "meson.build" ]; then
+    meson setup build
+  else
+    echo "no files for build"
+    exit 1
+  fi
 
   cd ${top_dir}
 }
@@ -149,12 +170,19 @@ config()
 compile()
 {
   cd ${builddir}/${pkgname}-${version}
-  meson clean
-  cd build
-  #make clean
-  #make
+  if [ -e "configure" ]; then
+    cd build
+    make clean
+    make
+  elif [ -e "meson.build" ]; then
+    meson clean
+    cd build
+    meson compile
+  else
+    echo "no files for build"
+    exit 1
+  fi
 
-  meson compile
   cd ${top_dir}
 }
 
@@ -198,6 +226,17 @@ Version: $version
 Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${version}_amd64.deb
+}
+
+pacman_init()
+{
+  sudo mkdir -p /var/lib/pacman
+  sudo pacman -Tv
 }
 
 clean()
