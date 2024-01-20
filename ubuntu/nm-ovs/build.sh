@@ -3,10 +3,12 @@
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
-pkgname="NetworkManager-ovs"
-pkgver="1.36"
+pkgname="network-manager-ovs"
+pkgver="1.36.6"
 
-destdir="$top_dir/work/dest/${pkgname}-${pkgver}"
+srcdir="$top_dir/work/source"
+builddir="$top_dir/work/build"
+destdir="$top_dir/work/dest"
 
 help()
 {
@@ -33,8 +35,14 @@ all()
 
 fetch()
 {
-  git clone --depth 1 -b nm-1-36 \
-    https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git
+  mkdir -p $srcdir
+  cd $srcdir
+  if [ ! -e "${pkgname}-${pkgver}" ]; then
+    git clone --depth 1 -b $pkgver \
+      https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git \
+      ${pkgname}-${pkgver}
+  fi
+  cd $top_dir
 }
 
 prepare()
@@ -49,8 +57,9 @@ prepare()
 
 configure()
 {
-  cd NetworkManager
-  sh autogen.sh \
+  mkdir -p $builddir/${pkgname}-${pkgver}
+  cd       $builddir/${pkgname}-${pkgver}
+  sh ${srcdir}/${pkgname}-${pkgver}/autogen.sh \
     --prefix=/usr \
     --disable-gtk-doc \
     --disable-introspection
@@ -64,15 +73,15 @@ config()
 
 build()
 {
-  cd NetworkManager
+  cd $builddir/${pkgname}-${pkgver}
   make -j
   cd $top_dir
 }
 
 install()
 {
-  cd NetworkManager
-  make install DESTDIR=${destdir}
+  cd $builddir/${pkgname}-${pkgver}
+  make install DESTDIR=${destdir}/${pkgname}-${pkgver}
   cd $top_dir
 }
 
