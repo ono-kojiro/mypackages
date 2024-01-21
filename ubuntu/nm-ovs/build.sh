@@ -6,9 +6,11 @@ cd $top_dir
 pkgname="network-manager-ovs"
 pkgver="1.36.6"
 
+workdir="$top_dir/work"
 srcdir="$top_dir/work/source"
 builddir="$top_dir/work/build"
-destdir="$top_dir/work/dest"
+destdir="$top_dir/work/dest/${pkgname}-${pkgver}"
+outputdir="$top_dir"
 
 help()
 {
@@ -81,10 +83,32 @@ build()
 install()
 {
   cd $builddir/${pkgname}-${pkgver}
-  make install DESTDIR=${destdir}/${pkgname}-${pkgver}
+  #make install-libLTLIBRARIES  DESTDIR=${destdir}
+  make install-pluginLTLIBRARIES  DESTDIR=${destdir}
+  cd $top_dir
+
+  # remove non-ovs related files  
+  cd $destdir
+  find ./usr/lib/ -type f -or -type l | grep -v ovs | xargs rm -f
   cd $top_dir
 }
 
+package()
+{
+  mkdir -p ${destdir}/DEBIAN
+
+  username=`git config user.name`
+  email=`git config user.email`
+
+cat << EOS > $destdir/DEBIAN/control
+Package: $pkgname
+Maintainer: $username <$email>
+Architecture: amd64
+Version: $pkgver
+Description: $pkgname
+EOS
+    fakeroot dpkg-deb --build $destdir $outputdir
+}
 
 mclean()
 {
