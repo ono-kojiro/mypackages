@@ -1,5 +1,5 @@
 _pkgname=libev
-pkgname=$_pkgname
+pkgname=mingw-w64-x86_64-$_pkgname
 pkgver=4.33
 pkgrel=1
 pkgdesc="high-performance software library that implements an event loop"
@@ -25,7 +25,7 @@ build() {
   rm -rf _build
   mkdir -p _build
   cd _build
-  sh ../configure --prefix=/usr
+  sh ../configure --prefix=/mingw64
   make
 }
 
