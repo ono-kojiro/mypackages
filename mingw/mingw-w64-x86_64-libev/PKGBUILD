@@ -1,0 +1,38 @@
+_pkgname=libev
+pkgname=$_pkgname
+pkgver=4.33
+pkgrel=1
+pkgdesc="high-performance software library that implements an event loop"
+arch=('i686' 'x86_64')
+url="http://software.schmorp.de/pkg/libev.html"
+license=('GPL2')
+groups=()
+depends=()
+makedepends=('mingw-w64-x86_64-gcc')
+optdepends=()
+provides=("$_pkgname")
+conflicts=("$_pkgname")
+source=("http://dist.schmorp.de/libev/libev-4.33.tar.gz")
+sha256sums=('507eb7b8d1015fbec5b935f34ebed15bf346bed04a11ab82b8eee848c4205aea')
+
+prepare() {
+  :
+}
+
+build() {
+  cd "$srcdir/$_pkgname-$pkgver"
+#  autoreconf -vi
+  rm -rf _build
+  mkdir -p _build
+  cd _build
+  sh ../configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname-$pkgver"
+  cd _build
+  make install DESTDIR=$pkgdir
+}
+
+
