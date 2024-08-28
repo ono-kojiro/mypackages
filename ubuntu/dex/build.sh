@@ -151,9 +151,11 @@ app()
 {
   cd ${builddir}/${pkgname}-${pkgver}
   ./bin/example-app \
-    --listen http://127.0.0.1:5555 \
-    --issuer http://127.0.0.1:5556/dex \
-    --redirect-uri http://127.0.0.1:5555/callback
+    --listen https://192.168.0.98:5555 \
+    --issuer https://192.168.0.98:5556/dex \
+    --redirect-uri https://192.168.0.98:5555/callback \
+    --tls-cert example-app.crt \
+    --tls-key  example-app.key
   cd ${top_dir}
 }
 
@@ -167,7 +169,7 @@ install()
   command install bin/dex         ${destdir}/usr/bin
   command install bin/example-app ${destdir}/usr/bin
   command install bin/grpc-client ${destdir}/usr/bin
-  command install examples/ldap/config-ldap.yaml ${destdir}/etc/dex
+  command install -m 640 examples/ldap/config-ldap.yaml ${destdir}/etc/dex
   command install ${top_dir}/dex.service ${destdir}/lib/systemd/system/
   cd ${top_dir}
 
