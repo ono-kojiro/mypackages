@@ -1,0 +1,16 @@
+[Unit]
+Description=dex
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dex serve /etc/dex/config-ldap.yaml
+Restart=on-failure
+SuccessExitStatus=143
+
+User=dex
+Group=dex
+
+[Install]
+WantedBy=multi-user.target
