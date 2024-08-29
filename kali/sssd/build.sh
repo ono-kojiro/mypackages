@@ -71,7 +71,9 @@ prepare()
   autoconf \
   libtool \
   uuid-dev \
-  fakeroot
+  fakeroot \
+  systemd-dev \
+  libsystemd-dev
 }
 
 configure()
@@ -88,7 +90,8 @@ configure()
   --without-kcm \
   --without-python3-bindings \
   --without-selinux \
-  --without-semanage
+  --without-semanage \
+  --with-initscript=systemd
   cd ${top_dir}
 }
 
@@ -102,6 +105,14 @@ compile()
   cd ${builddir}/${pkgname}-${pkgver}
   make -j
   cd ${top_dir}
+}
+
+debug()
+{
+  cd ${builddir}/${pkgname}-${pkgver}
+  make
+  cd ${top_dir}
+
 }
 
 build()
@@ -188,6 +199,11 @@ Depends: \
   uuid-dev
 EOS
   fakeroot dpkg-deb --build $destdir $outputdir
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${pkgname}_${pkgver}_amd64.deb
 }
 
 clean()
