@@ -37,4 +37,10 @@ deb:
 	fakeroot dpkg-deb --build dest .
 	dpkg-deb --info @PACKAGE@_@VERSION@_amd64.deb
 	dpkg -c @PACKAGE@_@VERSION@_amd64.deb
+  
+pkg:
+	$(MAKE) install DESTDIR=$(PWD)/dest
+	find $(PWD)/dest -type f | sed "s@.*$(PWD)/dest@@" > plist
+	cat plist
+	pkg create -M misc/manifest -r dest -p plist
 

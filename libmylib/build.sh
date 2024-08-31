@@ -74,13 +74,6 @@ install()
   make install DESTDIR=${top_dir}/dest
 }
 
-pkg()
-{
-  find ${destdir} -type f | sed "s@.*${destdir}@@" > plist
-  cat plist
-  command pkg create -M misc/manifest -r dest -p plist
-}
-
 deb()
 {
   mkdir -p ${destdir}/DEBIAN
