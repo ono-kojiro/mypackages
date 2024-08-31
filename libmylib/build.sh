@@ -78,7 +78,7 @@ pkg()
 {
   find ${destdir} -type f | sed "s@.*${destdir}@@" > plist
   cat plist
-  command pkg create -M manifest -r dest -p plist
+  command pkg create -M misc/manifest -r dest -p plist
 }
 
 deb()

@@ -33,7 +33,7 @@ PKG_CHECK_MODULES(CHECK, [check])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tests/Makefile
-                 manifest
+                 misc/manifest
                  misc/control
                ])
 
