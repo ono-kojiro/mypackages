@@ -1,0 +1,6 @@
+Package: @PACKAGE@
+Maintainer: @PACKAGE_BUGREPORT@
+Architecture: amd64
+Version: @VERSION@
+Description: @PACKAGE@
+

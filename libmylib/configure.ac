@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.72])
+AC_PREREQ([2.69])
 AC_INIT([libmylib],[0.0.1],[ono.kojiro@gmail.com])
 AC_CONFIG_MACRO_DIR([config])
 AC_CONFIG_AUX_DIR([config])
@@ -33,9 +33,8 @@ PKG_CHECK_MODULES(CHECK, [check])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tests/Makefile
-                 mkdebpkg.sh
                  manifest
+                 misc/control
                ])
-AC_CONFIG_FILES([mkpackage.sh], [chmod +x mkpackage.sh])
 
 AC_OUTPUT

@@ -2,6 +2,8 @@
 
 top_dir="$(cd "$(dirname "$0")" > /dev/null 2>&1 && pwd)"
 
+destdir=${top_dir}/dest
+
 usage()
 {
   echo "usage : $0 [options] target1 target2 ..."
@@ -74,10 +76,19 @@ install()
 
 pkg()
 {
-  destdir=${top_dir}/dest
   find ${destdir} -type f | sed "s@.*${destdir}@@" > plist
   cat plist
   command pkg create -M manifest -r dest -p plist
+}
+
+deb()
+{
+  mkdir -p ${destdir}/DEBIAN
+  cp -f misc/control ${destdir}/DEBIAN/
+  fakeroot dpkg-deb --build ${destdir} .
+
+  dpkg-deb --info *.deb
+  dpkg -c *.deb
 }
 
 all()
