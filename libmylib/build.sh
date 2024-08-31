@@ -51,6 +51,17 @@ build()
   make
 }
 
+clean()
+{
+  make clean
+}
+
+mclean()
+{
+  make maintainer-clean
+  rm -rf dest
+}
+
 check()
 {
   make check
@@ -58,7 +69,15 @@ check()
 
 install()
 {
-  make install DESTDIR=`pwd`/buildroot
+  make install DESTDIR=${top_dir}/dest
+}
+
+pkg()
+{
+  destdir=${top_dir}/dest
+  find ${destdir} -type f | sed "s@.*${destdir}@@" > plist
+  cat plist
+  command pkg create -M manifest -r dest -p plist
 }
 
 all()

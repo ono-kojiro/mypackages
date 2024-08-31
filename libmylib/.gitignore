@@ -1,3 +1,4 @@
+*~
 buildroot/
 Makefile
 Makefile.in
@@ -19,3 +20,8 @@ autom4te.cache/
 *.rpm
 *.deb
 
+# for freebsd
+manifest
+plist
+*.pkg
+dest/

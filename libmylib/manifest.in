@@ -1,0 +1,9 @@
+name: libmylib
+version: @VERSION@
+origin: devel/libmylib
+comment: libmylib
+www: https://github.com/ono-kojiro/mypackages
+maintainer: ono.kojiro@gmail.com
+prefix: @prefix@
+desc: example creating library
+
