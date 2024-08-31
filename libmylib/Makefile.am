@@ -24,5 +24,10 @@ reinstall-rpm:
 	$(MAKE) uninstall-rpm install-rpm
 
 deb:
-	sh mkdebpkg.sh
+	$(MAKE) install DESTDIR=`pwd`/dest
+	mkdir -p dest/DEBIAN
+	cp -f misc/control dest/DEBIAN/
+	fakeroot dpkg-deb --build dest .
+	dpkg-deb --info @PACKAGE@_@VERSION@_amd64.deb
+	dpkg -c @PACKAGE@_@VERSION@_amd64.deb
 
