@@ -35,6 +35,7 @@ AC_CONFIG_FILES([Makefile
                  tests/Makefile
                  misc/manifest
                  misc/control
+                 misc/libmylib.spec
                ])
 
 AC_OUTPUT

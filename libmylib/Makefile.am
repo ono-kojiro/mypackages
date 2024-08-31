@@ -4,13 +4,20 @@ SUBDIRS = \
   src \
   tests
 
-EXTRA_DIST = libmylib.spec
+EXTRA_DIST = \
+  misc/libmylib.spec.in \
+  misc/libmylib.spec
 
 rpm:
+	mkdir -p ./rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 	$(MAKE) dist
-	cp -f libmylib-0.0.1.tar.gz ~/rpmbuild/SOURCES/
-	rpmbuild -bb --target aarch64-poky-linux libmylib.spec
-	cp -f ~/rpmbuild/RPMS/aarch64/libmylib-0.0.1-1.aarch64.rpm .
+	cp -f libmylib-0.0.1.tar.gz ./rpmbuild/SOURCES/
+	rpmbuild -bb \
+		--target x86_64-redhat-linux \
+		--define "_topdir ${PWD}/rpmbuild" \
+		misc/libmylib.spec
+	cp -f ./rpmbuild/RPMS/x86_64/*.rpm .
+	rpm -qlp *.rpm
 
 install-rpm:
 	sudo rpm -vhi \

@@ -10,8 +10,8 @@
 %define __requires_exclude libc.so.6
 %define __requires_exclude rtld
 
-Name: libmylib
-Version: 0.0.1
+Name: @PACKAGE@
+Version: @VERSION@
 Release: 1%{?dist}
 Summary: RPM example
 Group: none
@@ -20,7 +20,7 @@ URL: http://example.com
 Source0: %{name}-%{version}.tar.gz
 
 AutoReq : no
-Prefix: /usr
+Prefix: @prefix@
 
 %description
 RPM sample program

@@ -25,3 +25,7 @@ manifest
 plist
 *.pkg
 dest/
+
+# for redhat
+rpmbuild/
+
