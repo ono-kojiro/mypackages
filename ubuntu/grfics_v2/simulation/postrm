@@ -1,0 +1,71 @@
+#!/bin/sh
+
+set -e
+
+NAME=simulation
+USER=${NAME}
+GROUP=${NAME}
+
+case "$1" in
+  purge )
+    if [ -x "$(command -v deluser)" ]; then
+      deluser --quiet --system $USER || \
+        echo "failed to remove ${NAME} system user with deluser" 1>&2
+    else
+      userdel $USER || \
+        echo "failed to remove ${NAME} system user with userdel" 1>&2
+    fi
+    
+   
+    if getent group "$GROUP" > /dev/null; then 
+      if [ -x "$(command -v delgroup)" ]; then
+        delgroup --quiet --system --only-if-empty $GROUP || \
+          echo "failed to remove ${NAME} system group with delgroup" 1>&2
+      else
+        groupdel $GROUP || \
+          echo "failed to remove ${NAME} system group with groupdel" 1>&2
+      fi
+    fi
+
+    rm -rf \
+      /var/lib/${NAME} \
+      /var/log/${NAME} \
+      /var/run/${NAME} \
+      /var/cache/${NAME}
+    ;;
+
+  remove | upgrade | failed-upgrade )
+    ;;
+
+  abort-install | abort-upgrade | disappear )
+    ;;
+
+  * )
+    echo "postrm called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+if [ "$1" = "purge" ]; then
+  update-rc.d ${NAME} remove > /dev/null
+fi
+
+if [ -d /run/systemd/system ]; then
+  systemctl --system daemon-reload > /dev/null || true
+fi
+
+if [ "$1" = "remove" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper mask   "${NAME}.service" >/dev/null || true
+  fi
+fi
+
+if [ "$1" = "purge" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper purge  "${NAME}.service" >/dev/null || true
+    deb-systemd-helper unmask "${NAME}.service" >/dev/null || true
+  fi
+fi
+
+exit 0
+

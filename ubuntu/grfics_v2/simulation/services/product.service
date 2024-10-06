@@ -1,0 +1,17 @@
+[Unit]
+Description=product
+Requires=network.target
+After=network.target
+After=simulation.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/share/simulation/remote_io/modbus/product.py
+Restart=on-failure
+SuccessExitStatus=143
+
+User=simulation
+Group=simulation
+
+[Install]
+WantedBy=multi-user.target

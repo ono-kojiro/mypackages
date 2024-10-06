@@ -1,0 +1,17 @@
+[Unit]
+Description=purge
+Requires=network.target
+After=network.target
+After=simulation.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/share/simulation/remote_io/modbus/purge.py
+Restart=on-failure
+SuccessExitStatus=143
+
+User=simulation
+Group=simulation
+
+[Install]
+WantedBy=multi-user.target
