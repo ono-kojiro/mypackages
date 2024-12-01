@@ -121,9 +121,14 @@ prepare()
 
 configure()
 {
-  cd ${top_builddir}/${realname}-${pkgver}
-  :
-  cd ${top_dir}
+  for src_url in $src_urls; do
+    archive=`basename $src_url`
+    dirname=${archive%.git}
+    commit=`git -C work/sources/${dirname} rev-parse --short=8 HEAD`
+    cd ${top_builddir}/${realname}-${pkgver}-${commit}
+    :
+    cd ${top_dir}
+  done
 }
 
 config()
@@ -133,9 +138,14 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${pkgver}
-  :
-  cd ${top_dir}
+  for src_url in $src_urls; do
+    archive=`basename $src_url`
+    dirname=${archive%.git}
+    commit=`git -C work/sources/${dirname} rev-parse --short=8 HEAD`
+    cd ${top_builddir}/${realname}-${pkgver}-${commit}
+    :
+    cd ${top_dir}
+  done
 }
 
 build()
@@ -155,10 +165,8 @@ install()
 
     destdir=$top_dir/work/dest/${pkgname}-${pkgver}-${commit}/usr/share/snmp/cisco-mibs
     mkdir -p ${destdir}
-    cd ${builddir}
-    cp -a . ${destdir}/
+    cp -a ${builddir}/* ${destdir}/
     rm -rf ${destdir}/.git/
-    cd ${top_dir}
   done
 
 }
