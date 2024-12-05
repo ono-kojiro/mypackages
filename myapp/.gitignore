@@ -16,4 +16,6 @@ config.status
 config/
 *.tar.gz
 *_amd64.deb
+rpmbuild/
+*.rpm
 
