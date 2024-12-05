@@ -22,3 +22,18 @@ uninstall-rpm:
 reinstall-rpm:
 	$(MAKE) uninstall-rpm install-rpm
 
+deb :
+	destdir=$(PWD)/work/dest/$(PACKAGE)-$(VERSION); \
+	make install DESTDIR=$${destdir}; \
+	mkdir -p $${destdir}/DEBIAN; \
+	username=`git config user.name`; \
+	email=`git config user.email`; \
+	control="$${destdir}/DEBIAN/control"; \
+	echo "Package: $(PACKAGE)" > $${control}; \
+	echo "Maintainer: $${username} <$${email}>" >> $${control}; \
+	echo "Architecture: amd64" >> $${control}; \
+	echo "Version: $(VERSION)" >> $${control}; \
+	echo "Description: $(PACKAGE)" >> $${control}; \
+	fakeroot dpkg-deb --build $${destdir} .; \
+	dpkg-deb --info $(PACKAGE)_$(VERSION)_amd64.deb
+
