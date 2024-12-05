@@ -11,6 +11,7 @@ AC_CONFIG_HEADERS([config/config.h])
 AC_REQUIRE_AUX_FILE([tap-driver.sh])
 
 AC_CANONICAL_TARGET
+AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 

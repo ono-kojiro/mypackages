@@ -8,9 +8,11 @@ EXTRA_DIST = myapp.spec
 rpm :
 	$(MAKE) dist
 	mkdir -p $(PWD)/rpmbuild/SOURCES/
-	cp -f myapp-0.0.1.tar.gz $(PWD)/rpmbuild/SOURCES/
-	rpmbuild -bb -D "_topdir $(PWD)/rpmbuild" myapp.spec
-	cp -f $(PWD)/rpmbuild/RPMS/x86_64/myapp-0.0.1-1.el9.x86_64.rpm .
+	cp -f $(PACKAGE)-$(VERSION).tar.gz $(PWD)/rpmbuild/SOURCES/
+	rpmbuild -bb -D "_topdir $(PWD)/rpmbuild" $(PACKAGE).spec
+	dist=`rpm --eval '%dist'`; \
+	target_cpu=`rpm --eval '%_target_cpu'`; \
+	cp -f $(PWD)/rpmbuild/RPMS/$${target_cpu}/$(PACKAGE)-$(VERSION)-1$${dist}.$${target_cpu}.rpm .
 
 install-rpm :
 	sudo rpm -vhi \
