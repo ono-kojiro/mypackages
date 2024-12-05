@@ -20,4 +20,5 @@ config/
 work/
 rpmbuild/
 *.rpm
+*.spec
 

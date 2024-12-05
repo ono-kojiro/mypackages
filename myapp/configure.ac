@@ -62,8 +62,9 @@ AC_ARG_WITH([libmylib],
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-				 tests/Makefile
-				 ])
+                 tests/Makefile
+                 myapp.spec
+               ])
 
 AC_CONFIG_FILES([tests/01-simple.sh], [chmod +x tests/01-simple.sh])
 
