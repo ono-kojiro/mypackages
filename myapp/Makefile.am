@@ -7,9 +7,10 @@ EXTRA_DIST = myapp.spec
 
 rpm :
 	$(MAKE) dist
-	cp -f myapp-0.0.1.tar.gz ~/rpmbuild/SOURCES/
-	rpmbuild -bb --target=aarch64-poky-linux myapp.spec
-	cp -f ~/rpmbuild/RPMS/aarch64/myapp-0.0.1-1.aarch64.rpm .
+	mkdir -p $(PWD)/rpmbuild/SOURCES/
+	cp -f myapp-0.0.1.tar.gz $(PWD)/rpmbuild/SOURCES/
+	rpmbuild -bb -D "_topdir $(PWD)/rpmbuild" myapp.spec
+	cp -f $(PWD)/rpmbuild/RPMS/x86_64/myapp-0.0.1-1.el9.x86_64.rpm .
 
 install-rpm :
 	sudo rpm -vhi \

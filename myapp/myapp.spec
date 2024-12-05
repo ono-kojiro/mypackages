@@ -21,8 +21,8 @@ URL: http://example.com
 Source0: %{name}-%{version}.tar.gz
 
 #BuildArch: noarch
-BuildRequires: libmylib
-Requires: libmylib
+#BuildRequires: libmylib
+#Requires: libmylib
 
 AutoReq: no
 
