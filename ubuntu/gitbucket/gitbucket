@@ -4,46 +4,16 @@ if [ -z "${GITBUCKET_WAR}" ]; then
   GITBUCKET_WAR=/usr/share/java/gitbucket.war
 fi
 
-if [ -z "${GITBUCKET_OPTS}" ]; then
-  GITBUCKET_OPTS="$*"
-else
-  GITBUCKET_OPTS="${GITBUCKET_OPTS} $*"
-fi
-
 java_opts=""
 gitbucket_opts=""
 
+if [ -n "${GITBUCKET_PREFIX}" ]; then
+  gitbucket_opts="${gitbucket_opts} --prefix=${GITBUCKET_PREFIX}"
+fi
+
 if [ -n "${GITBUCKET_HOME}" ]; then
-  gitbucket_opts="${gitbucket_opts} -Dgitbucket.home=${GITBUCKET_HOME}"
+  java_opts="${java_opts} -Dgitbucket.home=${GITBUCKET_HOME}"
 fi
-
-if [ -n "${GITBUCKET_BASE_URL}" ]; then
-  gitbucket_opts="${gitbucket_opts} -Dgitbucket.base_url=${GITBUCKET_BASE_URL}"
-fi
-
-if [ -n "${GITBUCKET_CONNECTORS}" ]; then
-  gitbucket_opts="${gitbucket_opts} --connectors=${GITBUCKET_CONNECTORS}"
-fi
-
-if [ -n "${GITBUCKET_REDIRECTHTTPS}" ]; then
-  gitbucket_opts="${gitbucket_opts} --redirect_https=${GITBUCKET_REDIRECTHTTPS}"
-fi
-
-if [ -n "${GITBUCKET_PORT}" ]; then
-  gitbucket_opts="${gitbucket_opts} --port=${GITBUCKET_PORT}"
-fi
-
-if [ -n "${GITBUCKET_SECUREPORT}" ]; then
-  gitbucket_opts="${gitbucket_opts} --secure_port=${GITBUCKET_SECUREPORT}"
-fi
-
-if [ -n "${GITBUCKET_OPTS}" ]; then
-  gitbucket_opts="${gitbucket_opts} ${GITBUCKET_OPTS}"
-fi
-
-#if [ -n "${GITBUCKET_LOG}" ]; then
-#  gitbucket_opts="${gitbucket_opts} > ${GITBUCKET_LOG}"
-#fi
 
 if [ -n "${GITBUCKET_LOGBACK}" ]; then
   java_opts="${java_opts} -Dlogback.configurationFile=${GITBUCKET_LOGBACK}"

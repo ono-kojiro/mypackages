@@ -17,14 +17,12 @@ WorkingDirectory=/var/lib/gitbucket
 Environment="GITBUCKET_HOME=/var/lib/gitbucket"
 Environment="GITBUCKET_PREFIX=/gitbucket"
 Environment="GITBUCKET_CONNECTORS=http,https"
-Environment="GITBUCKET_PORT=18080"
-Environment="GITBUCKET_SECUREPORT=18443"
+Environment="GITBUCKET_PORT=8080"
+Environment="GITBUCKET_SECUREPORT=8443"
 Environment="GITBUCKET_REDIRECTHTTPS=false"
-
-Environment="GITBUCKET_KEYSTOREPATH=/var/lib/gitbucket/server.p12"
+Environment="GITBUCKET_KEYSTOREPATH=/var/lib/gitbucket/gitbucket.jks"
 Environment="GITBUCKET_KEYSTOREPASSWORD=secret"
 Environment="GITBUCKET_KEYMANAGERPASSWORD=secret"
-
 Environment="GITBUCKET_LOGBACK=/var/lib/gitbucket/logback-settings.xml"
 
 [Install]

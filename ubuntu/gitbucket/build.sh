@@ -5,9 +5,11 @@ cd $top_dir
 
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.38.3
+VERSION=4.42.1
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
+
+ARCH="amd64"
 
 workdir=${top_dir}/work
 
@@ -23,13 +25,28 @@ debug()
   :
 }
 
+help()
+{
+  cat - << EOF
+usage : sh build.sh <target>
+
+  target:
+  - fetch
+  - do_install
+  - custom_install
+  - package
+  - clean
+
+EOF
+}
+
 all()
 {
   fetch
   #extract
   #configure
   #build
-  do_install
+  install
   custom_install
   package
   clean
@@ -64,7 +81,7 @@ build()
   cd ${top_dir}
 }
 
-do_install()
+install()
 {
   rm -rf $DESTDIR
   
@@ -72,12 +89,12 @@ do_install()
   mkdir -p $DESTDIR/usr/share/java/
   mkdir -p $DESTDIR/var/lib/gitbucket/
   mkdir -p $DESTDIR/var/log/gitbucket/
-  mkdir -p $DESTDIR/lib/systemd/system/
+  mkdir -p $DESTDIR/usr/lib/systemd/system/
 
-  install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
-  install ${top_dir}/gitbucket.service $DESTDIR/lib/systemd/system/
-  install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
-  install ${top_dir}/logback-settings.xml $DESTDIR/var/lib/gitbucket/
+  command install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
+  command install ${top_dir}/gitbucket.service $DESTDIR/usr/lib/systemd/system/
+  command install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
+  command install ${top_dir}/logback-settings.xml $DESTDIR/var/lib/gitbucket/
   
   cd $top_dir
 }
@@ -96,9 +113,9 @@ package()
   cat << EOS > $DESTDIR/DEBIAN/control
 Package: $PKGNAME
 Maintainer: $maintainer <$email>
-Architecture: amd64
+Architecture: $ARCH
 Version: $VERSION
-Depends: openjdk-17-jre-headless
+Depends: openjdk-21-jre-headless
 Description: $PKGNAME
 EOS
 
@@ -106,6 +123,11 @@ EOS
   cp -f postrm   $DESTDIR/DEBIAN/
   cp -f prerm    $DESTDIR/DEBIAN/
   fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
+}
+
+sysinstall()
+{
+  sudo apt -y install ./${PACKAGE}_${VERSION}_${ARCH}.deb
 }
 
 clean()
