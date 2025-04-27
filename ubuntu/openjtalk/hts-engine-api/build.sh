@@ -40,7 +40,7 @@ fetch()
     case $src_url in
       *.gz | *.zip )
         cd $sourcedir
-        curl -L -O "$src_url"
+        curl --no-clobber -L -O "$src_url"
         ;;
       *.git )
         dirname=${archive%.git}
@@ -55,7 +55,7 @@ fetch()
         #echo "ERROR : unknown extension, $src_url"
         #exit 1
         cd $sourcedir
-        curl -L -O "$src_url"
+        curl --no-clobber -L -O "$src_url"
         ;;
     esac
   done
@@ -79,7 +79,7 @@ prepare()
 
 patch()
 {
-  cd ${builddir}/${pkgname}-${pkgver}
+  cd ${builddir}/${realname}-${pkgver}
   cd ${top_dir}
 }
 
