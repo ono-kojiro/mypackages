@@ -2,7 +2,7 @@
 
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
-
+  
 REALNAME=gitbucket
 PKGNAME=$REALNAME
 VERSION=4.42.1
@@ -90,9 +90,14 @@ install()
   mkdir -p $DESTDIR/var/lib/gitbucket/
   mkdir -p $DESTDIR/var/log/gitbucket/
   mkdir -p $DESTDIR/usr/lib/systemd/system/
+  mkdir -p $DESTDIR/etc/gitbucket/
+  mkdir -p $DESTDIR/etc/apache2/conf-available/
 
   command install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
   command install ${top_dir}/gitbucket.service $DESTDIR/usr/lib/systemd/system/
+  command install -m 0660 ${top_dir}/gitbucket.conf $DESTDIR/etc/gitbucket/
+  command install ${top_dir}/apache2-gitbucket.conf \
+     $DESTDIR/etc/apache2/conf-available/
   command install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
   command install ${top_dir}/logback-settings.xml $DESTDIR/var/lib/gitbucket/
   
@@ -127,7 +132,12 @@ EOS
 
 sysinstall()
 {
-  sudo apt -y install ./${PACKAGE}_${VERSION}_${ARCH}.deb
+  sudo apt -y install ./${PKGNAME}_${VERSION}_${ARCH}.deb
+}
+
+sysuninst()
+{
+  sudo apt -y remove gitbucket
 }
 
 clean()

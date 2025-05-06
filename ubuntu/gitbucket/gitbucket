@@ -1,27 +1,10 @@
 #!/usr/bin/env sh
 
+. /etc/gitbucket/gitbucket.conf
+
 if [ -z "${GITBUCKET_WAR}" ]; then
   GITBUCKET_WAR=/usr/share/java/gitbucket.war
 fi
 
-java_opts=""
-gitbucket_opts=""
-
-if [ -n "${GITBUCKET_PREFIX}" ]; then
-  gitbucket_opts="${gitbucket_opts} --prefix=${GITBUCKET_PREFIX}"
-fi
-
-if [ -n "${GITBUCKET_HOME}" ]; then
-  java_opts="${java_opts} -Dgitbucket.home=${GITBUCKET_HOME}"
-fi
-
-if [ -n "${GITBUCKET_LOGBACK}" ]; then
-  java_opts="${java_opts} -Dlogback.configurationFile=${GITBUCKET_LOGBACK}"
-fi
-
-exec /usr/bin/java \
-    ${java_opts} \
-    -jar ${GITBUCKET_WAR} \
-    ${gitbucket_opts} \
-	&
+exec /usr/bin/java -jar ${GITBUCKET_WAR} &
 
