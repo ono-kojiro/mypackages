@@ -6,5 +6,11 @@ if [ -z "${GITBUCKET_WAR}" ]; then
   GITBUCKET_WAR=/usr/share/java/gitbucket.war
 fi
 
-exec /usr/bin/java -jar ${GITBUCKET_WAR} &
+JAVA_OPTS=""
+
+if [ -z "${GITBUCKET_BASE_URL}" ]; then
+  JAVA_OPTS="${JAVA_OPTS} -Dgitbucket.base_url=${GITBUCKET_BASE_URL}"
+fi
+
+exec /usr/bin/java ${JAVA_OPTS} -jar ${GITBUCKET_WAR} &
 
