@@ -1,0 +1,68 @@
+#!/bin/sh
+
+set -e
+
+NAME=zap
+USER=${NAME}
+GROUP=${NAME}
+
+case "$1" in
+  configure)
+    if ! getent group "$GROUP" > /dev/null; then
+      addgroup --system --quiet "$GROUP"
+    fi
+
+    if ! id "$USER" > /dev/null 2>&1; then
+      adduser --system --quiet \
+        --home /var/lib/${NAME} \
+        --no-create-home \
+        --ingroup "$GROUP" \
+        --disabled-password \
+        --shell /usr/sbin/nologin \
+        --gecos "${NAME}" \
+        "$USER"
+    fi
+    
+    mkdir -p /var/lib/${NAME}
+    chown -R "${USER}:${GROUP}" /var/lib/${NAME}
+    chmod u+rwx /var/lib/${NAME}
+    
+    mkdir -p /var/log/${NAME}
+    chown -R "${USER}:${GROUP}" /var/log/${NAME}
+    chmod u+rwx /var/log/${NAME}
+    
+    mkdir -p /var/cache/${NAME}
+    chown -R "${USER}:${GROUP}" /var/cache/${NAME}
+    chmod -R 750 /var/cache/${NAME}
+
+    if [ -d "/var/run/${NAME}" ]; then
+      chown -R "${USER}:${GROUP}" /var/run/${NAME}
+      chmod -R 750 /var/run/${NAME}
+    fi
+
+    ;;
+  abort-upgrade | abort-remove | abort-deconfigure)
+    ;;
+  * )
+    echo "postinst called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+case "$1" in
+  configure | abort-upgrade | abort-deconfigure | abort-remove )
+
+    deb-systemd-helper umask "${NAME}.service" > /dev/null || true
+
+    if deb-systemd-helper --quiet was-enabled "${NAME}.service"; then
+      deb-systemd-helper enable       "${NAME}.service" > /dev/null || true
+    else
+      deb-systemd-helper update-state "${NAME}.service" > /dev/null || true
+    fi
+    ;;
+  * )
+    ;;
+esac
+
+exit 0
+

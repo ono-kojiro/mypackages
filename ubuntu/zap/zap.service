@@ -1,0 +1,17 @@
+[Unit]
+Description=zap
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/share/zap/zap.sh -daemon -host 0.0.0.0 -port 1234 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=myapikey
+Restart=on-failure
+SuccessExitStatus=143
+
+User=zap
+Group=zap
+
+[Install]
+WantedBy=multi-user.target
+
