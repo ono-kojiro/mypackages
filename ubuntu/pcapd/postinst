@@ -44,6 +44,11 @@ case "$1" in
       chmod -R 750 /var/run/${PKG_NAME}
     fi
 
+    # enable /etc/apparmor.d/local/usr.bin.tcpdump
+    sed -i -E -e 's|^(\s*)#(include <local/usr.bin.tcpdump>)|\1\2|' /etc/apparmor.d/usr.bin.tcpdump
+
+    systemctl restart apparmor
+
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)
     ;;

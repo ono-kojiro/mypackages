@@ -1,0 +1,5 @@
+  # for -z xz
+  /{usr/,}bin/xz ixr,
+
+  # allow .pcap.xz
+  /**.[pP][cC][aA][pP].[xX][zZ] rw,

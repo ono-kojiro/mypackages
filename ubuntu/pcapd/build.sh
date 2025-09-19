@@ -56,6 +56,10 @@ install()
   
   command install ${top_dir}/${PKGNAME}.service $DESTDIR/usr/lib/systemd/system/
   command install -m 0644 ${top_dir}/${PKGNAME}.conf $DESTDIR/etc/${PKGNAME}/
+
+  command install -m 0755 -d $DESTDIR/etc/apparmor.d/local/
+  command install -m 0644 ${top_dir}/usr.bin.tcpdump $DESTDIR/etc/apparmor.d/local/
+
   cd $top_dir
 }
 
