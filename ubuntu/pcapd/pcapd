@@ -1,0 +1,40 @@
+#!/bin/sh
+
+flags=""
+args=""
+configfile=""
+
+while [ "$#" -ne 0 ]; do
+  case $1 in
+    -h )
+      ;;
+    -c | --config)
+      shift
+      configfile="$1"
+      ;;
+    -* )
+      shift
+      flags="$flags $1"
+      ;;
+    * )
+      args="$args $1"
+      ;;
+  esac
+  
+  shift
+done
+
+if [ -z "$configfile" ]; then
+  configfile="/etc/pcapd/pcapd.conf"
+fi
+
+. $configfile
+
+exec tcpdump \
+  -i ${PCAPD_IF} \
+  -G ${PCAPD_ROTATE} \
+  -Z ${PCAPD_USER} \
+  -w ${PCAPD_OUTPUT} \
+  -z ${PCAPD_POSTROTATE_CMD} \
+  ${flags}
+

@@ -1,0 +1,72 @@
+#!/bin/sh
+
+set -e
+
+PKG_NAME=pcapd
+PKG_USER=tcpdump
+PKG_GROUP=tcpdump
+
+case "$1" in
+  configure)
+    #if ! getent group "${PKG_GROUP}" > /dev/null; then
+    #  addgroup --system --quiet "${PKG_GROUP}"
+    #fi
+
+    #if ! id "${PKG_USER}" > /dev/null 2>&1; then
+    #  adduser --system --quiet \
+    #    --home /var/lib/${PKG_NAME} \
+    #    --no-create-home \
+    #    --ingroup "${PKG_GROUP}" \
+    #    --disabled-password \
+    #    --shell /usr/sbin/nologin \
+    #    --gecos ${PKG_USER} \
+    #    "${PKG_USER}"
+    #fi
+    
+    mkdir -p /etc/${PKG_NAME}
+    chown -R "${PKG_USER}:${PKG_GROUP}" /etc/${PKG_NAME}
+    chmod -R 0755 /etc/${PKG_NAME}/
+    
+    mkdir -p /var/lib/${PKG_NAME}
+    chown -R "${PKG_USER}:${PKG_GROUP}" /var/lib/${PKG_NAME}
+    chmod u+rwx /var/lib/${PKG_NAME}
+    
+    mkdir -p /var/log/${PKG_NAME}
+    chown -R "${PKG_USER}:${PKG_GROUP}" /var/log/${PKG_NAME}
+    chmod u+rwx /var/log/${PKG_NAME}
+    
+    mkdir -p /var/cache/${PKG_NAME}
+    chown -R "${PKG_USER}:${PKG_GROUP}" /var/cache/${PKG_NAME}
+    chmod -R 750 /var/cache/${PKG_NAME}
+
+    if [ -d "/var/run/${PKG_NAME}" ]; then
+      chown -R "${PKG_USER}:${PKG_GROUP}" /var/run/${PKG_NAME}
+      chmod -R 750 /var/run/${PKG_NAME}
+    fi
+
+    ;;
+  abort-upgrade | abort-remove | abort-deconfigure)
+    ;;
+  * )
+    echo "postinst called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+case "$1" in
+  configure | abort-upgrade | abort-deconfigure | abort-remove )
+
+    deb-systemd-helper umask "${PKG_NAME}.service" > /dev/null || true
+
+    if deb-systemd-helper --quiet was-enabled "${PKG_NAME}"; then
+      deb-systemd-helper enable       "${PKG_NAME}" > /dev/null || true
+    else
+      deb-systemd-helper update-state "${PKG_NAME}" > /dev/null || true
+    fi
+    ;;
+  * )
+    ;;
+esac
+
+exit 0
+

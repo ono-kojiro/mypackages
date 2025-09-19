@@ -1,0 +1,71 @@
+#!/bin/sh
+
+set -e
+
+PKG_NAME=pcapd
+PKG_USER=tcpdump
+PKG_GROUP=tcpdump
+
+case "$1" in
+  purge )
+    #if [ -x "$(command -v deluser)" ]; then
+    #  deluser --quiet --system $PKG_USER || \
+    #    echo "failed to remove ${PKG_NAME} system user with deluser" 1>&2
+    #else
+    #  userdel ${PKG_USER} || \
+    #    echo "failed to remove ${PKG_NAME} system user with userdel" 1>&2
+    #fi
+    
+   
+    #if getent group "$PKG_GROUP" > /dev/null; then 
+    #  if [ -x "$(command -v delgroup)" ]; then
+    #    delgroup --quiet --system --only-if-empty ${PKG_GROUP} || \
+    #      echo "failed to remove ${PKG_NAME} system group with delgroup" 1>&2
+    #  else
+    #    groupdel ${PKG_GROUP} || \
+    #      echo "failed to remove ${PKG_NAME} system group with groupdel" 1>&2
+    #  fi
+    #fi
+
+    rm -rf \
+      /var/lib/${PKG_NAME} \
+      /var/log/${PKG_NAME} \
+      /var/run/${PKG_NAME} \
+      /var/cache/${PKG_NAME}
+    ;;
+
+  remove | upgrade | failed-upgrade )
+    ;;
+
+  abort-install | abort-upgrade | disappear )
+    ;;
+
+  * )
+    echo "postrm called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+if [ "$1" = "purge" ]; then
+  update-rc.d ${PKG_NAME} remove > /dev/null
+fi
+
+if [ -d /run/systemd/system ]; then
+  systemctl --system daemon-reload > /dev/null || true
+fi
+
+if [ "$1" = "remove" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper mask   "${PKG_NAME}.service" >/dev/null || true
+  fi
+fi
+
+if [ "$1" = "purge" ]; then
+  if [ -x "/usr/bin/deb-systemd-helper" ]; then
+    deb-systemd-helper purge  "${PKG_NAME}" >/dev/null || true
+    deb-systemd-helper unmask "${PKG_NAME}" >/dev/null || true
+  fi
+fi
+
+exit 0
+

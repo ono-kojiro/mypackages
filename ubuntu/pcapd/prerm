@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+PKG_NAME=pcapd
+
+if [ "$1" = "remove" ] && [ -d /run/systemd/system ]; then
+  deb-systemd-invoke stop "${PKG_NAME}.service" > /dev/null || true
+fi
+
+exit 0
+
