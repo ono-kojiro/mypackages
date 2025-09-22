@@ -1,13 +1,13 @@
 PORT = 1234
 
 start :
-	$(top_builddir)/server/mydaemond -p 1234
+	$(top_builddir)/server/myserver -p $(PORT)
 
 debug :
-	$(top_builddir)/server/mydaemond -p 1234 -F
+	$(top_builddir)/server/myserver -p $(PORT) -F
 
 stop :
-	-pkill mydaemond
+	-pkill myserver
 
 test :
 	$(top_builddir)/client/client --host localhost --port $(PORT)

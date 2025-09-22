@@ -1,20 +1,18 @@
-bin_PROGRAMS = mydaemond
+bin_PROGRAMS = myserver
 
-mydaemond_SOURCES = \
-	mydaemon.c \
+myserver_SOURCES = \
+	myserver.c \
 	common.c \
 	accept_handler.c \
 	recv_handler.c \
 	cmd_handler.c \
 	mystrlcat.c
 
-mydaemond_DATA = mydaemon.service
-mydaemonddir = /lib/systemd/system
+myserver_DATA = myserver.service
+myserverdir = /usr/lib/systemd/system
 
-dist_pkgdata_DATA = mydaemon.service
-#noinst_pkgdata_DATA = mydaemon.service
+dist_pkgdata_DATA = myserver.service
 
-mydaemond_LDFLAGS = 
-
-mydaemond_LDADD = -levent
+myserver_LDFLAGS = 
+myserver_LDADD = -levent
 
