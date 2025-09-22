@@ -1,0 +1,15 @@
+COPYING
+INSTALL
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+autoscan.log
+config.log
+config.status
+config/
+configure
+.deps/
+*~
+*.o
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=MyDaemon
+
+[Service]
+Type=simple
+ExecStart=@prefix@/bin/mydaemond
+
+[Install]
+WantedBy=multi-user.target
+
