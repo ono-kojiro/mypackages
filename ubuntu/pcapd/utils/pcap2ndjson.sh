@@ -38,7 +38,7 @@ pcap2log()
       -E setup.dashboards.enabled=false \
       -E "output.file.path=/var/log/pcapd/$basename" \
       -E "output.file.filename=${basename}" \
-      2>${basename}/packetbeat.log
+      2>${basename}/${basename}.log
   
   # "output.file.permissions" does not work
   # -E output.file.permissions=0600 \
