@@ -47,7 +47,7 @@ void recv_handler(int acc, short event, void *arg)
             *ptr = '\0';
         }
         /* (void) fprintf(stderr, "[client]%s\n", buf); */
-	    syslog(LOG_INFO, "[client]%s", buf);
+	    syslog(LOG_INFO, "%s", buf);
 		
 		if(!strcmp(buf, "shutdown")){
 			/* fprintf(stderr, "shutdown tcpserver\n"); */

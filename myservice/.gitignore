@@ -12,4 +12,5 @@ configure
 .deps/
 *~
 *.o
+*.swp
 

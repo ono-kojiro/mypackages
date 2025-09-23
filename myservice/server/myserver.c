@@ -31,6 +31,8 @@
 #include "accept_handler.h"
 #include "cmd_handler.h"
 
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
 void signal_handler(int sig)
 {
     switch(sig){
@@ -54,6 +56,7 @@ int daemonize(int flag)
     int fd = 0;
 
     pid_t pid = 0;
+
     pid = fork();
     if(pid == -1){
         /* failure */
@@ -171,6 +174,11 @@ int main(int argc, char **argv)
 
     char buf[PATH_MAX];
     char *str;
+    
+    // for syslog    
+    const char *ident = NULL;
+    int facility;
+    int option;
 
     while(1){
         c = getopt_long(argc, argv, "hp:F", options, &index);
@@ -210,16 +218,33 @@ int main(int argc, char **argv)
         exit(ret);
     }
 
-
-    if(!is_foreground){
-        openlog(argv[0], LOG_CONS | LOG_PID, LOG_USER);
-        syslog(LOG_INFO, "call daemonize()");
-        daemonize(1);
+    if(strrchr(argv[0], '/')){
+        ident = strrchr(argv[0], '/') + 1;
     }
     else {
-        openlog(NULL, LOG_PERROR, LOG_USER);
-        syslog(LOG_INFO, "call daemonize()");
+        ident = argv[0];
     }
+
+    option   = LOG_PID;
+    facility = LOG_USER;
+
+    if(!is_foreground){
+        option = option | LOG_CONS;
+    }
+    else{
+        option = option | LOG_PERROR;
+    }
+        
+    openlog(ident, option, facility);
+    
+    if(!is_foreground){
+        syslog(LOG_INFO, "%s(%d): call daemonize", __FILENAME__, __LINE__ );
+        daemonize(1);
+    }
+    else{
+        syslog(LOG_INFO, "%s(%d): foreground", __FILENAME__, __LINE__ );
+    }
+
     str = getcwd(buf, sizeof(buf));
 
     if(str == NULL){
