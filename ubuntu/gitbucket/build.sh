@@ -5,7 +5,7 @@ cd $top_dir
   
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.42.1
+VERSION=4.43.0
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
 
@@ -95,7 +95,7 @@ install()
 
   command install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
   command install ${top_dir}/gitbucket.service $DESTDIR/usr/lib/systemd/system/
-  command install -m 0660 ${top_dir}/gitbucket.conf $DESTDIR/etc/gitbucket/
+  command install -m 0755 ${top_dir}/gitbucket.conf $DESTDIR/etc/gitbucket/
   command install ${top_dir}/apache2-gitbucket.conf \
      $DESTDIR/etc/apache2/conf-available/
   command install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
