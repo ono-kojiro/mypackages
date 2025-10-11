@@ -22,7 +22,7 @@ outputdir=$top_dir
 
 all()
 {
-  fetch
+  #fetch
   extract
   patch
   configure

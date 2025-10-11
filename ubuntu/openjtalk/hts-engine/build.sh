@@ -22,7 +22,7 @@ outputdir=$top_dir
 
 all()
 {
-  fetch
+  #fetch
   extract
   patch
   configure
@@ -79,7 +79,7 @@ prepare()
 
 patch()
 {
-  cd ${builddir}/${pkgname}-${pkgver}
+  cd ${builddir}/${realname}-${pkgver}
   cd ${top_dir}
 }
 

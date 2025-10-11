@@ -22,7 +22,7 @@ outputdir=$top_dir
 
 all()
 {
-  fetch
+  #fetch
   extract
   patch
   configure
@@ -69,8 +69,12 @@ extract()
   find $sourcedir -maxdepth 1 -type f -name "*.tar.gz" -print \
     -exec tar xzvf {} \;
   find $sourcedir -maxdepth 1 -type f -name "*.zip" -print \
-    -exec unzip {} \;
+    -exec unzip -o {} \;
 
+  if [ -d "MMDAgent_Example-1.8" ]; then
+    rm -rf ${pkgname}-${pkgver}
+    mv MMDAgent_Example-1.8 ${pkgname}-${pkgver}
+  fi
   cd ${top_dir}
 }
 
@@ -87,7 +91,7 @@ patch()
 
 configure()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 }
 
@@ -98,7 +102,7 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 }
 
@@ -109,7 +113,7 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   mkdir -p ${destdir}/usr/share/openjtalk/voice/
   find ./ -name "*.htsvoice" \
     -exec cp -f {} ${destdir}/usr/share/openjtalk/voice/ \;

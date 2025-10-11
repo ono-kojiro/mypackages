@@ -22,7 +22,7 @@ outputdir=$top_dir
 
 all()
 {
-  fetch
+  #fetch
   extract
   patch
   configure
@@ -69,6 +69,10 @@ extract()
   find $sourcedir -maxdepth 1 -type f -name "*.tar.gz" -print \
     -exec tar xzvf {} \;
 
+  if [ -d "open_jtalk_dic_utf_8-1.11" ]; then
+    rm -rf ${pkgname}-${pkgver}
+    mv open_jtalk_dic_utf_8-1.11 ${pkgname}-${pkgver}
+  fi
   cd ${top_dir}
 }
 
@@ -85,7 +89,7 @@ patch()
 
 configure()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 }
 
@@ -96,7 +100,7 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 }
 
@@ -107,7 +111,7 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   mkdir -p ${destdir}/usr/share/openjtalk/dict/
   cp -f * ${destdir}/usr/share/openjtalk/dict/
   cd ${top_dir}

@@ -22,7 +22,7 @@ outputdir=$top_dir
 
 all()
 {
-  fetch
+  #fetch
   extract
   patch
   configure
@@ -69,6 +69,10 @@ extract()
   find $sourcedir -maxdepth 1 -type f -name "*.tar.gz" -print \
     -exec tar xzvf {} \;
 
+  if [ -d "open_jtalk-1.11" ]; then
+    rm -rf ${pkgname}-${pkgver}
+    mv open_jtalk-1.11 ${pkgname}-${pkgver}
+  fi
   cd ${top_dir}
 }
 
@@ -85,7 +89,7 @@ patch()
 
 configure()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   sh configure \
     --prefix=/usr \
     --with-hts-engine-header-path=/usr/include \
@@ -101,7 +105,7 @@ config()
 
 compile()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   make
   cd ${top_dir}
 }
@@ -113,7 +117,7 @@ build()
 
 install()
 {
-  cd ${builddir}/${realname}-${pkgver}
+  cd ${builddir}/${pkgname}-${pkgver}
   make install DESTDIR=${destdir}
   cd ${top_dir}
 
