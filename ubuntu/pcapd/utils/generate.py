@@ -98,13 +98,14 @@ rule pcapxz2log
             logfile  = logdir + '/' + basename + '/' + basename + '.log'
             fp.write('build {0}: pcapxz2log {1}\n'.format(logfile, pcapxz))
             count = count + 1 
-            print('count is {0}'.format(count), file=sys.stderr)
-            if count > 4:
-                break
+            #print('count is {0}'.format(count), file=sys.stderr)
+            #if count > 4:
+            #    break
 
     fp.write('\n')
     if output is not None :
         fp.close()
-	
+    print('INFO: generate {0} target'.format(count))
+
 if __name__ == "__main__":
 	main()

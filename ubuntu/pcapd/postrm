@@ -3,8 +3,8 @@
 set -e
 
 PKG_NAME=pcapd
-PKG_USER=tcpdump
-PKG_GROUP=tcpdump
+PKG_USER=pcapd
+PKG_GROUP=pcapd
 
 case "$1" in
   purge )
