@@ -12,6 +12,8 @@ ARCH="all"
 
 OUTPUTDIR="$PWD"
 
+flags=""
+
 help()
 {
   cat - << EOF
@@ -50,11 +52,11 @@ install()
   command install -m 755 -d $DESTDIR/usr/bin/
   command install -m 755 -d $DESTDIR/var/lib/${PKGNAME}
   command install -m 755 -d $DESTDIR/var/log/${PKGNAME}
-  command install -m 755 -d $DESTDIR/usr/lib/systemd/system/
+  command install -m 755 -d $DESTDIR/lib/systemd/system/
   command install -m 755 -d $DESTDIR/etc/${PKGNAME}
   command install ${top_dir}/${PKGNAME} $DESTDIR/usr/bin/
   
-  command install ${top_dir}/${PKGNAME}.service $DESTDIR/usr/lib/systemd/system/
+  command install ${top_dir}/${PKGNAME}.service $DESTDIR/lib/systemd/system/
   command install -m 0644 ${top_dir}/${PKGNAME}.conf $DESTDIR/etc/${PKGNAME}/
 
   command install -m 0755 -d $DESTDIR/etc/apparmor.d/local/
@@ -89,14 +91,21 @@ EOS
   fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
 }
 
-sysinstall()
+show()
 {
-  sudo apt -y install ./${PKGNAME}_${PKGVER}_${ARCH}.deb
+  dpkg -c ./${PKGNAME}_${PKGVER}_${ARCH}.deb
+}
+
+sysinst()
+{
+  cp -f ${PKGNAME}_${PKGVER}_${ARCH}.deb /tmp/
+  sudo apt -y install $flags /tmp/${PKGNAME}_${PKGVER}_${ARCH}.deb
+  rm -f /tmp/${PKGNAME}_${PKGVER}_${ARCH}.deb
 }
 
 sysuninst()
 {
-  sudo apt -y remove ${PKGNAME}
+  sudo apt -y remove $flags ${PKGNAME}
 }
 
 clean()
@@ -108,7 +117,28 @@ if [ "$#" -eq 0 ]; then
   all
 fi
 
-for target in "$@"; do
+args=""
+while [ $# -ne 0 ]; do
+  case $1 in
+    -h )
+      usage
+      exit 1
+      ;;
+    -v )
+      verbose=1
+      ;;
+    -* )
+      flags="$flags $1"
+      ;;
+    * )
+      args="$args $1"
+      ;;
+  esac
+
+  shift
+done
+
+for target in $args; do
 	LANG=C type $target | grep 'function' > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 		$target

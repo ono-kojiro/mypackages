@@ -8,20 +8,28 @@ PKG_GROUP=pcapd
 
 case "$1" in
   configure)
-    #if ! getent group "${PKG_GROUP}" > /dev/null; then
-    #  addgroup --system --quiet "${PKG_GROUP}"
-    #fi
+    echo "DEBUG: configure in postinst" 1>&2
+    echo "DEBUG: getent group ${PKG_GROUP}"
+    #getent group "${PKG_GROUP}" > /dev/null
+    num=`getent group | grep -e "^${PKG_GROUP}:" | wc -l`
+    if [ "$num" -eq 0 ]; then
+      echo "DEBUG: addgroup --system --quiet ${PKG_GROUP}"
+      addgroup --system --quiet "${PKG_GROUP}"
+    fi
 
-    #if ! id "${PKG_USER}" > /dev/null 2>&1; then
-    #  adduser --system --quiet \
-    #    --home /var/lib/${PKG_NAME} \
-    #    --no-create-home \
-    #    --ingroup "${PKG_GROUP}" \
-    #    --disabled-password \
-    #    --shell /usr/sbin/nologin \
-    #    --gecos ${PKG_USER} \
-    #    "${PKG_USER}"
-    #fi
+    echo "DEBUG: id ${PKG_USER}"
+    num=`getent passwd | grep -e "^${PKG_USER}:" | wc -l`
+    if [ "$num" -eq 0 ]; then
+      echo "DEBUG: adduser --system --quiet"
+      adduser --system --quiet \
+        --home /var/lib/${PKG_NAME} \
+        --no-create-home \
+        --ingroup "${PKG_GROUP}" \
+        --disabled-password \
+        --shell /usr/sbin/nologin \
+        --gecos ${PKG_USER} \
+        "${PKG_USER}"
+    fi
     
     mkdir -p /etc/${PKG_NAME}
     chown -R "${PKG_USER}:${PKG_GROUP}" /etc/${PKG_NAME}
@@ -60,12 +68,14 @@ esac
 
 case "$1" in
   configure | abort-upgrade | abort-deconfigure | abort-remove )
-
+    echo "DEBUG: deb-systemd-helper umask"
     deb-systemd-helper umask "${PKG_NAME}.service" > /dev/null || true
 
+    echo "DEBUG: deb-systemd-helper was-enabled"
     if deb-systemd-helper --quiet was-enabled "${PKG_NAME}"; then
       deb-systemd-helper enable       "${PKG_NAME}" > /dev/null || true
     else
+      echo "DEBUG: deb-systemd-helper update-state"
       deb-systemd-helper update-state "${PKG_NAME}" > /dev/null || true
     fi
     ;;

@@ -8,24 +8,24 @@ PKG_GROUP=pcapd
 
 case "$1" in
   purge )
-    #if [ -x "$(command -v deluser)" ]; then
-    #  deluser --quiet --system $PKG_USER || \
-    #    echo "failed to remove ${PKG_NAME} system user with deluser" 1>&2
-    #else
-    #  userdel ${PKG_USER} || \
-    #    echo "failed to remove ${PKG_NAME} system user with userdel" 1>&2
-    #fi
+    if [ -x "$(command -v deluser)" ]; then
+      deluser --quiet --system $PKG_USER || \
+        echo "failed to remove ${PKG_NAME} system user with deluser" 1>&2
+    else
+      userdel ${PKG_USER} || \
+        echo "failed to remove ${PKG_NAME} system user with userdel" 1>&2
+    fi
     
    
-    #if getent group "$PKG_GROUP" > /dev/null; then 
-    #  if [ -x "$(command -v delgroup)" ]; then
-    #    delgroup --quiet --system --only-if-empty ${PKG_GROUP} || \
-    #      echo "failed to remove ${PKG_NAME} system group with delgroup" 1>&2
-    #  else
-    #    groupdel ${PKG_GROUP} || \
-    #      echo "failed to remove ${PKG_NAME} system group with groupdel" 1>&2
-    #  fi
-    #fi
+    if getent group "$PKG_GROUP" > /dev/null; then 
+      if [ -x "$(command -v delgroup)" ]; then
+        delgroup --quiet --system --only-if-empty ${PKG_GROUP} || \
+          echo "failed to remove ${PKG_NAME} system group with delgroup" 1>&2
+      else
+        groupdel ${PKG_GROUP} || \
+          echo "failed to remove ${PKG_NAME} system group with groupdel" 1>&2
+      fi
+    fi
 
     rm -rf \
       /var/lib/${PKG_NAME} \
