@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+#set -e
 
 PKG_NAME=pcapd
 PKG_USER=pcapd
@@ -8,19 +8,19 @@ PKG_GROUP=pcapd
 
 case "$1" in
   configure)
-    echo "DEBUG: configure in postinst" 1>&2
-    echo "DEBUG: getent group ${PKG_GROUP}"
+    #echo "DEBUG: configure in postinst" 1>&2
+    #echo "DEBUG: getent group ${PKG_GROUP}"
     #getent group "${PKG_GROUP}" > /dev/null
     num=`getent group | grep -e "^${PKG_GROUP}:" | wc -l`
     if [ "$num" -eq 0 ]; then
-      echo "DEBUG: addgroup --system --quiet ${PKG_GROUP}"
+      #echo "DEBUG: addgroup --system --quiet ${PKG_GROUP}"
       addgroup --system --quiet "${PKG_GROUP}"
     fi
 
     echo "DEBUG: id ${PKG_USER}"
     num=`getent passwd | grep -e "^${PKG_USER}:" | wc -l`
     if [ "$num" -eq 0 ]; then
-      echo "DEBUG: adduser --system --quiet"
+      #echo "DEBUG: adduser --system --quiet"
       adduser --system --quiet \
         --home /var/lib/${PKG_NAME} \
         --no-create-home \
@@ -68,15 +68,16 @@ esac
 
 case "$1" in
   configure | abort-upgrade | abort-deconfigure | abort-remove )
-    echo "DEBUG: deb-systemd-helper umask"
-    deb-systemd-helper umask "${PKG_NAME}.service" > /dev/null || true
+    #echo "DEBUG: deb-systemd-helper unmask"
+    deb-systemd-helper unmask "${PKG_NAME}.service" > /dev/null 2>&1 || true
 
-    echo "DEBUG: deb-systemd-helper was-enabled"
+    #echo "DEBUG: deb-systemd-helper was-enabled"
     if deb-systemd-helper --quiet was-enabled "${PKG_NAME}"; then
-      deb-systemd-helper enable       "${PKG_NAME}" > /dev/null || true
+      #echo "DEBUG: deb-systemd-helper enable"
+      deb-systemd-helper enable       "${PKG_NAME}" > /dev/null 2>&1 || true
     else
-      echo "DEBUG: deb-systemd-helper update-state"
-      deb-systemd-helper update-state "${PKG_NAME}" > /dev/null || true
+      #echo "DEBUG: deb-systemd-helper update-state"
+      deb-systemd-helper update-state "${PKG_NAME}" > /dev/null 2>&1 || true
     fi
     ;;
   * )

@@ -56,7 +56,7 @@ install()
   command install -m 755 -d $DESTDIR/etc/${PKGNAME}
   command install ${top_dir}/${PKGNAME} $DESTDIR/usr/bin/
   
-  command install ${top_dir}/${PKGNAME}.service $DESTDIR/lib/systemd/system/
+  command install -m 0644 ${top_dir}/${PKGNAME}.service $DESTDIR/lib/systemd/system/
   command install -m 0644 ${top_dir}/${PKGNAME}.conf $DESTDIR/etc/${PKGNAME}/
 
   command install -m 0755 -d $DESTDIR/etc/apparmor.d/local/
