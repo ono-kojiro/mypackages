@@ -1,0 +1,76 @@
+#!/bin/sh
+
+top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
+
+flags=""
+
+help()
+{
+  usage
+}
+
+usage()
+{
+  cat << EOS
+usage : $0 [options] target1 target2 ...
+
+target:
+  deploy
+EOS
+
+}
+
+all()
+{
+  deploy
+}
+
+args=""
+while [ "$#" -ne 0 ]; do
+  case $1 in
+    -h )
+      usage
+      exit 1
+      ;;
+    -v )
+      verbose=1
+      ;;
+    -n | --name)
+      shift
+      name="$1"
+      ;;
+	-* )
+	  flags="$flags $1"
+	  ;;
+    * )
+      args="$args $1"
+      ;;
+  esac
+  
+  shift
+done
+
+#if [ -z "$args" ]; then
+#  help
+#  exit 1
+#fi
+
+targetdir="/var/lib/pcapd"
+wildcard="*.pcap.xz"
+
+find $targetdir -maxdepth 1 -type f -name "$wildcard" -exec sh -c '
+  target={}
+  dirname=`dirname $target`
+  basename=`basename $target`
+  echo $basename | grep -E "^[0-9]{8}-[0-9]{2}"
+  if [ "$?" -ne 0 ]; then
+     echo "ERROR: invalid filename, $target"
+     exit 1
+  fi
+
+  subdir=`echo $basename | sed -E -e "s/^([[:digit:]]{8}-[[:digit:]]{2})(.*)/\1/"`
+  echo "INFO: move $target to $dirname/$subdir/"
+  mkdir -p $dirname/$subdir/
+  mv $target $dirname/$subdir/
+' \;
+

@@ -6,7 +6,7 @@ cd $top_dir
 workdir="$PWD/work"
 
 PKGNAME=pcapd
-PKGVER="0.0.1"
+PKGVER="0.0.2"
 DESTDIR="$workdir/dest/${PKGNAME}-${PKGVER}"
 ARCH="all"
 
@@ -54,6 +54,9 @@ install()
   command install -m 755 -d $DESTDIR/var/log/${PKGNAME}
   command install -m 755 -d $DESTDIR/lib/systemd/system/
   command install -m 755 -d $DESTDIR/etc/${PKGNAME}
+  command install -m 755 -d $DESTDIR/etc/cron.d/
+  command install -m 755 -d $DESTDIR/usr/lib/${PKGNAME}
+  
   command install ${top_dir}/${PKGNAME} $DESTDIR/usr/bin/
   
   command install -m 0644 ${top_dir}/${PKGNAME}.service $DESTDIR/lib/systemd/system/
@@ -61,6 +64,10 @@ install()
 
   command install -m 0755 -d $DESTDIR/etc/apparmor.d/local/
   command install -m 0644 ${top_dir}/usr.bin.tcpdump $DESTDIR/etc/apparmor.d/local/
+
+  command install -m 755 mvsubdir   $DESTDIR/usr/lib/${PKGNAME}/
+  command install -m 755 pcap2xz    $DESTDIR/usr/lib/${PKGNAME}/
+  command install -m 644 pcapd.cron $DESTDIR/etc/cron.d/pcapd
 
   cd $top_dir
 }
@@ -81,7 +88,7 @@ Package: $PKGNAME
 Maintainer: $maintainer <$email>
 Architecture: $ARCH
 Version: $PKGVER
-Depends: tcpdump, xz-utils
+Depends: tcpdump, xz-utils, cron
 Description: $PKGNAME
 EOS
 

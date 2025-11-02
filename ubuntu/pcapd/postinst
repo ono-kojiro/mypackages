@@ -17,7 +17,6 @@ case "$1" in
       addgroup --system --quiet "${PKG_GROUP}"
     fi
 
-    echo "DEBUG: id ${PKG_USER}"
     num=`getent passwd | grep -e "^${PKG_USER}:" | wc -l`
     if [ "$num" -eq 0 ]; then
       #echo "DEBUG: adduser --system --quiet"
@@ -56,6 +55,8 @@ case "$1" in
     sed -i -E -e 's|^(\s*)#(include <local/usr.bin.tcpdump>)|\1\2|' /etc/apparmor.d/usr.bin.tcpdump
 
     systemctl restart apparmor
+
+    systemctl restart cron
 
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)

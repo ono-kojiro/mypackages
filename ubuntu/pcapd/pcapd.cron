@@ -1,0 +1,19 @@
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+#  .-- minute
+# /   .- hour
+#|   /   .- day
+#|  |   /   .- month
+#|  |  |   /   .- weekday
+#|  |  |  |   /   .- run as user
+#|  |  |  |  |   /               .- command
+#|  |  |  |  |  |               /
+#|  |  |  |  |  |              |
+#|  |  |  |  |  |              |
+#*  *  *  *  *  user          cmd
+
+# ex. run echo command every minute
+#* * * * *  nobody   echo hello
+
+*/5 * * * * pcapd    /usr/lib/pcapd/mvsubdir
+

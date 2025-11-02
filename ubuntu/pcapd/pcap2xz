@@ -1,0 +1,69 @@
+#!/bin/sh
+
+top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
+
+flags=""
+
+help()
+{
+  usage
+}
+
+usage()
+{
+  cat << EOS
+usage : $0 [options] target1 target2 ...
+
+target:
+  deploy
+EOS
+
+}
+
+all()
+{
+  deploy
+}
+
+args=""
+while [ "$#" -ne 0 ]; do
+  case $1 in
+    -h )
+      usage
+      exit 1
+      ;;
+    -v )
+      verbose=1
+      ;;
+    -n | --name)
+      shift
+      name="$1"
+      ;;
+	-* )
+	  flags="$flags $1"
+	  ;;
+    * )
+      args="$args $1"
+      ;;
+  esac
+  
+  shift
+done
+
+#if [ -z "$args" ]; then
+#  help
+#  exit 1
+#fi
+
+ps -ef | grep -e '^pcapd ' >/dev/null 2>&1
+if [ "$?" -eq 0 ]; then
+  echo "ERROR: pcapd is running."
+  echo "ERROR: Please stop pcapd first."
+  exit 1
+fi
+
+targetdir="/var/lib/pcapd"
+wildcard="*.pcap"
+
+sudo -u pcapd \
+  find $targetdir -maxdepth 1 -type f -name "$wildcard" -exec xz -z {} \;

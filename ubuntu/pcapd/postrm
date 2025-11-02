@@ -32,6 +32,8 @@ case "$1" in
       /var/log/${PKG_NAME} \
       /var/run/${PKG_NAME} \
       /var/cache/${PKG_NAME}
+
+    rm -f /etc/cron.d/${PKG_NAME}
     ;;
 
   remove | upgrade | failed-upgrade )
