@@ -1,0 +1,13 @@
+*~
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+*.deb
+config.status
+configure
+*.zip
+install-sh
+missing
+work/
+
