@@ -5,7 +5,7 @@ cd $top_dir
   
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.43.0
+VERSION=4.46.0
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
 
@@ -17,7 +17,7 @@ mkdir -p ${workdir}
 
 WARFILE=$(basename $WAR_URL)
 
-DESTDIR=$top_dir/dest
+DESTDIR=$workdir/dest/${PKGNAME}-${VERSION}
 OUTPUTDIR=.
 
 debug()

@@ -24,7 +24,7 @@ case "$1" in
     
     mkdir -p /etc/gitbucket
     chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /etc/gitbucket/
-    chmod -R 0660 /etc/gitbucket/
+    chmod -R 0770 /etc/gitbucket/
     
     mkdir -p /var/lib/gitbucket
     chown -R "${GITBUCKET_USER}:${GITBUCKET_GROUP}" /var/lib/gitbucket
