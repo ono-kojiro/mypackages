@@ -3,4 +3,5 @@
 work/
 *.crt
 *.key
+.env
 

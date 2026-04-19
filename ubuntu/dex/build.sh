@@ -5,6 +5,10 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
+if [ ! -e ".env" ]; then
+  touch .env
+fi
+
 . ./.env
 
 realname="dex"
@@ -179,9 +183,9 @@ install()
   command install bin/dex         ${destdir}/usr/bin
   command install bin/example-app ${destdir}/usr/bin
   command install bin/grpc-client ${destdir}/usr/bin
-  command install -m 640 examples/ldap/config-ldap.yaml ${destdir}/etc/dex
-  command install ${top_dir}/dex.service ${destdir}/lib/systemd/system/
-  command install ${top_dir}/example-app.service ${destdir}/lib/systemd/system/
+  command install -m 640 ${top_dir}/config/config-ldap.yaml ${destdir}/etc/dex
+  command install -m 644 ${top_dir}/config/dex.service ${destdir}/lib/systemd/system/
+  command install -m 644 ${top_dir}/config/example-app.service ${destdir}/lib/systemd/system/
   command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
   cd ${top_dir}
 
@@ -262,9 +266,11 @@ cert()
     chown -R dex:dex /etc/dex/certs/
 
     cp -f config-ldap.yaml /etc/dex/
+    chown dex:dex /etc/dex/config-ldap.yaml
     chmod 660 /etc/dex/config-ldap.yaml
     
     cp -f example-app.conf /etc/dex/
+    chown dex:dex /etc/dex/example-app.conf
     chmod 660 /etc/dex/example-app.conf
 EOF
 
