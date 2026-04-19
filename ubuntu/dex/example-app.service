@@ -1,0 +1,24 @@
+[Unit]
+Description=dex
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/dex/example-app.conf
+ExecStart=/usr/bin/example-app \
+  --listen $LISTEN_URL \
+  --issuer $ISSUER_URL \
+  --redirect-uri $REDIRECT_URI \
+  --tls-cert $TLS_CERT \
+  --tls-key  $TLS_KEY \
+  --issuer-root-ca /etc/ssl/certs/ca-certificates.crt
+
+Restart=on-failure
+SuccessExitStatus=143
+
+User=dex
+Group=dex
+
+[Install]
+WantedBy=multi-user.target

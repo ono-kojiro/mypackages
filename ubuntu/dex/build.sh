@@ -181,6 +181,8 @@ install()
   command install bin/grpc-client ${destdir}/usr/bin
   command install -m 640 examples/ldap/config-ldap.yaml ${destdir}/etc/dex
   command install ${top_dir}/dex.service ${destdir}/lib/systemd/system/
+  command install ${top_dir}/example-app.service ${destdir}/lib/systemd/system/
+  command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
   cd ${top_dir}
 
   custom_install
@@ -229,6 +231,11 @@ sysinstall()
   sudo apt -y install ./${pkgname}_${pkgver}_amd64.deb
 }
 
+sysinst()
+{
+  sysinstall
+}
+
 sysuninstall()
 {
   sudo apt -y remove --purge ${pkgname}
@@ -237,6 +244,30 @@ sysuninstall()
 sysuninst()
 {
   sysuninstall
+}
+
+cert()
+{
+  sudo sh -s << EOF
+    cp -f dex.crt /etc/dex/certs/
+    cp -f dex.key /etc/dex/certs/
+    cp -f example-app.crt /etc/dex/certs/
+    cp -f example-app.key /etc/dex/certs/
+
+    chmod 664 /etc/dex/certs/dex.crt
+    chmod 660 /etc/dex/certs/dex.key
+    chmod 664 /etc/dex/certs/example-app.crt
+    chmod 660 /etc/dex/certs/example-app.key
+
+    chown -R dex:dex /etc/dex/certs/
+
+    cp -f config-ldap.yaml /etc/dex/
+    chmod 660 /etc/dex/config-ldap.yaml
+    
+    cp -f example-app.conf /etc/dex/
+    chmod 660 /etc/dex/example-app.conf
+EOF
+
 }
 
 if [ "$#" -eq 0 ]; then
