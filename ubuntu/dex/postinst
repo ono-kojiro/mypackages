@@ -39,6 +39,16 @@ case "$1" in
       chown -R "${USER}:${GROUP}" /var/run/${NAME}
       chmod -R 750 /var/run/${NAME}
     fi
+    
+    mkdir -p /etc/dex
+    chown -R "root:${GROUP}" /etc/dex
+    chmod -R 750 /etc/dex
+    chmod g+s /etc/dex
+
+
+    mkdir -p /etc/dex/certs
+    chown -R "${USER}:${GROUP}" /etc/dex/certs
+    chmod -R 770 /etc/dex/certs
 
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)

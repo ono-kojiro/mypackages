@@ -1,3 +1,6 @@
 *~
 *.deb
 work/
+*.crt
+*.key
+

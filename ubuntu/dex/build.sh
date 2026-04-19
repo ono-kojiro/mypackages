@@ -5,12 +5,14 @@ set -e
 top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
 cd $top_dir
 
+. ./.env
+
 realname="dex"
 pkgname="${realname}"
-pkgver="2.41.1"
+pkgver="2.45.1"
 
 src_urls=""
-src_urls="$src_urls https://github.com/dexidp/dex/archive/refs/tags/v2.41.1.tar.gz"
+src_urls="$src_urls https://github.com/dexidp/dex/archive/refs/tags/v${pkgver}.tar.gz"
 
 url="https://github.com/dexidp/dex"
 
@@ -142,20 +144,28 @@ build()
 
 server()
 {
+  #cp -f ${builddir}/${pkgname}-${pkgver}/examples/ldap/config-ldap.yaml .
+
   cd ${builddir}/${pkgname}-${pkgver}
-  ./bin/dex serve config-ldap.yaml
+  ./bin/dex serve ${top_dir}/config-ldap.yaml
   cd ${top_dir}
 }
 
 app()
 {
+  cp -f ${TLS_CERT} ${builddir}/${pkgname}-${pkgver}
+  cp -f ${TLS_KEY}  ${builddir}/${pkgname}-${pkgver}
+
   cd ${builddir}/${pkgname}-${pkgver}
   ./bin/example-app \
-    --listen https://192.168.0.98:5555 \
-    --issuer https://192.168.0.98:5556/dex \
-    --redirect-uri https://192.168.0.98:5555/callback \
-    --tls-cert example-app.crt \
-    --tls-key  example-app.key
+    --listen ${LISTEN_URL} \
+    --issuer ${ISSUER_URL} \
+    --redirect-uri ${REDIRECT_URI} \
+    --tls-cert ${TLS_CERT} \
+    --tls-key  ${TLS_KEY} \
+    --issuer-root-ca /etc/ssl/certs/ca-certificates.crt \
+    --debug
+
   cd ${top_dir}
 }
 
@@ -178,7 +188,7 @@ install()
 
 custom_install()
 {
-  cd ${destdir}/usr/bin
+  cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 }
 
@@ -219,7 +229,17 @@ sysinstall()
   sudo apt -y install ./${pkgname}_${pkgver}_amd64.deb
 }
 
-if [ $# -eq 0 ]; then
+sysuninstall()
+{
+  sudo apt -y remove --purge ${pkgname}
+}
+
+sysuninst()
+{
+  sysuninstall
+}
+
+if [ "$#" -eq 0 ]; then
   all
 fi
 
