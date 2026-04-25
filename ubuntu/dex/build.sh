@@ -241,6 +241,10 @@ mclean()
 sysinstall()
 {
   sudo apt -y install ./${pkgname}_${pkgver}_amd64.deb
+  postinst
+  sudo systemctl daemon-reload
+  sudo systemctl restart dex
+  sudo systemctl restart example-app
 }
 
 sysinst()
@@ -251,6 +255,7 @@ sysinst()
 sysuninstall()
 {
   sudo apt -y remove --purge ${pkgname}
+  sudo rm -rf /etc/dex/
 }
 
 sysuninst()
@@ -258,7 +263,7 @@ sysuninst()
   sysuninstall
 }
 
-cert()
+install_certs()
 {
   sudo sh -s << EOF
     cp -f dex.crt /etc/dex/certs/
@@ -272,7 +277,12 @@ cert()
     chmod 660 /etc/dex/certs/example-app.key
 
     chown -R dex:dex /etc/dex/certs/
+EOF
+}
 
+install_configs()
+{
+  sudo sh -s << EOF
     cp -f config-ldap.yaml /etc/dex/
     chown dex:dex /etc/dex/config-ldap.yaml
     chmod 660 /etc/dex/config-ldap.yaml
@@ -282,6 +292,12 @@ cert()
     chmod 660 /etc/dex/example-app.conf
 EOF
 
+}
+
+postinst()
+{
+  install_certs
+  install_configs
 }
 
 start()
@@ -300,6 +316,36 @@ restart()
 {
   sudo systemctl restart dex
   sudo systemctl restart example-app
+}
+
+debug()
+{
+  cd / && sudo -u dex /usr/bin/dex serve /etc/dex/config-ldap.yaml
+}
+
+debug_example()
+{
+  cd / && sudo -u dex /bin/sh -s << EOF
+  {
+     . /etc/dex/example-app.conf
+     echo "DEBUG: TLS_CERT is $TLS_CERT"
+     cd / && /usr/bin/example-app \
+       --listen $LISTEN_URL \
+       --issuer $ISSUER_URL \
+       --redirect-uri $REDIRECT_URI \
+       --tls-cert $TLS_CERT \
+       --tls-key  $TLS_KEY \
+       --issuer-root-ca /etc/ssl/certs/ca-certificates.crt
+  }
+EOF
+
+}
+
+keys()
+{
+  cmd="curl -k -s https://192.168.1.72:5556/dex/keys"
+  echo "CMD: $cmd"
+  $cmd  | jq .
 }
 
 if [ "$#" -eq 0 ]; then
