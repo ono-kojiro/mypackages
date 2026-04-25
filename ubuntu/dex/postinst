@@ -63,11 +63,14 @@ case "$1" in
   configure | abort-upgrade | abort-deconfigure | abort-remove )
 
     deb-systemd-helper umask "${NAME}.service" > /dev/null || true
+    deb-systemd-helper umask "example-app.service" > /dev/null || true
 
     if deb-systemd-helper --quiet was-enabled "${NAME}.service"; then
       deb-systemd-helper enable       "${NAME}.service" > /dev/null || true
+      deb-systemd-helper enable       "example-app.service" > /dev/null || true
     else
       deb-systemd-helper update-state "${NAME}.service" > /dev/null || true
+      deb-systemd-helper update-state "example-app.service" > /dev/null || true
     fi
     ;;
   * )

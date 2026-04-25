@@ -125,6 +125,7 @@ patch()
 configure()
 {
   cd ${builddir}/${pkgname}-${pkgver}
+  #command patch -p0 -i ${top_dir}/0001-enable_x509.patch
   cd ${top_dir}
 }
 
@@ -138,6 +139,13 @@ compile()
   cd ${builddir}/${pkgname}-${pkgver}
   make
   make examples
+  cd ${top_dir}
+}
+
+clean()
+{
+  cd ${builddir}/${pkgname}-${pkgver}
+  make clean
   cd ${top_dir}
 }
 
@@ -224,7 +232,7 @@ info()
   dpkg-deb --info ${pkgname}_${pkgver}_amd64.deb
 }
 
-clean()
+mclean()
 {
   rm -rf $builddir
   rm -rf $destdir
@@ -274,6 +282,24 @@ cert()
     chmod 660 /etc/dex/example-app.conf
 EOF
 
+}
+
+start()
+{
+  sudo systemctl start dex
+  sudo systemctl start example-app
+}
+
+stop()
+{
+  sudo systemctl stop dex
+  sudo systemctl stop example-app
+}
+
+restart()
+{
+  sudo systemctl restart dex
+  sudo systemctl restart example-app
 }
 
 if [ "$#" -eq 0 ]; then
