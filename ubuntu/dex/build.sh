@@ -318,6 +318,16 @@ restart()
   sudo systemctl restart example-app
 }
 
+status()
+{
+  res=`systemctl is-active dex`
+  echo "INFO: dex is $res"
+
+  res=`systemctl is-active example-app`
+  echo "INFO: example-app is $res"
+}
+
+
 debug()
 {
   cd / && sudo -u dex /usr/bin/dex serve /etc/dex/config-ldap.yaml

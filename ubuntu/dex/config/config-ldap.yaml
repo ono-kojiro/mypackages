@@ -1,4 +1,4 @@
-issuer: https://localhost:5556/dex
+issuer: https://192.168.1.72:5556/dex
 storage:
   type: sqlite3
   config:
@@ -60,10 +60,31 @@ connectors:
 
       # The group name should be the "cn" value.
       nameAttr: cn
+    
+    userIDKey: uid
+    userNameKey: uid
+    claims:
+      username: uid
+      email: mail
+      name: cn
+      groups: memberOf
 
 staticClients:
 - id: example-app
   redirectURIs:
-  - 'https://localhost:5555/callback'
+  - 'https://192.168.1.72:5555/callback'
   name: 'Example App'
   secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+
+- id: myclient
+  name: myclient
+  public: true
+  redirectURIs: []
+  grantTypes:
+  - urn:ietf:params:oauth:grant-type:device_code
+  scopes:
+  - "openid"
+  - "email"
+  - "profile"
+  - "offline_access"
+
