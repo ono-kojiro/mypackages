@@ -55,7 +55,7 @@ done
 #  exit 1
 #fi
 
-targetdir="/var/lib/pcapd"
+targetdir="/var/lib/pcapd/"
 wildcard="*.pcap.xz"
 
 find $targetdir -maxdepth 1 -type f -name "$wildcard" -exec sh -c '
@@ -68,9 +68,10 @@ find $targetdir -maxdepth 1 -type f -name "$wildcard" -exec sh -c '
      exit 1
   fi
 
-  subdir=`echo $basename | sed -E -e "s/^([[:digit:]]{8}-[[:digit:]]{2})(.*)/\1/"`
-  echo "INFO: move $target to $dirname/$subdir/"
-  mkdir -p $dirname/$subdir/
-  mv $target $dirname/$subdir/
+  daydir=`echo $basename | sed -E -e "s/^([[:digit:]]{8})-(.*)/\1/"`
+  hourdir=`echo $basename | sed -E -e "s/^([[:digit:]]{8}-[[:digit:]]{2})(.*)/\1/"`
+  echo "INFO: move $target to $dirname/$daydir/$hourdir/"
+  mkdir -p $dirname/$daydir/$hourdir/
+  mv $target $dirname/$daydir/$hourdir/
 ' \;
 
