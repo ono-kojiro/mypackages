@@ -7,7 +7,7 @@ cd $top_dir
 
 realname="fluent-bit"
 pkgname="fluent-bit"
-pkgver="5.0.4"
+pkgver="5.0.5"
 
 src_urls=""
 src_urls="$src_urls https://github.com/fluent/fluent-bit/archive/refs/tags/v${pkgver}.tar.gz"
