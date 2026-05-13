@@ -209,11 +209,6 @@ custom_install()
     rm -rf ${destdir}/usr/lualib
   fi
 
-  #if [ -d "${destdir}/usr/site" ]; then
-  #  mkdir -p ${destdir}/usr/share/doc/openresty/
-  #  mv ${destdir}/usr/site ${destdir}/usr/share/doc/openresty/
-  #fi
-
   if [ -d "${destdir}/usr/pod" ]; then
     mkdir -p ${destdir}/usr/share/doc/openresty/
     mv ${destdir}/usr/pod ${destdir}/usr/share/doc/openresty/
@@ -225,19 +220,16 @@ custom_install()
   fi
   
   if [ -d "${destdir}/usr/luajit/share/lua" ]; then
-    echo "DEBUG: move /usr/luajit/share/lua"
     rsync -aq ${destdir}/usr/luajit/share/lua/ ${destdir}/usr/share/lua/
     rm -rf ${destdir}/usr/luajit/share/lua
   fi
   
   if [ -d "${destdir}/usr/luajit/share/man" ]; then
-    echo "DEBUG: move /usr/luajit/share/man"
     rsync -aq ${destdir}/usr/luajit/share/man/ ${destdir}/usr/share/man/
     rm -rf ${destdir}/usr/luajit/share/man
   fi
 
   if [ -d "${destdir}/usr/luajit/share" ]; then
-    echo "DEBUG: move /usr/luajit/share"
     rsync -aq ${destdir}/usr/luajit/share/ ${destdir}/usr/share/
     rm -rf ${destdir}/usr/luajit/share
   fi
@@ -274,6 +266,17 @@ custom_install()
   rm -rf ${destdir}/usr/site/lualib
 
   mkdir -p ${destdir}/var/www/html
+
+  mkdir -p ${destdir}/etc/nginx/conf.d/
+  cp -f lua-path.conf ${destdir}/etc/nginx/conf.d/
+
+  mkdir -p ${destdir}/etc/nginx/sites-available/
+  cp -f default ${destdir}/etc/nginx/sites-available/
+  
+  mkdir -p ${destdir}/etc/nginx/sites-enabled/
+
+  cp -f nginx.conf ${destdir}/etc/nginx/
+
   cp -f index.html ${destdir}/var/www/html
 }
 
