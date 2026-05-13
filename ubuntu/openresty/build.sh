@@ -19,6 +19,7 @@ src_urls=""
 src_urls="$src_urls https://openresty.org/download/openresty-1.25.3.2.tar.gz"
 #src_urls="$src_urls https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.bz2/download"
 src_urls="$src_urls https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.bz2"
+src_urls="$src_urls https://github.com/ledgetech/lua-resty-http/archive/refs/tags/v0.17.2.tar.gz"
 
 url="https://openresty.org/"
 
@@ -185,6 +186,11 @@ install()
 
 custom_install()
 {
+  cd ${top_dir}/work/build/lua-resty-http-0.17.2/
+  mkdir -p ${destdir}/usr/lib/lua/5.1/resty
+  cp -r lib/resty/* ${destdir}/usr/lib/lua/5.1/resty/
+  cd ${top_dir}
+
   cd ${builddir}/${pkgname}-${pkgver}
   cd ${top_dir}
 
@@ -198,14 +204,15 @@ custom_install()
   fi
 
   if [ -d "${destdir}/usr/lualib" ]; then
-    mkdir -p ${destdir}/usr/share/lua
-    mv ${destdir}/usr/lualib ${destdir}/usr/share/lua/5.1
+    mkdir -p ${destdir}/usr/lib/lua/5.1
+    rsync -aq ${destdir}/usr/lualib/ ${destdir}/usr/lib/lua/5.1/
+    #rm -rf ${destdir}/usr/lualib
   fi
 
-  if [ -d "${destdir}/usr/site" ]; then
-    mkdir -p ${destdir}/usr/share/doc/openresty/
-    mv ${destdir}/usr/site ${destdir}/usr/share/doc/openresty/
-  fi
+  #if [ -d "${destdir}/usr/site" ]; then
+  #  mkdir -p ${destdir}/usr/share/doc/openresty/
+  #  mv ${destdir}/usr/site ${destdir}/usr/share/doc/openresty/
+  #fi
 
   if [ -d "${destdir}/usr/pod" ]; then
     mkdir -p ${destdir}/usr/share/doc/openresty/
@@ -214,40 +221,40 @@ custom_install()
 
   if [ -d "${destdir}/usr/luajit/bin" ]; then
     mv -f ${destdir}/usr/luajit/bin/* ${destdir}/usr/bin/
-    rm -rf "${destdir}/usr/luajit/bin"
+    #rm -rf "${destdir}/usr/luajit/bin"
   fi
   
   if [ -d "${destdir}/usr/luajit/share/lua" ]; then
     echo "DEBUG: move /usr/luajit/share/lua"
     rsync -aq ${destdir}/usr/luajit/share/lua/ ${destdir}/usr/share/lua/
-    rm -rf ${destdir}/usr/luajit/share/lua
+    #rm -rf ${destdir}/usr/luajit/share/lua
   fi
   
   if [ -d "${destdir}/usr/luajit/share/man" ]; then
     echo "DEBUG: move /usr/luajit/share/man"
     rsync -aq ${destdir}/usr/luajit/share/man/ ${destdir}/usr/share/man/
-    rm -rf ${destdir}/usr/luajit/share/man
+    #rm -rf ${destdir}/usr/luajit/share/man
   fi
 
   if [ -d "${destdir}/usr/luajit/share" ]; then
     echo "DEBUG: move /usr/luajit/share"
     rsync -aq ${destdir}/usr/luajit/share/ ${destdir}/usr/share/
-    rm -rf ${destdir}/usr/luajit/share
+    #rm -rf ${destdir}/usr/luajit/share
   fi
 
   if [ -d "${destdir}/usr/luajit/include" ]; then
     rsync -aq ${destdir}/usr/luajit/include/ ${destdir}/usr/include/
-    rm -rf ${destdir}/usr/luajit/include
+    #rm -rf ${destdir}/usr/luajit/include
   fi
 
   if [ -d "${destdir}/usr/luajit/share" ]; then
     rsync -aq ${destdir}/usr/luajit/share/ ${destdir}/usr/share/
-    rm -rf ${destdir}/usr/luajit/share
+    #rm -rf ${destdir}/usr/luajit/share
   fi
 
   if [ -d "${destdir}/usr/luajit/lib" ]; then
     rsync -aq ${destdir}/usr/luajit/lib/ ${destdir}/usr/lib/
-    rm -rf ${destdir}/usr/luajit/lib
+    #rm -rf ${destdir}/usr/luajit/lib
   fi
 
   if [ -d "${destdir}/usr/luajit" ]; then
@@ -262,6 +269,9 @@ custom_install()
   rm -rf ${destdir}/usr/share/luajit-2.1/jit/
   rm -f  ${destdir}/usr/bin/luajit-2.1.ROLLING
   rm -f  ${destdir}/usr/bin/luajit
+
+  mkdir -p ${destdir}/var/www/html
+  cp -f index.html ${destdir}/var/www/html
 }
 
 package()
@@ -313,7 +323,8 @@ sysinst()
 
 sysuninstall()
 {
-  sudo apt -y remove --purge ${pkgname}
+  #sudo apt -y remove --purge ${pkgname}
+  sudo apt -y remove nginx-common
 }
 
 sysuninst()
