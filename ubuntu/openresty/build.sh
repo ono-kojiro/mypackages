@@ -206,7 +206,7 @@ custom_install()
   if [ -d "${destdir}/usr/lualib" ]; then
     mkdir -p ${destdir}/usr/lib/lua/5.1
     rsync -aq ${destdir}/usr/lualib/ ${destdir}/usr/lib/lua/5.1/
-    #rm -rf ${destdir}/usr/lualib
+    rm -rf ${destdir}/usr/lualib
   fi
 
   #if [ -d "${destdir}/usr/site" ]; then
@@ -221,40 +221,40 @@ custom_install()
 
   if [ -d "${destdir}/usr/luajit/bin" ]; then
     mv -f ${destdir}/usr/luajit/bin/* ${destdir}/usr/bin/
-    #rm -rf "${destdir}/usr/luajit/bin"
+    rm -rf "${destdir}/usr/luajit/bin"
   fi
   
   if [ -d "${destdir}/usr/luajit/share/lua" ]; then
     echo "DEBUG: move /usr/luajit/share/lua"
     rsync -aq ${destdir}/usr/luajit/share/lua/ ${destdir}/usr/share/lua/
-    #rm -rf ${destdir}/usr/luajit/share/lua
+    rm -rf ${destdir}/usr/luajit/share/lua
   fi
   
   if [ -d "${destdir}/usr/luajit/share/man" ]; then
     echo "DEBUG: move /usr/luajit/share/man"
     rsync -aq ${destdir}/usr/luajit/share/man/ ${destdir}/usr/share/man/
-    #rm -rf ${destdir}/usr/luajit/share/man
+    rm -rf ${destdir}/usr/luajit/share/man
   fi
 
   if [ -d "${destdir}/usr/luajit/share" ]; then
     echo "DEBUG: move /usr/luajit/share"
     rsync -aq ${destdir}/usr/luajit/share/ ${destdir}/usr/share/
-    #rm -rf ${destdir}/usr/luajit/share
+    rm -rf ${destdir}/usr/luajit/share
   fi
 
   if [ -d "${destdir}/usr/luajit/include" ]; then
     rsync -aq ${destdir}/usr/luajit/include/ ${destdir}/usr/include/
-    #rm -rf ${destdir}/usr/luajit/include
+    rm -rf ${destdir}/usr/luajit/include
   fi
 
   if [ -d "${destdir}/usr/luajit/share" ]; then
     rsync -aq ${destdir}/usr/luajit/share/ ${destdir}/usr/share/
-    #rm -rf ${destdir}/usr/luajit/share
+    rm -rf ${destdir}/usr/luajit/share
   fi
 
   if [ -d "${destdir}/usr/luajit/lib" ]; then
     rsync -aq ${destdir}/usr/luajit/lib/ ${destdir}/usr/lib/
-    #rm -rf ${destdir}/usr/luajit/lib
+    rm -rf ${destdir}/usr/luajit/lib
   fi
 
   if [ -d "${destdir}/usr/luajit" ]; then
@@ -269,6 +269,9 @@ custom_install()
   rm -rf ${destdir}/usr/share/luajit-2.1/jit/
   rm -f  ${destdir}/usr/bin/luajit-2.1.ROLLING
   rm -f  ${destdir}/usr/bin/luajit
+
+  rm -rf ${destdir}/usr/lualib
+  rm -rf ${destdir}/usr/site/lualib
 
   mkdir -p ${destdir}/var/www/html
   cp -f index.html ${destdir}/var/www/html
