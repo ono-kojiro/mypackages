@@ -50,7 +50,7 @@ case "$1" in
     #chown -R "${USER}:${GROUP}" /etc/dex/certs
     #chmod -R 770 /etc/dex/certs
 
-    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+    ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)
