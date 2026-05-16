@@ -1,0 +1,39 @@
+---
+- name: download srpm
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: $HOME/rpmbuild/SRPMS/
+    force: no
+  loop:
+  - https://kojipkgs.fedoraproject.org//packages/wlroots/0.19.3/1.fc43/src/wlroots-0.19.3-1.fc43.src.rpm
+  when: false
+
+- name: install srpm
+  ansible.builtin.shell: |
+    rpm -vhi $HOME/rpmbuild/SRPMS/{{ item }}
+  loop:
+  - wlroots-0.19.3-1.fc43.src.rpm
+  when: false
+
+- block:
+  - name: install build dependencies for wlroots
+    ansible.builtin.shell: |
+      cd /home/{{ ansible_user }}/rpmbuild/SPECS
+      dnf -y builddep wlroots.spec
+    become: true
+
+- name: build wlroots
+  ansible.builtin.shell: |
+    cd /home/{{ ansible_user }}/rpmbuild/SPECS
+    rpmbuild -bb wlroots.spec
+
+- block:
+  - name: install local wlroots package
+    ansible.builtin.dnf:
+      name:
+      - /home/{{ ansible_user }}/rpmbuild/RPMS/x86_64/wlroots-0.19.3-1.el10.x86_64.rpm
+      - /home/{{ ansible_user }}/rpmbuild/RPMS/x86_64/wlroots-devel-0.19.3-1.el10.x86_64.rpm
+      state: present
+      disable_gpg_check: true
+    become: true
+

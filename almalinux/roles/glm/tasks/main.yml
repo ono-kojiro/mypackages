@@ -1,0 +1,37 @@
+---
+- name: download srpm
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: $HOME/rpmbuild/SRPMS/
+    force: no
+  loop:
+  - https://kojipkgs.fedoraproject.org//packages/glm/1.0.1/5.fc43/src/glm-1.0.1-5.fc43.src.rpm
+  when: false
+
+- name: install srpm
+  ansible.builtin.shell: |
+    rpm -vhi $HOME/rpmbuild/SRPMS/{{ item }}
+  loop:
+  - glm-1.0.1-5.fc43.src.rpm
+  when: false
+
+- block:
+  - name: install build dependencies for glm
+    ansible.builtin.shell: |
+      cd /home/{{ ansible_user }}/rpmbuild/SPECS
+      dnf -y builddep glm.spec
+    become: true
+
+- name: build glm
+  ansible.builtin.shell: |
+    cd /home/{{ ansible_user }}/rpmbuild/SPECS
+    rpmbuild -bb glm.spec
+
+- block:
+  - name: install local glm package
+    ansible.builtin.dnf:
+      name: /home/{{ ansible_user }}/rpmbuild/RPMS/noarch/glm-devel-1.0.1-5.el10.noarch.rpm
+      state: present
+      disable_gpg_check: true
+    become: true
+

@@ -1,0 +1,22 @@
+---
+- name: install development tools
+  ansible.builtin.dnf:
+    name: "@Development tools"
+    state: present
+
+- name: install epel-release
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+
+- name: install rpmdevtools
+  ansible.builtin.dnf:
+    name:  rpmdevtools
+    state: present
+
+- name: setup rpm tree
+  ansible.builtin.shell: |
+    cd /home/{{ ansible_user }}
+    HOME="/home/{{ ansible_user }}" rpmdev-setuptree
+  become: false
+
