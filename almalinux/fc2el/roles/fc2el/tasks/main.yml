@@ -29,11 +29,9 @@
 - block:
   - name: install local package
     ansible.builtin.dnf:
-      name:
-      - "{{ item }}"
+      name: "{{ target_rpms }}"
       state: present
       disable_gpg_check: true
-    loop:
-      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ target_rpm }}"
     become: true
+    tags: install, never
 

@@ -1,10 +1,2 @@
 ---
-target: seatd
-target_ver: 0.9.3
-target_fc_rel: 1.fc43
-target_el_rel: 1.el10
-target_arch: x86_64
-target_srpm: "{{ target }}-{{ target_ver }}-{{ target_fc_rel }}.src.rpm"
-target_spec: "{{ target }}.spec"
-target_url:  "https://kojipkgs.fedoraproject.org//packages/{{ target }}/{{ target_ver }}/{{ target_fc_rel }}/src/{{ target_srpm }}"
-target_rpm: "{{ target }}-{{ target_ver }}-{{ target_el_rel }}.{{ target_arch }}.rpm"
+

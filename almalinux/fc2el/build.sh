@@ -16,15 +16,15 @@ usage()
 usage : $0 [options] target1 target2 ...
 
   target:
-    deply
-    reset
+    build
+    install
 EOS
 
 }
 
 all()
 {
-  deploy
+  build 
 }
 
 clean()
@@ -42,7 +42,7 @@ install()
   ansible-playbook $flags -i hosts.yml -t install site.yml
 }
 
-deploy()
+build()
 {
   ansible-playbook $flags -i hosts.yml site.yml
 }
