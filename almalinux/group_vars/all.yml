@@ -1,3 +1,32 @@
 ---
 wayfire_version: 0.10.1-1
 
+wlroots_ver: 0.19.3-1
+fc_ver: 43
+wlroots_srpm: wlroots-{{ wlroots_ver }}.fc{{ fc_ver }}.src.rpm
+#wlroots_url: https://kojipkgs.fedoraproject.org//packages/wlroots/0.19.3/1.fc43/src/{{ wlroots_srpm }}
+wlroots_url: https://download.fedoraproject.org/pub/fedora/linux/updates/{{ fc_ver }}/Everything/source/tree/Packages/w/{{ wlroots_srpm }}
+
+wlroots_rpm: wlroots-{{ wlroots_ver }}.el10.x86_64.rpm
+wlroots_devel_rpm: wlroots-devel-{{ wlroots_ver }}.el10.x86_64.rpm
+
+glm_ver: 1.0.1-5
+glm_srpm: glm-{{ glm_ver }}.fc{{ fc_ver }}.src.rpm
+glm_url: https://kojipkgs.fedoraproject.org//packages/glm/1.0.1/5.fc{{ fc_ver }}/src/glm-{{ glm_ver }}.fc{{ fc_ver }}.src.rpm
+glm_devel_rpm: glm-devel-{{ glm_ver }}.el10.noarch.rpm
+
+
+wf_config_ver: 0.10.0-2
+wf_config_srpm: wf-config-{{ wf_config_ver }}.fc{{ fc_ver }}.src.rpm
+wf_config_url: https://download.fedoraproject.org/pub/fedora/linux/updates/43/Everything/source/tree/Packages/w/{{ wf_config_srpm }}
+
+wf_config_rpm: wf-config-{{ wf_config_ver }}.el10.x86_64.rpm
+wf_config_devel_rpm: wf-config-devel-{{ wf_config_ver }}.el10.x86_64.rpm
+
+
+wayfire_ver: 0.10.1
+wayfire_rel: 1.fc43
+wayfire_srpm: wayfire-{{ wayfire_ver }}-{{ wayfire_rel }}.src.rpm
+wayfire_url: https://kojipkgs.fedoraproject.org//packages/wayfire/{{ wayfire_ver }}/{{ wayfire_rel }}/src/wayfire-{{ wayfire_ver }}-{{ wayfire_rel }}.src.rpm
+wayfire_rpm: wayfire-{{ wayfire_ver }}-1.el10.x86_64.rpm
+

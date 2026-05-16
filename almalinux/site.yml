@@ -9,25 +9,19 @@
   roles:
   - role: prepare
     tags: prepare
-    become: true
 
   - role: wlroots
     tags: wlroots
-    become: false
 
   - role: glm
     tags: glm
-    become: false
 
   - role: wf-config
     tags: wf-config
-    become: false
   
   - role: wayfire
     tags: wayfire
-    become: false
 
   - role: wayvnc
     tags: wayvnc
-    become: true
 

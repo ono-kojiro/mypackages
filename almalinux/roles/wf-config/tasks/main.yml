@@ -2,18 +2,16 @@
 - name: download srpm
   ansible.builtin.get_url:
     url: "{{ item }}"
-    dest: $HOME/rpmbuild/SRPMS/
+    dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/"
     force: no
   loop:
-  - https://kojipkgs.fedoraproject.org//packages/wf-config/0.10.0/2.fc43/src/wf-config-0.10.0-2.fc43.src.rpm
-  when: false
+  - "{{ wf_config_url }}"
 
 - name: install srpm
   ansible.builtin.shell: |
-    rpm -vhi $HOME/rpmbuild/SRPMS/{{ item }}
+    rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
   loop:
-  - wf-config-0.10.0-2.fc43.src.rpm
-  when: false
+  - "{{ wf_config_srpm }}"
 
 - block:
   - name: install build dependencies for wf-config
@@ -26,13 +24,14 @@
   ansible.builtin.shell: |
     cd /home/{{ ansible_user }}/rpmbuild/SPECS
     rpmbuild -bb wf-config.spec
+  become: false
 
 - block:
   - name: install local wf-config package
     ansible.builtin.dnf:
       name:
-      - /home/{{ ansible_user }}/rpmbuild/RPMS/x86_64/wf-config-0.10.0-2.el10.x86_64.rpm
-      - /home/{{ ansible_user }}/rpmbuild/RPMS/x86_64/wf-config-devel-0.10.0-2.el10.x86_64.rpm
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wf_config_rpm }}"
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wf_config_devel_rpm }}"
       state: present
       disable_gpg_check: true
     become: true

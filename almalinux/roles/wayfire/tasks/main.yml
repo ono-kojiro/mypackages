@@ -2,24 +2,22 @@
 - name: download wayfire srpm
   ansible.builtin.get_url:
     url: "{{ item }}"
-    dest: $HOME/rpmbuild/SRPMS/
+    dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/"
     force: no
   loop:
-  - https://kojipkgs.fedoraproject.org//packages/wayfire/0.10.1/1.fc43/src/wayfire-0.10.1-1.fc43.src.rpm
-  when: false
+  - "{{ wayfire_url }}"
 
 - name: install srpm
   ansible.builtin.shell: |
-    rpm -vhi $HOME/rpmbuild/SRPMS/{{ item }}
+    rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
   loop:
-  - wayfire-0.10.1-1.fc43.src.rpm
-  when: false
+  - "{{ wayfire_srpm }}"
 
 
 - block:
   - name: install build dependencies for wayfire
     ansible.builtin.shell: |
-      cd /home/{{ ansible_user }}/rpmbuild/SPECS
+      cd {{ ansible_user_home }}/rpmbuild/SPECS
       dnf -y builddep wayfire.spec
     become: true
 
@@ -32,8 +30,9 @@
   - name: install local wayfire package
     ansible.builtin.dnf:
       name:
-      - /home/{{ ansible_user }}/rpmbuild/RPMS/x86_64/wayfire-0.10.1-1.el10.x86_64.rpm
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wayfire_rpm }}"
       state: present
       disable_gpg_check: true
     become: true
+    tags: debug
 

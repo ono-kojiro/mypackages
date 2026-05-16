@@ -1,18 +1,22 @@
 ---
-- name: install development tools
-  ansible.builtin.dnf:
-    name: "@Development tools"
-    state: present
+- block:
+  - name: install development tools
+    ansible.builtin.dnf:
+      name: "@Development tools"
+      state: present
+    become: true
 
-- name: install epel-release
-  ansible.builtin.dnf:
-    name: epel-release
-    state: present
+  - name: install epel-release
+    ansible.builtin.dnf:
+      name: epel-release
+      state: present
+    become: true
 
-- name: install rpmdevtools
-  ansible.builtin.dnf:
-    name:  rpmdevtools
-    state: present
+  - name: install rpmdevtools
+    ansible.builtin.dnf:
+      name:  rpmdevtools
+      state: present
+    become: true
 
 - name: setup rpm tree
   ansible.builtin.shell: |
