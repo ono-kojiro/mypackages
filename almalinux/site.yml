@@ -25,3 +25,11 @@
   - role: wayvnc
     tags: wayvnc
 
+  - role: tllist
+    tags: tllist
+
+  - role: fcft
+    tags: fcft
+
+  - role: foot
+    tags: foot

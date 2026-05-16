@@ -5,33 +5,35 @@
     dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/"
     force: no
   loop:
-  - "{{ wayfire_url }}"
+  - "{{ tllist_url }}"
 
 - name: install srpm
   ansible.builtin.shell: |
     rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
   loop:
-  - "{{ wayfire_srpm }}"
+  - "{{ tllist_srpm }}"
 
 
 - block:
   - name: install build dependencies
     ansible.builtin.shell: |
       cd {{ ansible_user_home }}/rpmbuild/SPECS
-      dnf -y builddep wayfire.spec
+      dnf -y builddep tllist.spec
     become: true
 
 - name: build rpm package
   ansible.builtin.shell: |
     cd {{ ansible_user_home }}/rpmbuild/SPECS
-    rpmbuild -bb wayfire.spec
+    rpmbuild -bb tllist.spec
 
 - block:
   - name: install local package
     ansible.builtin.dnf:
       name:
-      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wayfire_rpm }}"
+      - "{{ item }}"
       state: present
       disable_gpg_check: true
+    loop:
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ tllist_devel_rpm }}"
     become: true
 
