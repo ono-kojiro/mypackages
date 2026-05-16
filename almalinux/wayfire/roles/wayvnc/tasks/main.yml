@@ -3,4 +3,5 @@
   ansible.builtin.dnf:
     name: wayvnc
     state: present
+  become: true
 
