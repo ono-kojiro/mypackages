@@ -4,4 +4,6 @@ work/
 *.crt
 *.key
 .env
+*.json
+config-ldap.yaml
 

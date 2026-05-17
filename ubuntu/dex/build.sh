@@ -9,7 +9,10 @@ if [ ! -e ".env" ]; then
   touch .env
 fi
 
+set -a
 . ./.env
+envsubst < config-ldap.yaml.template > config-ldap.yaml
+set +a
 
 realname="dex"
 pkgname="${realname}"
@@ -36,6 +39,13 @@ all()
   install
   custom_install
   package
+}
+
+help()
+{
+  cat - << EOF
+usage: sh build.sh TARGET
+EOF
 }
 
 fetch()
@@ -183,21 +193,47 @@ app()
 
 install()
 {
+  install_main
+  install_example
+
+  custom_install
+}
+
+install_main()
+{
+  destdir=${top_dir}/work/dest/${pkgname}-${pkgver}
+  rm -rf ${destdir}
+
   cd ${builddir}/${pkgname}-${pkgver}
   #make install DESTDIR=${destdir}
   mkdir -p ${destdir}/usr/bin/
   mkdir -p ${destdir}/etc/dex/
-  mkdir -p ${destdir}/lib/systemd/system/
+  mkdir -p ${destdir}/usr/lib/systemd/system/
   command install bin/dex         ${destdir}/usr/bin
-  command install bin/example-app ${destdir}/usr/bin
+  #command install bin/example-app ${destdir}/usr/bin
   command install bin/grpc-client ${destdir}/usr/bin
   command install -m 640 ${top_dir}/config/config-ldap.yaml ${destdir}/etc/dex
-  command install -m 644 ${top_dir}/config/dex.service ${destdir}/lib/systemd/system/
-  command install -m 644 ${top_dir}/config/example-app.service ${destdir}/lib/systemd/system/
-  command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
+  command install -m 644 ${top_dir}/config/dex.service ${destdir}/usr/lib/systemd/system/
+  #command install -m 644 ${top_dir}/config/example-app.service ${destdir}/lib/systemd/system/
+  #command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
   cd ${top_dir}
 
   custom_install
+}
+
+install_example()
+{
+  destdir=$top_dir/work/dest/${pkgname}-example-${pkgver}
+  rm -rf ${destdir}
+  
+  cd ${builddir}/${pkgname}-${pkgver}
+  mkdir -p ${destdir}/usr/bin/
+  mkdir -p ${destdir}/etc/dex/
+  mkdir -p ${destdir}/lib/systemd/system/
+  command install bin/example-app ${destdir}/usr/bin
+  command install -m 644 ${top_dir}/config/example-app.service ${destdir}/lib/systemd/system/
+  command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
+  cd ${top_dir}
 }
 
 custom_install()
@@ -208,6 +244,14 @@ custom_install()
 
 package()
 {
+  package_main
+  package_example
+}
+
+package_main()
+{
+  pkgname="${realname}"
+  destdir=$top_dir/work/dest/${pkgname}-${pkgver}
   mkdir -p $destdir/DEBIAN
 
   username=`git config user.name`
@@ -227,9 +271,41 @@ EOS
   fakeroot dpkg-deb --build $destdir $outputdir
 }
 
+package_example()
+{
+  pkgname="${realname}-example"
+  destdir=$top_dir/work/dest/${pkgname}-${pkgver}
+  
+  mkdir -p ${destdir}/DEBIAN
+
+  username=`git config user.name`
+  email=`git config user.email`
+
+cat << EOS > ${destdir}/DEBIAN/control
+Package: ${pkgname}
+Maintainer: ${username} <${email}>
+Architecture: amd64
+Version: ${pkgver}
+Description: ${pkgname}
+EOS
+  
+  cp -f postinst ${destdir}/DEBIAN/
+  cp -f postrm   ${destdir}/DEBIAN/
+  cp -f prerm    ${destdir}/DEBIAN/
+  fakeroot dpkg-deb --build ${destdir} ${outputdir}
+}
+
+
 info()
 {
+  dpkg -c ${pkgname}_${pkgver}_amd64.deb
   dpkg-deb --info ${pkgname}_${pkgver}_amd64.deb
+
+}
+
+check()
+{
+  info
 }
 
 mclean()
@@ -240,11 +316,12 @@ mclean()
 
 sysinstall()
 {
-  sudo apt -y install ./${pkgname}_${pkgver}_amd64.deb
+  cp -f ./${pkgname}_${pkgver}_amd64.deb /tmp/
+  sudo apt -y install /tmp/${pkgname}_${pkgver}_amd64.deb
   postinst
   sudo systemctl daemon-reload
   sudo systemctl restart dex
-  sudo systemctl restart example-app
+  #sudo systemctl restart example-app
 }
 
 sysinst()
@@ -254,7 +331,10 @@ sysinst()
 
 sysuninstall()
 {
+  stop
+
   sudo apt -y remove --purge ${pkgname}
+  echo "INFO: remove /etc/dex"
   sudo rm -rf /etc/dex/
 }
 
@@ -303,19 +383,19 @@ postinst()
 start()
 {
   sudo systemctl start dex
-  sudo systemctl start example-app
+  #sudo systemctl start example-app
 }
 
 stop()
 {
   sudo systemctl stop dex
-  sudo systemctl stop example-app
+  #sudo systemctl stop example-app
 }
 
 restart()
 {
   sudo systemctl restart dex
-  sudo systemctl restart example-app
+  #sudo systemctl restart example-app
 }
 
 status()
@@ -323,8 +403,8 @@ status()
   res=`systemctl is-active dex`
   echo "INFO: dex is $res"
 
-  res=`systemctl is-active example-app`
-  echo "INFO: example-app is $res"
+  #res=`systemctl is-active example-app`
+  #echo "INFO: example-app is $res"
 }
 
 
@@ -353,10 +433,64 @@ EOF
 
 keys()
 {
-  cmd="curl -k -s https://192.168.1.72:5556/dex/keys"
+  cmd="curl -k -s https://${DEX_IP_PORT}/dex/keys"
   echo "CMD: $cmd"
   $cmd  | jq .
 }
+
+device_code()
+{
+   curl -s -k -X POST https://${DEX_IP_PORT}/dex/device/code \
+     -d "client_id=myclient" \
+     -d "scope=openid email profile groups offline_access" \
+   | jq . | tee device_code.json
+}
+
+device()
+{
+  device_code
+}
+
+auth()
+{
+   verification_uri_complete=`cat device_code.json \
+     | jq -r ".verification_uri_complete"`
+   lynx ${verification_uri_complete}
+}
+
+refresh_token()
+{
+  code=`cat device_code.json | jq -r ".device_code"`
+  client_id="myclient"
+
+  grant_type="urn:ietf:params:oauth:grant-type:device_code"
+  curl -k -s -X POST https://${DEX_IP_PORT}/dex/token \
+          -d "grant_type=$grant_type" \
+          -d "device_code=$code" \
+          -d "client_id=$client_id" | jq . | tee refresh_token.json
+}
+
+refresh()
+{
+  refresh_token
+}
+
+access_token()
+{
+  ref=`cat refresh_token.json | jq -r ".refresh_token"`
+
+  curl -k -s \
+    -X POST https://${DEX_IP_PORT}/dex/token \
+    -d "grant_type=refresh_token" \
+    -d "refresh_token=$ref" \
+    -d "client_id=myclient" | jq . | tee access_token.json
+}
+
+access()
+{
+  access_token
+}
+
 
 if [ "$#" -eq 0 ]; then
   all
