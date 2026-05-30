@@ -1,0 +1,39 @@
+---
+- name: download srpm
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/{{ wlroots_srpm }}"
+    force: no
+  loop:
+  - "{{ wlroots_url }}"
+
+- name: install srpm
+  ansible.builtin.shell: |
+    rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
+  loop:
+  - "{{ wlroots_srpm }}"
+  become: false
+
+- block:
+  - name: install build dependencies for wlroots
+    ansible.builtin.shell: |
+      cd {{ ansible_user_home }}/rpmbuild/SPECS
+      dnf -y builddep wlroots.spec
+    become: true
+
+- name: build wlroots
+  ansible.builtin.shell: |
+    cd {{ ansible_user_home }}/rpmbuild/SPECS
+    rpmbuild -bb wlroots.spec
+  become: false
+
+- block:
+  - name: install local wlroots package
+    ansible.builtin.dnf:
+      name:
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wlroots_rpm }}"
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wlroots_devel_rpm }}"
+      state: present
+      disable_gpg_check: true
+    become: true
+

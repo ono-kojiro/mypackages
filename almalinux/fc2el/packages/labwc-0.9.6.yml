@@ -1,0 +1,15 @@
+target: labwc
+target_ver: 0.9.6
+target_fc_rel: 1.fc43
+target_el_rel: 1.el10
+
+target_arch: x86_64
+
+target_srpm: "{{ target }}-{{ target_ver }}-{{ target_fc_rel }}.src.rpm"
+target_spec: "{{ target }}.spec"
+target_url:  "https://kojipkgs.fedoraproject.org//packages/{{ target }}/{{ target_ver }}/{{ target_fc_rel }}/src/{{ target_srpm }}"
+
+target_rpms:
+  - "{{ ansible_user_home }}/rpmbuild/RPMS/{{ target_arch }}/{{ target }}-{{ target_ver }}-{{ target_el_rel }}.{{ target_arch }}.rpm"
+  - "{{ ansible_user_home }}/rpmbuild/RPMS/noarch/{{ target }}-session-{{ target_ver }}-{{ target_el_rel }}.noarch.rpm"
+

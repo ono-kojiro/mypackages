@@ -1,0 +1,39 @@
+---
+- name: download srpm
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/"
+    force: no
+  loop:
+  - "{{ tllist_url }}"
+
+- name: install srpm
+  ansible.builtin.shell: |
+    rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
+  loop:
+  - "{{ tllist_srpm }}"
+
+
+- block:
+  - name: install build dependencies
+    ansible.builtin.shell: |
+      cd {{ ansible_user_home }}/rpmbuild/SPECS
+      dnf -y builddep tllist.spec
+    become: true
+
+- name: build rpm package
+  ansible.builtin.shell: |
+    cd {{ ansible_user_home }}/rpmbuild/SPECS
+    rpmbuild -bb tllist.spec
+
+- block:
+  - name: install local package
+    ansible.builtin.dnf:
+      name:
+      - "{{ item }}"
+      state: present
+      disable_gpg_check: true
+    loop:
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ tllist_devel_rpm }}"
+    become: true
+

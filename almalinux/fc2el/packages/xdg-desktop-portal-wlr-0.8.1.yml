@@ -1,0 +1,14 @@
+target: xdg-desktop-portal-wlr
+target_ver: 0.8.1
+target_fc_rel: 1.fc43
+target_el_rel: 1.el10
+
+target_arch: x86_64
+
+target_srpm: "{{ target }}-{{ target_ver }}-{{ target_fc_rel }}.src.rpm"
+target_spec: "{{ target }}.spec"
+target_url:  "https://kojipkgs.fedoraproject.org//packages/{{ target }}/{{ target_ver }}/{{ target_fc_rel }}/src/{{ target_srpm }}"
+
+target_rpms:
+  - "{{ ansible_user_home }}/rpmbuild/RPMS/{{ target_arch }}/{{ target }}-{{ target_ver }}-{{ target_el_rel }}.{{ target_arch }}.rpm"
+

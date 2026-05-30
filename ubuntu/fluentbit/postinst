@@ -2,7 +2,7 @@
 
 set -e
 
-NAME=dex
+NAME=fluent-bit
 USER=${NAME}
 GROUP=${NAME}
 
@@ -40,15 +40,10 @@ case "$1" in
       chmod -R 750 /var/run/${NAME}
     fi
     
-    mkdir -p /etc/dex
-    chown -R "root:${GROUP}" /etc/dex
-    chmod -R 750 /etc/dex
-    chmod g+s /etc/dex
-
-
-    mkdir -p /etc/dex/certs
-    chown -R "${USER}:${GROUP}" /etc/dex/certs
-    chmod -R 770 /etc/dex/certs
+    mkdir -p /etc/${NAME}
+    chown -R "${USER}:${GROUP}" /etc/${NAME}
+    chmod -R 750 /etc/${NAME}
+    chmod g+s /etc/${NAME}
 
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)
@@ -63,14 +58,11 @@ case "$1" in
   configure | abort-upgrade | abort-deconfigure | abort-remove )
 
     deb-systemd-helper umask "${NAME}.service" > /dev/null || true
-    #deb-systemd-helper umask "example-app.service" > /dev/null || true
 
     if deb-systemd-helper --quiet was-enabled "${NAME}.service"; then
       deb-systemd-helper enable       "${NAME}.service" > /dev/null || true
-      #deb-systemd-helper enable       "example-app.service" > /dev/null || true
     else
       deb-systemd-helper update-state "${NAME}.service" > /dev/null || true
-      #deb-systemd-helper update-state "example-app.service" > /dev/null || true
     fi
     ;;
   * )

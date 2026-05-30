@@ -1,0 +1,37 @@
+---
+- name: download srpm
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "{{ ansible_user_home }}/rpmbuild/SRPMS/"
+    force: no
+  loop:
+  - "{{ wayfire_url }}"
+
+- name: install srpm
+  ansible.builtin.shell: |
+    rpm -vhi {{ ansible_user_home }}/rpmbuild/SRPMS/{{ item }}
+  loop:
+  - "{{ wayfire_srpm }}"
+
+
+- block:
+  - name: install build dependencies
+    ansible.builtin.shell: |
+      cd {{ ansible_user_home }}/rpmbuild/SPECS
+      dnf -y builddep wayfire.spec
+    become: true
+
+- name: build rpm package
+  ansible.builtin.shell: |
+    cd {{ ansible_user_home }}/rpmbuild/SPECS
+    rpmbuild -bb wayfire.spec
+
+- block:
+  - name: install local package
+    ansible.builtin.dnf:
+      name:
+      - "{{ ansible_user_home }}/rpmbuild/RPMS/x86_64/{{ wayfire_rpm }}"
+      state: present
+      disable_gpg_check: true
+    become: true
+

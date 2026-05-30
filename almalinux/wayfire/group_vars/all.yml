@@ -1,0 +1,51 @@
+---
+
+wlroots_ver: 0.19.3
+wlroots_rel: 1.fc43
+wlroots_srpm: wlroots-{{ wlroots_ver }}-{{ wlroots_rel }}.src.rpm
+wlroots_url: https://kojipkgs.fedoraproject.org//packages/wlroots/{{ wlroots_ver }}/{{ wlroots_rel }}/src/{{ wlroots_srpm }}
+wlroots_rpm: wlroots-{{ wlroots_ver }}-1.el10.x86_64.rpm
+wlroots_devel_rpm: wlroots-devel-{{ wlroots_ver }}-1.el10.x86_64.rpm
+
+glm_ver: 1.0.1
+glm_rel: 5.fc43
+glm_srpm: glm-{{ glm_ver }}-{{ glm_rel }}.src.rpm
+glm_url: https://kojipkgs.fedoraproject.org//packages/glm/{{ glm_ver }}/{{ glm_rel }}/src/{{ glm_srpm }}
+glm_devel_rpm: glm-devel-{{ glm_ver }}-5.el10.noarch.rpm
+
+
+wf_config_ver: 0.10.0
+wf_config_rel: 2.fc43
+wf_config_srpm: wf-config-{{ wf_config_ver }}-{{ wf_config_rel }}.src.rpm
+wf_config_url: https://kojipkgs.fedoraproject.org//packages/wf-config/{{ wf_config_ver }}/{{ wf_config_rel }}/src/{{ wf_config_srpm }}
+wf_config_rpm: wf-config-{{ wf_config_ver }}-2.el10.x86_64.rpm
+wf_config_devel_rpm: wf-config-devel-{{ wf_config_ver }}-2.el10.x86_64.rpm
+
+
+wayfire_ver: 0.10.1
+wayfire_rel: 1.fc43
+wayfire_srpm: wayfire-{{ wayfire_ver }}-{{ wayfire_rel }}.src.rpm
+wayfire_url: https://kojipkgs.fedoraproject.org//packages/wayfire/{{ wayfire_ver }}/{{ wayfire_rel }}/src/{{ wayfire_srpm }}
+wayfire_rpm: wayfire-{{ wayfire_ver }}-1.el10.x86_64.rpm
+
+fcft_ver: 3.3.3
+fcft_rel: 1.fc43
+fcft_srpm: fcft-{{ fcft_ver }}-{{ fcft_rel }}.src.rpm
+fcft_url: https://kojipkgs.fedoraproject.org//packages/fcft/{{ fcft_ver }}/{{ fcft_rel }}/src/{{ fcft_srpm }}
+fcft_rpm: fcft-{{ fcft_ver }}-1.el10.x86_64.rpm
+fcft_devel_rpm: fcft-devel-{{ fcft_ver }}-1.el10.x86_64.rpm
+
+
+tllist_ver: 1.1.0
+tllist_rel: 7.fc43
+tllist_srpm: tllist-{{ tllist_ver }}-{{ tllist_rel }}.src.rpm
+tllist_url: https://kojipkgs.fedoraproject.org//packages/tllist/{{ tllist_ver }}/{{ tllist_rel }}/src/{{ tllist_srpm }}
+tllist_devel_rpm: tllist-devel-{{ tllist_ver }}-7.el10.x86_64.rpm
+
+
+foot_ver: 1.25.0
+foot_rel: 1.fc43
+foot_srpm: foot-{{ foot_ver }}-{{ foot_rel }}.src.rpm
+foot_url: https://kojipkgs.fedoraproject.org//packages/foot/{{ foot_ver }}/{{ foot_rel }}/src/{{ foot_srpm }}
+foot_rpm: foot-{{ foot_ver }}-1.el10.x86_64.rpm
+

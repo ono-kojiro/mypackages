@@ -1,0 +1,4 @@
+---
+ansible_host: almalinux
+ansible_user: "{{ lookup('env', 'USER') }}"
+ansible_user_home: "{{ lookup('env', 'HOME') }}"

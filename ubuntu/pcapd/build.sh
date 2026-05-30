@@ -6,7 +6,7 @@ cd $top_dir
 workdir="$PWD/work"
 
 PKGNAME=pcapd
-PKGVER="0.0.2"
+PKGVER="0.0.3"
 DESTDIR="$workdir/dest/${PKGNAME}-${PKGVER}"
 ARCH="all"
 

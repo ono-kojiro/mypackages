@@ -1,0 +1,35 @@
+- name: setup almalinux
+  hosts:
+  - almalinux
+
+  #environment:
+  #  http_proxy: http://proxy.example.com:8080
+  #  https_proxy: http://proxy.example.com:8080
+
+  roles:
+  - role: prepare
+    tags: prepare
+
+  - role: wlroots
+    tags: wlroots
+
+  - role: glm
+    tags: glm
+
+  - role: wf-config
+    tags: wf-config
+  
+  - role: wayfire
+    tags: wayfire
+
+  - role: wayvnc
+    tags: wayvnc
+
+  - role: tllist
+    tags: tllist
+
+  - role: fcft
+    tags: fcft
+
+  - role: foot
+    tags: foot
