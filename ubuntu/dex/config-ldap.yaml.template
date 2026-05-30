@@ -1,4 +1,4 @@
-issuer: https://${DEX_IP}:${DEX_HTTPS_PORT}/dex
+issuer: ${ISSUER_URL}
 storage:
   type: sqlite3
   config:
@@ -89,4 +89,11 @@ staticClients:
   - "email"
   - "profile"
   - "offline_access"
+
+- id: oauth2-proxy
+  name: "oauth2-proxy"
+  secret: ${OAUTH2_PROXY_SECRET}
+  redirectURIs:
+  - ${OAUTH2_PROXY_REDIRECT_URI}
+  #https://192.168.1.72/oauth2/callback
 
