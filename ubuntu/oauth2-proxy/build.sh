@@ -225,7 +225,8 @@ sysinst()
 
 sysuninstall()
 {
-  sudo apt -y remove --purge ${pkgname}
+  sudo apt -y remove --purge ${pkgname} || true
+  sudo rm -rf /etc/oauth2-proxy
 }
 
 sysuninst()
