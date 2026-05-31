@@ -5,8 +5,8 @@ storage:
     file: /var/lib/dex/dex.db
 web:
   https: 0.0.0.0:${DEX_HTTPS_PORT}
-  tlsCert: /etc/dex/certs/dex.crt
-  tlsKey:  /etc/dex/certs/dex.key
+  tlsCert: /etc/dex/certs/${DEX_CRT}
+  tlsKey:  /etc/dex/certs/${DEX_KEY}
 
 connectors:
 - type: ldap
@@ -72,12 +72,6 @@ connectors:
       sub: mail
 
 staticClients:
-- id: example-app
-  redirectURIs:
-  - 'https://${EXAMPLE_APP_IP}:${EXAMPLE_APP_HTTPS_PORT}/callback'
-  name: 'Example App'
-  secret: ${EXAMPLE_APP_SECRET}
-
 - id: myclient
   name: myclient
   public: true

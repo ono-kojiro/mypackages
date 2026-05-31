@@ -8,7 +8,7 @@ fi
 
 JAVA_OPTS=""
 
-if [ -z "${GITBUCKET_BASE_URL}" ]; then
+if [ ! -z "${GITBUCKET_BASE_URL}" ]; then
   JAVA_OPTS="${JAVA_OPTS} -Dgitbucket.base_url=${GITBUCKET_BASE_URL}"
 fi
 

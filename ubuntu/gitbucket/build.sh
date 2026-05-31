@@ -32,8 +32,7 @@ usage : sh build.sh <target>
 
   target:
   - fetch
-  - do_install
-  - custom_install
+  - install
   - package
   - clean
 

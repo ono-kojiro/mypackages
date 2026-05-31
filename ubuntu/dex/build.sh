@@ -8,7 +8,7 @@ cd $top_dir
 if [ ! -e ".env" ]; then
   touch .env
 fi
-
+  
 set -a
 . ./.env
 envsubst < config-ldap.yaml.template > config-ldap.yaml
@@ -28,6 +28,27 @@ builddir=$top_dir/work/build
 destdir=$top_dir/work/dest/${pkgname}-${pkgver}
 
 outputdir=$top_dir
+
+ret=0
+
+if [ -z "${ISSUER_URL}" ]; then
+  echo "ERROR: no ISSUER_URL variable" 1>&2
+  ret=`expr $ret + 1`
+fi
+
+if [ -z "${OAUTH2_PROXY_SECRET}" ]; then
+  echo "ERROR: no OAUTH2_PROXY_SECRET variable" 1>&2
+  ret=`expr $ret + 1`
+fi
+
+if [ -z "${OAUTH2_PROXY_REDIRECT_URI}" ]; then
+  echo "ERROR: no OAUTH2_PROXY_REDIRECT_URI variable" 1>&2
+  ret=`expr $ret + 1`
+fi
+
+if [ "$ret" -ne 0 ]; then
+  exit $ret
+fi
 
 all()
 {
@@ -205,17 +226,15 @@ install_main()
   rm -rf ${destdir}
 
   cd ${builddir}/${pkgname}-${pkgver}
-  #make install DESTDIR=${destdir}
   mkdir -p ${destdir}/usr/bin/
   mkdir -p ${destdir}/etc/dex/
   mkdir -p ${destdir}/usr/lib/systemd/system/
   command install bin/dex         ${destdir}/usr/bin
-  #command install bin/example-app ${destdir}/usr/bin
   command install bin/grpc-client ${destdir}/usr/bin
-  command install -m 640 ${top_dir}/config/config-ldap.yaml ${destdir}/etc/dex
-  command install -m 644 ${top_dir}/config/dex.service ${destdir}/usr/lib/systemd/system/
-  #command install -m 644 ${top_dir}/config/example-app.service ${destdir}/lib/systemd/system/
-  #command install ${top_dir}/config/example-app.conf    ${destdir}/etc/dex/
+  command install -m 640 examples/ldap/config-ldap.yaml ${destdir}/etc/dex
+  command install -m 644 ${top_dir}/config/dex.service \
+      ${destdir}/usr/lib/systemd/system/
+
   cd ${top_dir}
 
   custom_install
@@ -346,15 +365,12 @@ sysuninst()
 install_certs()
 {
   sudo sh -s << EOF
-    cp -f dex.crt /etc/dex/certs/
-    cp -f dex.key /etc/dex/certs/
-    cp -f example-app.crt /etc/dex/certs/
-    cp -f example-app.key /etc/dex/certs/
+    mkdir -p /etc/dex/certs/
+    cp -f ${DEX_CRT} /etc/dex/certs/
+    cp -f ${DEX_KEY} /etc/dex/certs/
 
-    chmod 664 /etc/dex/certs/dex.crt
-    chmod 660 /etc/dex/certs/dex.key
-    chmod 664 /etc/dex/certs/example-app.crt
-    chmod 660 /etc/dex/certs/example-app.key
+    chmod 664 /etc/dex/certs/${DEX_CRT}
+    chmod 660 /etc/dex/certs/${DEX_KEY}
 
     chown -R dex:dex /etc/dex/certs/
 EOF
@@ -366,10 +382,6 @@ install_configs()
     cp -f config-ldap.yaml /etc/dex/
     chown dex:dex /etc/dex/config-ldap.yaml
     chmod 660 /etc/dex/config-ldap.yaml
-    
-    cp -f example-app.conf /etc/dex/
-    chown dex:dex /etc/dex/example-app.conf
-    chmod 660 /etc/dex/example-app.conf
 EOF
 
 }
