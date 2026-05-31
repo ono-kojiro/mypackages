@@ -7,17 +7,17 @@ cd $top_dir
 
 realname="couchdb"
 pkgname="${realname}"
-version="3.2.2"
+pkgver="3.5.1"
 
 src_urls=""
-src_urls="$src_urls https://dlcdn.apache.org/couchdb/source/3.2.2/apache-couchdb-3.2.2.tar.gz"
+src_urls="$src_urls https://dlcdn.apache.org/couchdb/source/${pkgver}/apache-couchdb-${pkgver}.tar.gz"
 
 url="https://couchdb.apache.org/"
 
 sourcedir=$top_dir/work/sources
 buildroot=$top_dir/work/build
-builddir=$top_dir/work/build/apache-${pkgname}-${version}
-destdir=$top_dir/work/dest/${pkgname}-${version}
+builddir=$top_dir/work/build/apache-${pkgname}-${pkgver}
+destdir=$top_dir/work/dest/${pkgname}-${pkgver}
 
 outputdir=$top_dir
 
@@ -109,7 +109,7 @@ prepare()
 {
   sudo apt -y install \
     make rebar3 gcc g++ \
-    libmozjs-91-dev libicu-dev \
+    libmozjs-115-dev libicu-dev \
     fakeroot
 }
 
@@ -118,7 +118,7 @@ configure()
   cd ${builddir}
   ./configure \
     --disable-docs \
-    --spidermonkey-version 91
+    --spidermonkey-version 115
   #./bootstrap
   cd ${top_dir}
 }
@@ -135,7 +135,7 @@ compile()
   #rebar compile
   #make release \
   make \
-    ERL_CFLAGS="-I/usr/include/mozjs-91 -I/usr/lib/erlang/usr/include"
+    ERL_CFLAGS="-I/usr/include/mozjs-115 -I/usr/lib/erlang/usr/include"
   cd ${top_dir}
 }
 
@@ -179,7 +179,7 @@ cat << EOS > $destdir/DEBIAN/control
 Package: $pkgname
 Maintainer: $username <$email>
 Architecture: amd64
-Version: $version
+Version: $pkgver
 Description: $pkgname
 EOS
 	fakeroot dpkg-deb --build $destdir $outputdir
