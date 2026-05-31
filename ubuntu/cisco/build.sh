@@ -209,6 +209,20 @@ EOS
   done
 }
 
+sysinst()
+{
+  dirname="${pkgname}"
+  commit=`git -C work/sources/${dirname} rev-parse --short=8 HEAD`
+  dt=`git -C work/sources/${dirname} log -1 --format="%at" | xargs -I{} date -d @{} +%Y%m%d`
+    echo "INFO: dirname is $dirname"
+  sudo apt -y install ./cisco-mibs_${pkgver}+git${dt}.${commit}_amd64.deb
+}
+
+sysuninst()
+{
+  sudo apt -y remove cisco-mibs
+}
+
 clean()
 {
   rm -rf $builddir
