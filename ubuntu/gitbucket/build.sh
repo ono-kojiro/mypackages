@@ -96,8 +96,8 @@ install()
   command install ${top_dir}/gitbucket         $DESTDIR/usr/bin/
   command install ${top_dir}/gitbucket.service $DESTDIR/usr/lib/systemd/system/
   command install -m 0755 ${top_dir}/gitbucket.conf $DESTDIR/etc/gitbucket/
-  command install ${top_dir}/apache2-gitbucket.conf \
-     $DESTDIR/etc/apache2/conf-available/
+  command install -m 0644 ${top_dir}/apache2-gitbucket.conf \
+     $DESTDIR/etc/apache2/conf-available/gitbucket.conf
   command install ${workdir}/$WARFILE          $DESTDIR/usr/share/java/
   command install ${top_dir}/logback-settings.xml $DESTDIR/var/lib/gitbucket/
   
