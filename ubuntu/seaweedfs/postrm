@@ -1,0 +1,61 @@
+#!/bin/sh
+
+set -e
+
+NAME=weed
+USER=${NAME}
+GROUP=${NAME}
+
+case "$1" in
+  purge )
+    if [ -x "$(command -v deluser)" ]; then
+      deluser --quiet ${USER} || \
+        echo "failed to remove ${NAME} system user with deluser" 1>&2
+    else
+      userdel ${USER} || \
+        echo "failed to remove ${NAME} system user with userdel" 1>&2
+    fi
+    
+   
+    if getent group "${GROUP}" > /dev/null; then 
+      if [ -x "$(command -v delgroup)" ]; then
+        delgroup --quiet --system --only-if-empty ${GROUP} || \
+          echo "failed to remove ${NAME} system group with delgroup" 1>&2
+      else
+        groupdel ${GROUP} || \
+          echo "failed to remove ${NAME} system group with groupdel" 1>&2
+      fi
+    fi
+
+    rm -rf \
+      /var/lib/${NAME} \
+      /var/log/${NAME} \
+      /var/cache/${NAME}
+    ;;
+
+  remove | upgrade | failed-upgrade )
+    ;;
+
+  abort-install | abort-upgrade | disappear )
+    ;;
+
+  * )
+    echo "postrm called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+if [ -x /usr/bin/deb-systemd-helper ]; then
+  case "$1" in
+    remove)
+      deb-systemd-helper mask   "${NAME}.service" >/dev/null || true
+      ;;
+    purge)
+      deb-systemd-helper purge  "${NAME}.service" >/dev/null || true
+      deb-systemd-helper unmask "${NAME}.service" >/dev/null || true
+      ;;
+  esac
+fi
+
+exit 0
+

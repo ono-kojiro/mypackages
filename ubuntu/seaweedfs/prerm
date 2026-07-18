@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+NAME=weed
+
+if [ "$1" = "remove" ] && [ -d /run/systemd/system ]; then
+  deb-systemd-invoke stop "${NAME}" > /dev/null || true
+fi
+
+exit 0
+

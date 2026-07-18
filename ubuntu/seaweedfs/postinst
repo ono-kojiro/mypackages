@@ -1,0 +1,55 @@
+#!/bin/sh
+
+set -e
+
+NAME=weed
+USER=weed
+GROUP=weed
+
+case "$1" in
+  configure)
+    if ! getent group "${GROUP}" > /dev/null; then
+      addgroup --system --quiet "${GROUP}"
+    fi
+
+    if ! id "${USER}" > /dev/null 2>&1; then
+      adduser --system --quiet \
+        --home /var/lib/${NAME} \
+        --no-create-home \
+        --ingroup "${GROUP}" \
+        --disabled-password \
+        --shell /usr/sbin/nologin \
+        --gecos "${NAME}" \
+        "${USER}"
+    fi
+    
+    mkdir -p /var/lib/${NAME}
+    chown -R "${USER}:${GROUP}" /var/lib/${NAME}
+    chmod 750 /var/lib/${NAME}
+    
+    mkdir -p /var/log/${NAME}
+    chown -R "${USER}:${GROUP}" /var/log/${NAME}
+    chmod 750 /var/log/${NAME}
+
+    mkdir -p /etc/weed
+    chmod 755 /etc/weed
+    chown -R root:root /etc/weed/
+    chmod 600 /etc/weed/weed.env
+
+    ;;
+  abort-upgrade | abort-remove | abort-deconfigure)
+    ;;
+  * )
+    echo "postinst called with unknown argument '$1'" 1>&2
+    exit 1
+    ;;
+esac
+
+# Enable systemd service
+if [ "$1" = "configure" ]; then
+  deb-systemd-helper enable "${NAME}.service" > /dev/null || true
+  deb-systemd-helper update-state "${NAME}.service" > /dev/null || true
+fi
+
+exit 0
+

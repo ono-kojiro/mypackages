@@ -1,0 +1,20 @@
+[Unit]
+Description=SeaweedFS weed server (mini mode)
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/weed/weed.env
+ExecStart=/usr/bin/weed mini -dir /var/lib/weed
+Restart=on-failure
+SuccessExitStatus=143
+RuntimeDirectory=weed
+RuntimeDirectoryMode=0750
+LimitNOFILE=100000
+
+User=weed
+Group=weed
+
+[Install]
+WantedBy=multi-user.target
