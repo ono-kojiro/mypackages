@@ -4,7 +4,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/weed master -mdir /var/lib/seaweedfs/master
+EnvironmentFile=/etc/seaweedfs/master.env
+ExecStart=/usr/bin/weed master -mdir ${MASTER_MDIR} -port ${MASTER_PORT} -ip ${MASTER_IP}
 Restart=on-failure
 LimitNOFILE=100000
 

@@ -5,7 +5,8 @@ After=seaweedfs-master.service seaweedfs-volume.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/weed filer -master=localhost:9333 -port=8888
+EnvironmentFile=/etc/seaweedfs/filer.env
+ExecStart=/usr/bin/weed filer -master=${FILER_MASTER} -port=${FILER_PORT}
 Restart=on-failure
 LimitNOFILE=100000
 

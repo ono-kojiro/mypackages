@@ -4,7 +4,8 @@ After=seaweedfs-filer.service
 Requires=seaweedfs-filer.service
 
 [Service]
-ExecStart=/usr/bin/weed s3 -filer=localhost:8888 -port=8333
+EnvironmentFile=/etc/seaweedfs/s3.env
+ExecStart=/usr/bin/weed s3 -filer=${S3_FILER} -port=${S3_PORT}
 Restart=always
 
 [Install]
