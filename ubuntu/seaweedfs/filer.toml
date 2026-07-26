@@ -1,0 +1,20 @@
+[leveldb2]
+enabled = true
+dir = "/var/lib/seaweedfs/filer"
+
+[s3]
+  enabled = true
+  port = 8333
+
+[[s3.access_key]]
+  key    = "myaccesskey1"
+  secret = "mysecretkey1"
+
+[[s3.access_key]]
+  key    = "myaccesskey2"
+  secret = "mysecretkey2"
+
+[[s3.access_key]]
+  key    = "myaccesskey3"
+  secret = "mysecretkey3"
+

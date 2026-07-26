@@ -1,0 +1,17 @@
+[Unit]
+Description=SeaweedFS Volume Server
+Requires=seaweedfs-master.service
+After=seaweedfs-master.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/weed volume -dir /var/lib/seaweedfs/volume -max=100 -mserver=localhost:9333
+Restart=on-failure
+LimitNOFILE=100000
+
+User=seaweedfs
+Group=seaweedfs
+
+[Install]
+WantedBy=multi-user.target
+

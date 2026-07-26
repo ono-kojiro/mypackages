@@ -1,0 +1,16 @@
+[Unit]
+Description=SeaweedFS Master Server
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/weed master -mdir /var/lib/seaweedfs/master
+Restart=on-failure
+LimitNOFILE=100000
+
+User=seaweedfs
+Group=seaweedfs
+
+[Install]
+WantedBy=multi-user.target
+

@@ -2,9 +2,11 @@
 
 set -e
 
-NAME=weed
-USER=weed
-GROUP=weed
+NAME=seaweedfs
+USER=${NAME}
+GROUP=${NAME}
+
+components="master volume filer s3"
 
 case "$1" in
   configure)
@@ -22,20 +24,20 @@ case "$1" in
         --gecos "${NAME}" \
         "${USER}"
     fi
-    
-    mkdir -p /var/lib/${NAME}
-    chown -R "${USER}:${GROUP}" /var/lib/${NAME}
-    chmod 750 /var/lib/${NAME}
-    
-    mkdir -p /var/log/${NAME}
-    chown -R "${USER}:${GROUP}" /var/log/${NAME}
-    chmod 750 /var/log/${NAME}
+   
+    mkdir -p /etc/${NAME}
+    chmod 755 /etc/${NAME}
+    chown -R root:root /etc/${NAME}
 
-    mkdir -p /etc/weed
-    chmod 755 /etc/weed
-    chown -R root:root /etc/weed/
-    chmod 600 /etc/weed/weed.env
-
+    for component in $components; do
+      mkdir -p /var/lib/${NAME}/${component}
+      chown -R ${USER}:${GROUP} /var/lib/${NAME}/${component}
+    done
+    
+    for component in $components; do
+      mkdir -p /var/log/${NAME}/${component}
+      chown -R ${USER}:${GROUP} /var/log/${NAME}/${component}
+    done
     ;;
   abort-upgrade | abort-remove | abort-deconfigure)
     ;;
@@ -47,8 +49,10 @@ esac
 
 # Enable systemd service
 if [ "$1" = "configure" ]; then
-  deb-systemd-helper enable "${NAME}.service" > /dev/null || true
-  deb-systemd-helper update-state "${NAME}.service" > /dev/null || true
+  for component in $components; do
+    deb-systemd-helper enable "${NAME}-${component}.service" > /dev/null || true
+    deb-systemd-helper update-state "${NAME}-${component}.service" > /dev/null || true
+  done
 fi
 
 exit 0

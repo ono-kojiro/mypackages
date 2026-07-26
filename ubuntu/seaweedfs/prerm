@@ -2,10 +2,14 @@
 
 set -e
 
-NAME=weed
+NAME=seweedfs
+
+components="master volume filer s3"
 
 if [ "$1" = "remove" ] && [ -d /run/systemd/system ]; then
-  deb-systemd-invoke stop "${NAME}" > /dev/null || true
+  for component in ${components}; do
+    deb-systemd-invoke stop "${NAME}-${component}" > /dev/null || true
+  done
 fi
 
 exit 0

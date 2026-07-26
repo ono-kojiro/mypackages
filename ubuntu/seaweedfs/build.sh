@@ -7,19 +7,15 @@ cd $top_dir
 
 if [ ! -e ".env" ]; then
   touch .env
+else
+  . ./.env
 fi
 
-. ./.env
-
-#set -a
-#. ./.env
-#envsubst < config-ldap.yaml.template > config-ldap.yaml
-#set +a
-
-realname="${REALNAME}"
+realname="seaweedfs"
 pkgname="${realname}"
-pkgver="${PKGVER}"
-arch="${ARCH}"
+pkgver="4.40"
+arch="amd64"
+
 
 src_urls=""
 src_urls="$src_urls https://github.com/seaweedfs/seaweedfs/releases/download/${pkgver}/linux_amd64.tar.gz"
@@ -30,6 +26,8 @@ sourcedir=$top_dir/work/sources
 builddir=$top_dir/work/build
 destdir=$top_dir/work/dest/${pkgname}-${pkgver}
 outputdir=$top_dir
+
+components="master volume filer s3"
 
 ret=0
 
@@ -179,10 +177,15 @@ install()
   mkdir -p usr/bin/
   cp -f ${builddir}/weed usr/bin/
   mkdir -p usr/lib/systemd/system/
-  command install -m 644 ${top_dir}/weed.service usr/lib/systemd/system/
 
-  mkdir -p etc/weed
-  command install -m 600 ${top_dir}/weed.env etc/weed/
+  for component in ${components}; do
+    command install -m 644 ${top_dir}/${pkgname}-${component}.service \
+      usr/lib/systemd/system/
+    command install -m 755 -d var/lib/${pkgname}/${component}
+  done
+
+  mkdir -p etc/seaweedfs/
+  command install -m 644 ${top_dir}/filer.toml etc/seaweedfs/
 
   cd ${top_dir}
 }
@@ -234,7 +237,10 @@ sysinstall()
   sudo apt -y install /tmp/${pkgname}_${pkgver}_amd64.deb
   postinst
   sudo systemctl daemon-reload
-  sudo systemctl restart weed
+
+  for component in ${components}; do
+    sudo systemctl restart ${pkgname}-${component}
+  done
 }
 
 sysinst()
@@ -261,17 +267,29 @@ postinst()
 
 start()
 {
-  sudo systemctl start weed
+  for component in ${components}; do
+    sudo systemctl start ${pkgname}-${component}
+  done
 }
 
 stop()
 {
-  sudo systemctl stop weed
+  rcomponents=`{
+    for component in $components; do
+      echo $component
+    done
+  } | tac`
+
+  for component in ${rcomponents}; do
+    sudo systemctl stop ${pkgname}-${component}
+  done
 }
 
 restart()
 {
-  sudo systemctl restart weed
+  for component in ${components}; do
+    sudo systemctl restart ${pkgname}-${component}
+  done
 }
 
 status()

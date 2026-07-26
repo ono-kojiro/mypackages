@@ -1,0 +1,12 @@
+[Unit]
+Description=SeaweedFS S3 Server
+After=seaweedfs-filer.service
+Requires=seaweedfs-filer.service
+
+[Service]
+ExecStart=/usr/bin/weed s3 -filer=localhost:8888 -port=8333
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
