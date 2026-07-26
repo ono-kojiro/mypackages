@@ -210,31 +210,6 @@ EOS
   fakeroot dpkg-deb --build $destdir $outputdir
 }
 
-package_example()
-{
-  pkgname="${realname}-example"
-  destdir=$top_dir/work/dest/${pkgname}-${pkgver}
-  
-  mkdir -p ${destdir}/DEBIAN
-
-  username=`git config user.name`
-  email=`git config user.email`
-
-cat << EOS > ${destdir}/DEBIAN/control
-Package: ${pkgname}
-Maintainer: ${username} <${email}>
-Architecture: amd64
-Version: ${pkgver}
-Description: ${pkgname}
-EOS
-  
-  cp -f postinst ${destdir}/DEBIAN/
-  cp -f postrm   ${destdir}/DEBIAN/
-  cp -f prerm    ${destdir}/DEBIAN/
-  fakeroot dpkg-deb --build ${destdir} ${outputdir}
-}
-
-
 info()
 {
   dpkg -c ${pkgname}_${pkgver}_amd64.deb
@@ -272,37 +247,11 @@ sysuninstall()
   stop
 
   sudo apt -y remove --purge ${pkgname}
-  echo "INFO: remove /etc/dex"
-  sudo rm -rf /etc/dex/
 }
 
 sysuninst()
 {
   sysuninstall
-}
-
-install_certs()
-{
-  sudo sh -s << EOF
-    mkdir -p /etc/dex/certs/
-    cp -f ${DEX_CRT} /etc/dex/certs/
-    cp -f ${DEX_KEY} /etc/dex/certs/
-
-    chmod 664 /etc/dex/certs/${DEX_CRT}
-    chmod 660 /etc/dex/certs/${DEX_KEY}
-
-    chown -R dex:dex /etc/dex/certs/
-EOF
-}
-
-install_configs()
-{
-  sudo sh -s << EOF
-    cp -f config-ldap.yaml /etc/dex/
-    chown dex:dex /etc/dex/config-ldap.yaml
-    chmod 660 /etc/dex/config-ldap.yaml
-EOF
-
 }
 
 postinst()
@@ -312,115 +261,23 @@ postinst()
 
 start()
 {
-  sudo systemctl start dex
-  #sudo systemctl start example-app
+  sudo systemctl start weed
 }
 
 stop()
 {
-  sudo systemctl stop dex
-  #sudo systemctl stop example-app
+  sudo systemctl stop weed
 }
 
 restart()
 {
-  sudo systemctl restart dex
-  #sudo systemctl restart example-app
+  sudo systemctl restart weed
 }
 
 status()
 {
-  res=`systemctl is-active dex`
-  echo "INFO: dex is $res"
-
-  #res=`systemctl is-active example-app`
-  #echo "INFO: example-app is $res"
+  :
 }
-
-
-debug()
-{
-  cd / && sudo -u dex /usr/bin/dex serve /etc/dex/config-ldap.yaml
-}
-
-debug_example()
-{
-  cd / && sudo -u dex /bin/sh -s << EOF
-  {
-     . /etc/dex/example-app.conf
-     echo "DEBUG: TLS_CERT is $TLS_CERT"
-     cd / && /usr/bin/example-app \
-       --listen $LISTEN_URL \
-       --issuer $ISSUER_URL \
-       --redirect-uri $REDIRECT_URI \
-       --tls-cert $TLS_CERT \
-       --tls-key  $TLS_KEY \
-       --issuer-root-ca /etc/ssl/certs/ca-certificates.crt
-  }
-EOF
-
-}
-
-keys()
-{
-  cmd="curl -k -s https://${DEX_IP_PORT}/dex/keys"
-  echo "CMD: $cmd"
-  $cmd  | jq .
-}
-
-device_code()
-{
-   curl -s -k -X POST ${ISSUER_URL}/device/code \
-     -d "client_id=myclient" \
-     -d "scope=openid email profile groups offline_access" \
-   | jq . | tee device_code.json
-}
-
-device()
-{
-  device_code
-}
-
-auth()
-{
-   verification_uri_complete=`cat device_code.json \
-     | jq -r ".verification_uri_complete"`
-   lynx ${verification_uri_complete}
-}
-
-refresh_token()
-{
-  code=`cat device_code.json | jq -r ".device_code"`
-  client_id="myclient"
-
-  grant_type="urn:ietf:params:oauth:grant-type:device_code"
-  curl -k -s -X POST ${ISSUER_URL}/token \
-          -d "grant_type=$grant_type" \
-          -d "device_code=$code" \
-          -d "client_id=$client_id" | jq . | tee refresh_token.json
-}
-
-refresh()
-{
-  refresh_token
-}
-
-access_token()
-{
-  ref=`cat refresh_token.json | jq -r ".refresh_token"`
-
-  curl -k -s \
-    -X POST ${ISSUER_URL}/token \
-    -d "grant_type=refresh_token" \
-    -d "refresh_token=$ref" \
-    -d "client_id=myclient" | jq . | tee access_token.json
-}
-
-access()
-{
-  access_token
-}
-
 
 if [ "$#" -eq 0 ]; then
   all
