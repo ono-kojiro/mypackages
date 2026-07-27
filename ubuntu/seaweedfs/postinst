@@ -24,6 +24,8 @@ case "$1" in
         --gecos "${NAME}" \
         "${USER}"
     fi
+      
+    usermod -G ${GROUP},ssl-cert "${USER}"
    
     mkdir -p /etc/${NAME}
     chmod 755 /etc/${NAME}

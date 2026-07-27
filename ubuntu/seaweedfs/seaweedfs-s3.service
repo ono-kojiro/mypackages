@@ -5,8 +5,14 @@ Requires=seaweedfs-filer.service
 
 [Service]
 EnvironmentFile=/etc/seaweedfs/s3.env
-ExecStart=/usr/bin/weed s3 -filer=${S3_FILER} -port=${S3_PORT}
+
+ExecStart=/usr/bin/weed s3 -filer=${S3_FILER} -port=${S3_HTTP_PORT} -port.https=${S3_HTTPS_PORT} -cert.file=${S3_CERT_FILE} -key.file=${S3_KEY_FILE} -tlsVerifyClientCert=${S3_TLSVERIFYCLIENTCERT}
+
 Restart=always
+
+User=seaweedfs
+Group=seaweedfs
+
 
 [Install]
 WantedBy=multi-user.target
