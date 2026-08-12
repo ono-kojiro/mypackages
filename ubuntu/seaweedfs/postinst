@@ -31,6 +31,9 @@ case "$1" in
     chmod 755 /etc/${NAME}
     chown -R root:root /etc/${NAME}
 
+    chmod 640 /etc/${NAME}/s3-config.json
+    chown ${USER}:${GROUP} /etc/${NAME}/s3-config.json
+
     for component in $components; do
       mkdir -p /var/lib/${NAME}/${component}
       chown -R ${USER}:${GROUP} /var/lib/${NAME}/${component}

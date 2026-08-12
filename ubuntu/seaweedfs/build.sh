@@ -13,7 +13,7 @@ fi
 
 realname="seaweedfs"
 pkgname="${realname}"
-pkgver="4.41"
+pkgver="4.41-1"
 arch="amd64"
 
 
@@ -187,6 +187,8 @@ install()
   mkdir -p etc/seaweedfs/
   command install -m 644 ${top_dir}/filer.toml etc/seaweedfs/
   command install -m 644 ${top_dir}/security.toml etc/seaweedfs/
+  
+  command install -m 640 ${top_dir}/s3-config.json etc/seaweedfs/
 
   for component in ${components}; do
     command install -m 644 ${top_dir}/${component}.env etc/seaweedfs/
@@ -260,6 +262,7 @@ sysuninstall()
   stop
 
   sudo apt -y remove --purge ${pkgname}
+  sudo rm -rf /etc/${pkgname}
 }
 
 sysuninst()
