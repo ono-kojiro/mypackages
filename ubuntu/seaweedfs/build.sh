@@ -13,7 +13,7 @@ fi
 
 realname="seaweedfs"
 pkgname="${realname}"
-pkgver="4.40"
+pkgver="4.41"
 arch="amd64"
 
 

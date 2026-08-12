@@ -1,0 +1,5 @@
+[https.filer]
+enabled = true
+cert = "/etc/seaweedfs/certs/server.crt"
+key  = "/etc/seaweedfs/certs/server.key"
+

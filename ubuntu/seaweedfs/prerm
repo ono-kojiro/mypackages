@@ -2,6 +2,9 @@
 
 set -e
 
+export LANG=C
+export LC_ALL=C
+
 NAME=seweedfs
 
 components="master volume filer s3"
