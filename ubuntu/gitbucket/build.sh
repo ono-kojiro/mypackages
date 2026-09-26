@@ -5,7 +5,7 @@ cd $top_dir
   
 REALNAME=gitbucket
 PKGNAME=$REALNAME
-VERSION=4.46.0
+VERSION=4.48.0
 URL=https://gitbucket.github.io/
 WAR_URL=https://github.com/gitbucket/gitbucket/releases/download/${VERSION}/gitbucket.war
 
@@ -131,7 +131,8 @@ EOS
 
 sysinstall()
 {
-  sudo apt -y install ./${PKGNAME}_${VERSION}_${ARCH}.deb
+  cp -f ./${PKGNAME}_${VERSION}_${ARCH}.deb /tmp/
+  sudo apt -y install /tmp/${PKGNAME}_${VERSION}_${ARCH}.deb
 }
 
 sysuninst()
