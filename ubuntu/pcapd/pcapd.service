@@ -5,7 +5,8 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/pcapd -c /etc/pcapd/pcapd.conf
+EnvironmentFile=/etc/pcapd/pcapd.conf
+ExecStart=/usr/bin/pcapd
 Restart=on-failure
 
 User=root

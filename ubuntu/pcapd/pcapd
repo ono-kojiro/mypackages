@@ -1,8 +1,15 @@
 #!/bin/sh
 
+version="0.0.4"
+
 flags=""
 args=""
 configfile=""
+
+show_version()
+{
+  echo "pcapd $version"
+}
 
 while [ "$#" -ne 0 ]; do
   case $1 in
@@ -11,6 +18,10 @@ while [ "$#" -ne 0 ]; do
     -c | --config)
       shift
       configfile="$1"
+      ;;
+    -v | --version)
+      show_version
+      exit 0
       ;;
     -* )
       shift
@@ -25,17 +36,15 @@ while [ "$#" -ne 0 ]; do
 done
 
 if [ -z "$configfile" ]; then
-  configfile="/etc/pcapd/pcapd.conf"
+  . $configfile
 fi
 
-. $configfile
-
 exec tcpdump \
-  -i ${PCAPD_IF} \
-  -G ${PCAPD_ROTATE} \
-  -Z ${PCAPD_USER} \
-  -w ${PCAPD_OUTPUT} \
-  -z ${PCAPD_POSTROTATE_CMD} \
+  ${PCAPD_IF_OPTION} \
+  ${PCAPD_ROTATE} \
+  ${PCAPD_USER_OPTION} \
+  ${PCAPD_OUTPUT_OPTION} \
+  ${PCAPD_POSTROTATE_CMD_OPTION} \
   ${flags}
 
 

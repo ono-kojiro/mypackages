@@ -6,7 +6,7 @@ cd $top_dir
 workdir="$PWD/work"
 
 PKGNAME=pcapd
-PKGVER="0.0.3"
+PKGVER=`sh ./pcapd --version | awk '{ print $2 }'`
 DESTDIR="$workdir/dest/${PKGNAME}-${PKGVER}"
 ARCH="all"
 
@@ -101,6 +101,11 @@ EOS
 show()
 {
   dpkg -c ./${PKGNAME}_${PKGVER}_${ARCH}.deb
+}
+
+check()
+{
+  show
 }
 
 sysinst()
