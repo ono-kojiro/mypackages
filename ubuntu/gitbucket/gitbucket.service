@@ -5,6 +5,7 @@ After=network.target
 
 [Service]
 Type=simple
+EnvironmentFile=/etc/gitbucket/gitbucket.conf
 ExecStart=/usr/bin/gitbucket
 Restart=on-failure
 SuccessExitStatus=143
