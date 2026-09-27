@@ -39,6 +39,8 @@ if [ -z "$configfile" ]; then
   . $configfile
 fi
 
+umask 0002
+
 exec tcpdump \
   ${PCAPD_IF_OPTION} \
   ${PCAPD_ROTATE} \
