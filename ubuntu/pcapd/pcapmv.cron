@@ -15,5 +15,5 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # ex. run echo command every minute
 #* * * * *  nobody   echo hello
 
-*/15 * * * * pcapd    /usr/lib/pcapd/pcapmv
+H * * * * pcapd    /usr/lib/pcapd/pcapmv
 

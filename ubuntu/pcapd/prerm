@@ -10,8 +10,6 @@ if [ "$1" = "remove" ] && [ -d /run/systemd/system ]; then
   for unit in $units; do
     deb-systemd-invoke stop "$unit" > /dev/null || true
   done
-
-  deb-systemd-invoke stop "${PKG_NAME}.service" > /dev/null || true
 fi
 
 exit 0

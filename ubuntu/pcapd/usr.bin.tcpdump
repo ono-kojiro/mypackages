@@ -3,3 +3,8 @@
 
   # allow .pcap.xz
   /**.[pP][cC][aA][pP].[xX][zZ] rw,
+
+  # allow directory access
+  /var/lib/pcapd/ r,
+  /var/lib/pcapd/* rw,
+

@@ -23,6 +23,8 @@ case "$1" in
         --gecos ${PKG_USER} \
         "${PKG_USER}"
     fi
+
+	chmod -R 0755 /home/${PKG_NAME}
     
     mkdir -p /etc/${PKG_NAME}
     chown -R "${PKG_USER}:${PKG_GROUP}" /etc/${PKG_NAME}
