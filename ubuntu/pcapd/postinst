@@ -8,24 +8,18 @@ PKG_GROUP=pcapd
 
 case "$1" in
   configure)
-    #echo "DEBUG: configure in postinst" 1>&2
-    #echo "DEBUG: getent group ${PKG_GROUP}"
-    #getent group "${PKG_GROUP}" > /dev/null
     num=`getent group | grep -e "^${PKG_GROUP}:" | wc -l`
     if [ "$num" -eq 0 ]; then
-      #echo "DEBUG: addgroup --system --quiet ${PKG_GROUP}"
-      addgroup --system --quiet "${PKG_GROUP}"
+      LANG=C addgroup --system --quiet "${PKG_GROUP}"
     fi
 
     num=`getent passwd | grep -e "^${PKG_USER}:" | wc -l`
     if [ "$num" -eq 0 ]; then
-      #echo "DEBUG: adduser --system --quiet"
-      adduser --system --quiet \
-        --home /var/lib/${PKG_NAME} \
-        --no-create-home \
+      LANG=C adduser --system --quiet \
+        --home /home/${PKG_NAME} \
         --ingroup "${PKG_GROUP}" \
         --disabled-password \
-        --shell /usr/sbin/nologin \
+        --shell /bin/bash \
         --gecos ${PKG_USER} \
         "${PKG_USER}"
     fi
@@ -51,6 +45,7 @@ case "$1" in
       chmod -R 750 /var/run/${PKG_NAME}
     fi
 
+
     # enable /etc/apparmor.d/local/usr.bin.tcpdump
     sed -i -E -e 's|^(\s*)#(include <local/usr.bin.tcpdump>)|\1\2|' /etc/apparmor.d/usr.bin.tcpdump
 
@@ -69,15 +64,17 @@ esac
 
 case "$1" in
   configure | abort-upgrade | abort-deconfigure | abort-remove )
-    #echo "DEBUG: deb-systemd-helper unmask"
-    deb-systemd-helper unmask "${PKG_NAME}.service" > /dev/null 2>&1 || true
+    units=`systemctl list-unit-files "${PKG_NAME}@*.service" --no-legend \
+      | awk '{ print $1 }'`
 
-    #echo "DEBUG: deb-systemd-helper was-enabled"
+    for unit in $units; do
+      deb-systemd-helper unmask "$units" \
+        > /dev/null 2>&1 || true
+    done
+
     if deb-systemd-helper --quiet was-enabled "${PKG_NAME}"; then
-      #echo "DEBUG: deb-systemd-helper enable"
       deb-systemd-helper enable       "${PKG_NAME}" > /dev/null 2>&1 || true
     else
-      #echo "DEBUG: deb-systemd-helper update-state"
       deb-systemd-helper update-state "${PKG_NAME}" > /dev/null 2>&1 || true
     fi
     ;;

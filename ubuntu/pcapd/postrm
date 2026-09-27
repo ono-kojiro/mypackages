@@ -9,7 +9,7 @@ PKG_GROUP=pcapd
 case "$1" in
   purge )
     if [ -x "$(command -v deluser)" ]; then
-      deluser --quiet --system $PKG_USER || \
+      LANG=C deluser --quiet --system $PKG_USER || \
         echo "failed to remove ${PKG_NAME} system user with deluser" 1>&2
     else
       userdel ${PKG_USER} || \
@@ -19,7 +19,7 @@ case "$1" in
    
     if getent group "$PKG_GROUP" > /dev/null; then 
       if [ -x "$(command -v delgroup)" ]; then
-        delgroup --quiet --system --only-if-empty ${PKG_GROUP} || \
+        LANG=C delgroup --quiet --system --only-if-empty ${PKG_GROUP} || \
           echo "failed to remove ${PKG_NAME} system group with delgroup" 1>&2
       else
         groupdel ${PKG_GROUP} || \
@@ -28,7 +28,6 @@ case "$1" in
     fi
 
     rm -rf \
-      /var/lib/${PKG_NAME} \
       /var/log/${PKG_NAME} \
       /var/run/${PKG_NAME} \
       /var/cache/${PKG_NAME}
