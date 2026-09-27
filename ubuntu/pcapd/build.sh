@@ -37,29 +37,32 @@ all()
 
 configure()
 {
-  :
+  echo -n "configure ... "
+  echo "done"
 }
 
 build()
 {
-  :
+  echo -n "build ... "
+  echo "done"
 }
 
 install()
 {
+  echo -n "install to $DESTDIR ... "
   rm -rf $DESTDIR
   
   command install -m 755 -d $DESTDIR/usr/bin/
   command install -m 755 -d $DESTDIR/var/lib/${PKGNAME}
   command install -m 755 -d $DESTDIR/var/log/${PKGNAME}
-  command install -m 755 -d $DESTDIR/lib/systemd/system/
+  command install -m 755 -d $DESTDIR/usr/lib/systemd/system/
   command install -m 755 -d $DESTDIR/etc/${PKGNAME}
   command install -m 755 -d $DESTDIR/etc/cron.d/
   command install -m 755 -d $DESTDIR/usr/lib/${PKGNAME}
   
   command install ${top_dir}/${PKGNAME} $DESTDIR/usr/bin/
   
-  command install -m 0644 ${top_dir}/${PKGNAME}.service $DESTDIR/lib/systemd/system/
+  command install -m 0644 ${top_dir}/${PKGNAME}@.service $DESTDIR/usr/lib/systemd/system/
   command install -m 0644 ${top_dir}/${PKGNAME}.conf $DESTDIR/etc/${PKGNAME}/
 
   command install -m 0755 -d $DESTDIR/etc/apparmor.d/local/
@@ -70,6 +73,7 @@ install()
   command install -m 644 pcapd.cron $DESTDIR/etc/cron.d/pcapd
 
   cd $top_dir
+  echo "done"
 }
 
 custom_install()
@@ -79,6 +83,8 @@ custom_install()
 
 package()
 {
+  echo -n "create package ... "
+  echo ""
   maintainer=`git config --get user.name`
   email=`git config --get user.email`
 
@@ -96,6 +102,7 @@ EOS
   cp -f postrm   $DESTDIR/DEBIAN/
   cp -f prerm    $DESTDIR/DEBIAN/
   fakeroot dpkg-deb --build $DESTDIR $OUTPUTDIR
+  echo "done"
 }
 
 show()
@@ -118,6 +125,27 @@ sysinst()
 sysuninst()
 {
   sudo apt -y remove $flags ${PKGNAME}
+}
+
+sysreinst()
+{
+  sysuninst
+  sysinst
+}
+
+start()
+{
+  sudo systemctl start ${PKGNAME}@ue0
+}
+
+stop()
+{
+  sudo systemctl stop ${PKGNAME}@ue0
+}
+
+restart()
+{
+  sudo systemctl restart ${PKGNAME}@ue0
 }
 
 clean()

@@ -5,6 +5,7 @@ version="0.0.4"
 flags=""
 args=""
 configfile=""
+iface=""
 
 show_version()
 {
@@ -28,22 +29,29 @@ while [ "$#" -ne 0 ]; do
       flags="$flags $1"
       ;;
     * )
-      args="$args $1"
+      iface="$1"
       ;;
   esac
   
   shift
 done
 
-if [ -z "$configfile" ]; then
+if [ -z "$iface" ]; then
+  echo "ERROR: no interface instance"
+  exit 1
+fi
+
+PCAPD_IF="$iface"
+
+if [ ! -z "$configfile" ]; then
   . $configfile
 fi
 
 umask 0002
 
 exec tcpdump \
-  ${PCAPD_IF_OPTION} \
-  ${PCAPD_ROTATE} \
+  -i ${PCAPD_IF} \
+  ${PCAPD_ROTATE_OPTION} \
   ${PCAPD_USER_OPTION} \
   ${PCAPD_OUTPUT_OPTION} \
   ${PCAPD_POSTROTATE_CMD_OPTION} \
