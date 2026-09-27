@@ -136,7 +136,13 @@ sysreinst()
 
 start()
 {
+  sudo systemctl daemon-reload
   sudo systemctl start ${PKGNAME}@ue0
+}
+
+status()
+{
+  sudo systemctl status ${PKGNAME}@ue0
 }
 
 stop()

@@ -1,5 +1,11 @@
 #!/bin/sh
 
+top_dir="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
+cd $top_dir
+
+exec >> /var/log/pcapd/pcapmv.log
+exec 2>&1
+
 pcapmv_conf="/etc/pcapd/pcapmv.conf"
 
 if [ -f "$pcapmv_conf" ]; then
@@ -59,9 +65,10 @@ move_pcap()
   ymd="${year}${month}${day}"
   ymd_h="${year}${month}${day}-${hour}"
   dstdir="${PCAPMV_DSTDIR}/${ym}/${ymd}/${ymd}-${hour}"
-  dst="$dstdir/${base}"
-  echo "DEBUG: $src -> $dst" 1>&2
-  mv -f "$src" "$dst"
+  dst="${dstdir}/${base}"
+  echo "DEBUG: ${src} -> ${dst}" 1>&2
+  mkdir -p ${dstdir}
+  mv -f "${src}" "${dst}"
 }
 
 targets=""
