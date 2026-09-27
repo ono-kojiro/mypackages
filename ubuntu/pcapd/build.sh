@@ -69,8 +69,9 @@ install()
   command install -m 0644 ${top_dir}/usr.bin.tcpdump $DESTDIR/etc/apparmor.d/local/
 
   command install -m 755 pcapmv     $DESTDIR/usr/lib/${PKGNAME}/
+  command install -m 644 pcapmv.conf $DESTDIR/etc/${PKGNAME}/
   command install -m 755 pcap2xz    $DESTDIR/usr/lib/${PKGNAME}/
-  command install -m 644 pcapd.cron $DESTDIR/etc/cron.d/pcapd
+  command install -m 644 pcapmv.cron $DESTDIR/etc/cron.d/pcapmv
 
   cd $top_dir
   echo "done"
