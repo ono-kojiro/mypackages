@@ -1,0 +1,25 @@
+pipeline {
+    agent { label 'nodename' }
+
+    stages {
+        stage('Preparation') {
+            steps {
+                checkout scm   // use Jenkins SCM configuration
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'sh build_step.sh'
+            }
+        }
+
+        stage('Results') {
+            steps {
+                sh 'echo stage results finished'
+            }
+        }
+    }
+}
+
+
