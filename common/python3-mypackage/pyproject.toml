@@ -9,15 +9,12 @@ authors = [
 readme = "README.md"
 
 dependencies = [
-  "python-dotenv>=1.2.2",
-  "requests>=2.34.2",
-  "pyyaml>=6.0.3",
+  "python-dotenv>=1.0.1",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=9.0.3",
-  "pytest-order>=1.4.0",
+  "pytest>=9.0.2",
 ]
 
 [tool.setuptools.packages]
