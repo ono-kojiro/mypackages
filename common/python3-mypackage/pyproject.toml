@@ -1,0 +1,32 @@
+[project]
+name = "mypackage"
+version = "0.0.1"
+description = ""
+authors = [
+  { name = "Kojiro ONO", email = "ono.kojiro@gmail.com" }
+]
+
+readme = "README.md"
+
+dependencies = [
+  "python-dotenv>=1.2.2",
+  "requests>=2.34.2",
+  "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9.0.3",
+  "pytest-order>=1.4.0",
+]
+
+[tool.setuptools.packages]
+find = { where = [ "src"] }
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+mycli = "mypackage.mymodule.myfunc:main"
+

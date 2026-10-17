@@ -1,0 +1,2 @@
+from .myfunc import myfunc
+
