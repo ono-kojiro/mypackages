@@ -6,11 +6,12 @@ DESTDIR = $(PWD)/work/dest/$(PACKAGE)-$(VERSION)
 SUBDIRS = icons
 
 localinstall :
+	rm -rf $(DESTDIR)
 	$(MAKE) install DESTDIR=$(DESTDIR)
-	mkdir -p $(DESTDIR)/usr/share/$(PACKAGE)/doc_png/
-	mkdir -p $(DESTDIR)/usr/share/$(PACKAGE)/3015_png/
-	$(INSTALL_DATA) icons/doc_png/*.png $(DESTDIR)/usr/share/$(PACKAGE)/doc_png/
-	$(INSTALL_DATA) icons/3015_png/*.png $(DESTDIR)/usr/share/$(PACKAGE)/3015_png/
+	mkdir -p $(DESTDIR)/usr/share/icons/cisco/doc_png/
+	mkdir -p $(DESTDIR)/usr/share/icons/cisco/3015_png/
+	$(INSTALL_DATA) icons/doc_png/*.png $(DESTDIR)/usr/share/icons/cisco/doc_png/
+	$(INSTALL_DATA) icons/3015_png/*.png $(DESTDIR)/usr/share/icons/cisco/3015_png/
 
 localuninstall :
 	rm -rf $(DESTDIR)
@@ -18,6 +19,8 @@ localuninstall :
 li : localinstall
 
 lu : localuninstall
+
+package : localinstall deb
 
 deb :
 	destdir=$(PWD)/work/dest/$(PACKAGE)-$(VERSION); \
@@ -37,7 +40,8 @@ check :
 	dpkg-deb --info $(PACKAGE)_$(VERSION)_$(ARCH).deb
 
 sysinstall :
-	sudo apt -y install ./$(PACKAGE)_$(VERSION)_$(ARCH).deb
+	cp -f $(PACKAGE)_$(VERSION)_$(ARCH).deb /tmp/
+	sudo apt -y install /tmp/$(PACKAGE)_$(VERSION)_$(ARCH).deb
 
 sysuninstall :
 	sudo apt -y remove $(PACKAGE)
